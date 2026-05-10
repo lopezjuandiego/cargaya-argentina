@@ -43,7 +43,22 @@ export default function Home() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
-    router.push(`/buscar?q=${encodeURIComponent(query.trim())}`);
+    const q = encodeURIComponent(query.trim());
+    // Try to get GPS silently (3s timeout) so distances come from real location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          router.push(`/buscar?q=${q}&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
+        },
+        () => {
+          // GPS unavailable — search without location
+          router.push(`/buscar?q=${q}`);
+        },
+        { timeout: 3000, enableHighAccuracy: false, maximumAge: 120000 }
+      );
+    } else {
+      router.push(`/buscar?q=${q}`);
+    }
   }
 
   return (

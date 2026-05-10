@@ -5,11 +5,24 @@ import BackLink from "./BackLink";
 
 const CONNECTOR_INFO: Record<string, string> = {
   "Tipo 2": "Tipo 2 (AC) — el más común en Europa y Argentina. Carga lenta/media, hasta 22 kW. Compatible con la mayoría de los autos eléctricos.",
-  "CCS2": "CCS2 (DC) — carga rápida, desde 50 hasta 350 kW. Estándar europeo para carga rápida. Compatible con la mayoría de los EVs modernos.",
-  "CHAdeMO": "CHAdeMO (DC) — carga rápida japonesa, hasta 100 kW. Usado principalmente por Nissan, Mitsubishi y algunos modelos asiáticos.",
-  "GBT": "GB/T (DC/AC) — estándar chino. Usado en vehículos de origen chino como BYD, Chery, etc.",
-  "Tesla": "Tesla Supercharger — exclusivo de Tesla (en algunos países ya permite otros autos con adaptador).",
-  "Schuko": "Schuko (AC) — enchufe doméstico europeo. Carga muy lenta, solo para emergencias. No recomendado como opción principal.",
+  "CCS2": "CCS2 (DC) — carga rápida, desde 50 hasta 350 kW. Estándar europeo. Compatible con la mayoría de los EVs modernos.",
+  "CHAdeMO": "CHAdeMO (DC) — carga rápida japonesa, hasta 100 kW. Usado por Nissan, Mitsubishi y modelos asiáticos.",
+  "GBT": "GB/T (DC/AC) — estándar chino. Usado en BYD, Chery, y otros autos de origen chino.",
+  "Tesla": "Tesla Supercharger — propio de Tesla. En algunos países ya permite otros autos con adaptador CCS2.",
+  "Schuko": "Schuko (AC) — enchufe doméstico europeo. Carga muy lenta (~2 kW), solo para emergencias.",
+};
+
+const CATEGORY_INFO: Record<string, string> = {
+  "Hotel": "Cargador en hotel — generalmente accesible para huéspedes y en algunos casos al público general.",
+  "Restaurante": "Cargador en restaurante — para cargar mientras comés. Verificá si requiere consumir.",
+  "Supermercado": "Cargador en supermercado — podés cargar mientras hacés las compras.",
+  "Shopping": "Cargador en shopping o centro comercial — acceso público durante el horario comercial.",
+  "Parking": "Estacionamiento con carga — puede requerir pago de estacionamiento.",
+  "Aeropuerto": "Cargador en aeropuerto — disponible en playa de estacionamiento.",
+  "Terminal / Puerto": "Cargador en terminal o puerto — acceso variable según operatoria.",
+  "Estación de servicio": "Gasolinera con carga eléctrica — similar a cargar combustible, acceso público.",
+  "Autopista": "Cargador en autopista — pensado para viajes de larga distancia, parada rápida.",
+  "Deporte / Entretenimiento": "Cargador en club o espacio recreativo — puede requerir ser socio o cliente.",
 };
 
 export default async function StationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,6 +39,11 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
     ? lastReport.isWorking ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"
     : "text-gray-500 bg-gray-50";
 
+  const addedDate = new Date(station.createdAt).toLocaleDateString("es-AR", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+  const noReportsTooltip = `Ningún usuario reportó el estado todavía. Esta estación fue agregada el ${addedDate}.`;
+
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-screen">
       <BackLink />
@@ -35,7 +53,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
 
         {/* Status badge */}
         <div
-          title={!lastReport ? "Ningún usuario reportó el estado de esta estación todavía. ¡Sé el primero!" : undefined}
+          title={!lastReport ? noReportsTooltip : undefined}
           className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1 rounded-full cursor-default ${statusColor}`}
         >
           <span>{lastReport ? (lastReport.isWorking ? "✓" : "✗") : "?"}</span>
@@ -52,8 +70,16 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
         {/* Info grid */}
         <div className="grid grid-cols-2 gap-3">
           <InfoBox label="Operador" value={station.operator} />
-          <InfoBox label="Categoría" value={station.category ?? "—"} />
-          <InfoBox label="Potencia" value={station.powerKw ? `${station.powerKw} kW` : "—"} />
+          <InfoBox
+            label="Tipo de lugar"
+            value={station.category ?? "—"}
+            tooltip={station.category ? CATEGORY_INFO[station.category] : undefined}
+          />
+          <InfoBox
+            label="Potencia"
+            value={station.powerKw ? `${station.powerKw} kW` : "—"}
+            tooltip={station.powerKw ? `${station.powerKw} kW — ${station.powerKw >= 100 ? "Carga ultra-rápida: carga completa en ~30 min" : station.powerKw >= 50 ? "Carga rápida: ~1h para carga completa" : station.powerKw >= 22 ? "Carga media: 3-6hs para carga completa" : "Carga lenta: 8-12hs para carga completa"}` : undefined}
+          />
           <InfoBox label="Acceso" value={station.isFree ? "Gratuito" : "Pago"} />
         </div>
 
@@ -130,11 +156,17 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
   );
 }
 
-function InfoBox({ label, value }: { label: string; value: string }) {
+function InfoBox({ label, value, tooltip }: { label: string; value: string; tooltip?: string }) {
   return (
     <div className="bg-gray-50 rounded-xl p-3">
       <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">{label}</p>
-      <p className="text-gray-900 font-medium mt-0.5">{value}</p>
+      <p
+        className={`text-gray-900 font-medium mt-0.5 ${tooltip ? "cursor-help underline decoration-dotted decoration-gray-400" : ""}`}
+        title={tooltip}
+      >
+        {value}
+        {tooltip && <span className="text-gray-400 text-xs ml-1">ⓘ</span>}
+      </p>
     </div>
   );
 }
