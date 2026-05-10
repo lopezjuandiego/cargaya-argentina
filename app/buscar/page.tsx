@@ -92,6 +92,8 @@ function StationCard({ s, highlight = false }: { s: Station; highlight?: boolean
   );
 }
 
+const RADIOS = [5, 10, 15, 25, 50];
+
 function SearchResults() {
   const params = useSearchParams();
   const router = useRouter();
@@ -101,25 +103,25 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [title, setTitle] = useState("");
+  const [radio, setRadio] = useState(15);
 
-  useEffect(() => {
+  function fetchStations(radiusKm: number) {
     const lat = params.get("lat");
     const lng = params.get("lng");
     const q = params.get("q");
 
-    let url = "/api/estaciones?";
+    let url = `/api/estaciones?radio=${radiusKm}&`;
     if (lat && lng) {
       url += `lat=${lat}&lng=${lng}`;
-      setTitle("Estaciones cercanas a vos");
     } else if (q) {
       url += `q=${encodeURIComponent(q)}`;
-      setTitle(`Resultados para "${q}"`);
     } else {
       setError("No se especificó ubicación.");
       setLoading(false);
       return;
     }
 
+    setLoading(true);
     fetch(url)
       .then((r) => r.json())
       .then((data) => {
@@ -133,6 +135,16 @@ function SearchResults() {
         setError(e.message);
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    const lat = params.get("lat");
+    const lng = params.get("lng");
+    const q = params.get("q");
+    if (lat && lng) setTitle("Estaciones cercanas a vos");
+    else if (q) setTitle(`Resultados para "${q}"`);
+    fetchStations(radio);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   if (loading) {
@@ -149,7 +161,7 @@ function SearchResults() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center gap-3 mb-4">
         <button
           onClick={() => router.push("/")}
           className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors text-lg"
@@ -164,11 +176,29 @@ function SearchResults() {
           {!loading && (
             <p className="text-sm text-gray-500">
               {hasResults
-                ? `${stations.length} estación${stations.length !== 1 ? "es" : ""} encontrada${stations.length !== 1 ? "s" : ""}`
-                : "Sin resultados en esta zona"}
+                ? `${stations.length} estación${stations.length !== 1 ? "es" : ""} en ${radio} km`
+                : `Sin resultados en ${radio} km`}
             </p>
           )}
         </div>
+      </div>
+
+      {/* Radio selector */}
+      <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
+        <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">Radio:</span>
+        {RADIOS.map((r) => (
+          <button
+            key={r}
+            onClick={() => { setRadio(r); fetchStations(r); }}
+            className={`flex-shrink-0 text-sm px-3 py-1.5 rounded-full border transition-colors ${
+              radio === r
+                ? "bg-green-600 text-white border-green-600 font-semibold"
+                : "bg-white text-gray-600 border-gray-200 hover:border-green-400"
+            }`}
+          >
+            {r} km
+          </button>
+        ))}
       </div>
 
       {error && (

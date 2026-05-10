@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Se requiere lat+lng o q" }, { status: 400 });
     }
 
-    const radius = 50;
+    const radius = searchParams.get("radio") ? parseFloat(searchParams.get("radio")!) : 15;
     let stations = getNearbyStations(lat, lng, radius, 30);
 
     const withStatus = stations.map((s) => ({
