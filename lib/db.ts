@@ -1,19 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import Database from "better-sqlite3";
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
-declare global {
-  // eslint-disable-next-line no-var
-  var _db: ReturnType<typeof createDb> | undefined;
+let _sql: NeonQueryFunction<false, false> | null = null;
+
+export function getDb(): NeonQueryFunction<false, false> {
+  if (!_sql) {
+    const url = process.env.DATABASE_URL;
+    if (!url) throw new Error("DATABASE_URL is not set");
+    _sql = neon(url);
+  }
+  return _sql;
 }
-
-function createDb() {
-  return new Database(process.cwd() + "/dev.db");
-}
-
-const db = global._db ?? createDb();
-if (process.env.NODE_ENV !== "production") global._db = db;
-
-export { db };
-
-// Keep Prisma for type generation reference (not used at runtime yet)
-export type { PrismaClient };

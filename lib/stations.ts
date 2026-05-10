@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { getDb } from "./db";
 
 export type Station = {
   id: number;
@@ -14,13 +14,12 @@ export type Station = {
   connectorTypes: string;
   powerKw: number | null;
   accessType: string;
-  isFree: number;
+  isFree: boolean;
   source: string;
-  isVerified: number;
+  isVerified: boolean;
   notes: string | null;
   createdAt: string;
   updatedAt: string;
-  // computed
   distanceKm?: number;
   lastStatus?: "working" | "not_working" | null;
 };
@@ -28,7 +27,7 @@ export type Station = {
 export type StatusReport = {
   id: number;
   stationId: number;
-  isWorking: number;
+  isWorking: boolean;
   comment: string | null;
   reportedAt: string;
 };
@@ -45,16 +44,13 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function getNearbyStations(
+export async function getNearbyStations(
   lat: number,
   lng: number,
-  radiusKm = 50,
+  radiusKm = 15,
   limit = 30
-): Station[] {
-  const rows = db
-    .prepare("SELECT * FROM Station ORDER BY name")
-    .all() as Station[];
-
+): Promise<Station[]> {
+  const rows = (await getDb()`SELECT * FROM "Station"`) as Station[];
   return rows
     .map((s) => ({ ...s, distanceKm: haversineKm(lat, lng, s.lat, s.lng) }))
     .filter((s) => s.distanceKm! <= radiusKm)
@@ -62,44 +58,58 @@ export function getNearbyStations(
     .slice(0, limit);
 }
 
-export function getStation(id: number): Station | undefined {
-  return db
-    .prepare("SELECT * FROM Station WHERE id = ?")
-    .get(id) as Station | undefined;
+export async function getClosestStation(
+  lat = -34.6037,
+  lng = -58.3816
+): Promise<(Station & { distanceKm: number }) | null> {
+  const rows = (await getDb()`SELECT * FROM "Station"`) as Station[];
+  if (!rows.length) return null;
+  const sorted = rows
+    .map((s) => ({ ...s, distanceKm: haversineKm(lat, lng, s.lat, s.lng) }))
+    .sort((a, b) => a.distanceKm - b.distanceKm);
+  return sorted[0];
 }
 
-export function getStatusReports(stationId: number): StatusReport[] {
-  return db
-    .prepare(
-      "SELECT * FROM StatusReport WHERE stationId = ? ORDER BY reportedAt DESC LIMIT 10"
-    )
-    .all(stationId) as StatusReport[];
+export async function getStation(id: number): Promise<Station | null> {
+  const rows = (await getDb()`SELECT * FROM "Station" WHERE id = ${id}`) as Station[];
+  return rows[0] ?? null;
 }
 
-export function getLastStatus(
+export async function getStatusReports(stationId: number): Promise<StatusReport[]> {
+  return (await getDb()`
+    SELECT * FROM "StatusReport"
+    WHERE "stationId" = ${stationId}
+    ORDER BY "reportedAt" DESC
+    LIMIT 10
+  `) as StatusReport[];
+}
+
+export async function getLastStatus(
   stationId: number
-): "working" | "not_working" | null {
-  const report = db
-    .prepare(
-      "SELECT isWorking FROM StatusReport WHERE stationId = ? ORDER BY reportedAt DESC LIMIT 1"
-    )
-    .get(stationId) as { isWorking: number } | undefined;
-  if (!report) return null;
-  return report.isWorking ? "working" : "not_working";
+): Promise<"working" | "not_working" | null> {
+  const rows = (await getDb()`
+    SELECT "isWorking" FROM "StatusReport"
+    WHERE "stationId" = ${stationId}
+    ORDER BY "reportedAt" DESC
+    LIMIT 1
+  `) as { isWorking: boolean }[];
+  if (!rows.length) return null;
+  return rows[0].isWorking ? "working" : "not_working";
 }
 
-export function addStatusReport(
+export async function addStatusReport(
   stationId: number,
   isWorking: boolean,
   comment: string | null,
   reporterIp: string | null
-): void {
-  db.prepare(
-    "INSERT INTO StatusReport (stationId, isWorking, comment, reporterIp, reportedAt) VALUES (?, ?, ?, ?, ?)"
-  ).run(stationId, isWorking ? 1 : 0, comment, reporterIp, new Date().toISOString());
+): Promise<void> {
+  await getDb()`
+    INSERT INTO "StatusReport" ("stationId", "isWorking", comment, "reporterIp", "reportedAt")
+    VALUES (${stationId}, ${isWorking}, ${comment}, ${reporterIp}, NOW())
+  `;
 }
 
-export function addUserSubmission(data: {
+export async function addUserSubmission(data: {
   name: string;
   operator: string;
   address: string;
@@ -110,33 +120,13 @@ export function addUserSubmission(data: {
   connectorTypes: string;
   powerKw: number | null;
   comment: string | null;
-}): void {
-  db.prepare(
-    `INSERT INTO UserSubmission (name, operator, address, city, province, lat, lng, connectorTypes, powerKw, comment, status, submittedAt)
-     VALUES (@name, @operator, @address, @city, @province, @lat, @lng, @connectorTypes, @powerKw, @comment, 'pending', @submittedAt)`
-  ).run({ ...data, submittedAt: new Date().toISOString() });
-}
-
-export function searchStationsByCity(query: string, limit = 20): Station[] {
-  const like = `%${query}%`;
-  return db
-    .prepare(
-      "SELECT * FROM Station WHERE city LIKE ? OR province LIKE ? OR name LIKE ? OR address LIKE ? ORDER BY city LIMIT ?"
-    )
-    .all(like, like, like, like, limit) as Station[];
-}
-
-export function getClosestStation(lat?: number, lng?: number): (Station & { distanceKm: number }) | null {
-  const rows = db.prepare("SELECT * FROM Station").all() as Station[];
-  if (!rows.length) return null;
-  const refLat = lat ?? -34.6037;
-  const refLng = lng ?? -58.3816;
-  const sorted = rows
-    .map((s) => ({ ...s, distanceKm: haversineKm(refLat, refLng, s.lat, s.lng) }))
-    .sort((a, b) => a.distanceKm - b.distanceKm);
-  return sorted[0] as Station & { distanceKm: number };
-}
-
-export function getAllStations(): Station[] {
-  return db.prepare("SELECT * FROM Station ORDER BY province, city, name").all() as Station[];
+}): Promise<void> {
+  await getDb()`
+    INSERT INTO "UserSubmission"
+      (name, operator, address, city, province, lat, lng, "connectorTypes", "powerKw", comment, status, "submittedAt")
+    VALUES
+      (${data.name}, ${data.operator}, ${data.address}, ${data.city}, ${data.province},
+       ${data.lat}, ${data.lng}, ${data.connectorTypes}, ${data.powerKw}, ${data.comment},
+       'pending', NOW())
+  `;
 }

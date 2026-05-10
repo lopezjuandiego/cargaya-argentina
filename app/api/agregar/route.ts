@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
     }
 
-    addUserSubmission({
+    await addUserSubmission({
       name,
       operator: operator ?? "",
       address,

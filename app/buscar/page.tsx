@@ -49,8 +49,10 @@ export default async function BuscarPage({
   const params = await searchParams;
   const radio = params.radio ? parseInt(params.radio) : 15;
 
-  let stations: Station[] = [];
-  let closest: Station | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let stations: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let closest: any = null;
   let title = "";
   let resolvedLocation = "";
   let errorMsg = "";
@@ -59,26 +61,26 @@ export default async function BuscarPage({
     const lat = parseFloat(params.lat);
     const lng = parseFloat(params.lng);
     title = "Estaciones cercanas a vos";
-    const raw = getNearbyStations(lat, lng, radio, 30);
-    stations = raw.map((s) => ({ ...s, lastStatus: getLastStatus(s.id) }));
+    const raw = await getNearbyStations(lat, lng, radio, 30);
+    stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
     if (stations.length === 0) {
-      const c = getClosestStation(lat, lng);
-      if (c) closest = { ...c, lastStatus: getLastStatus(c.id) };
+      const c = await getClosestStation(lat, lng);
+      if (c) closest = { ...c, lastStatus: await getLastStatus(c!.id) };
     }
   } else if (params.q) {
     title = `Resultados para "${params.q}"`;
     const geo = await geocode(params.q);
     if (!geo) {
       errorMsg = `No encontramos "${params.q}" en el mapa. Intentá con una ciudad o barrio conocido.`;
-      const c = getClosestStation();
-      if (c) closest = { ...c, lastStatus: getLastStatus(c.id) };
+      const c = await getClosestStation();
+      if (c) closest = { ...c, lastStatus: await getLastStatus(c!.id) };
     } else {
       resolvedLocation = geo.display;
-      const raw = getNearbyStations(geo.lat, geo.lng, radio, 30);
-      stations = raw.map((s) => ({ ...s, lastStatus: getLastStatus(s.id) }));
+      const raw = await getNearbyStations(geo.lat, geo.lng, radio, 30);
+      stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
       if (stations.length === 0) {
-        const c = getClosestStation(geo.lat, geo.lng);
-        if (c) closest = { ...c, lastStatus: getLastStatus(c.id) };
+        const c = await getClosestStation(geo.lat, geo.lng);
+        if (c) closest = { ...c, lastStatus: await getLastStatus(c.id) };
       }
     }
   } else {

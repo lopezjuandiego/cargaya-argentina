@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
     }
 
-    const station = getStation(stationId);
+    const station = await getStation(stationId);
     if (!station) {
       return NextResponse.json({ error: "Estación no encontrada" }, { status: 404 });
     }
 
     const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? null;
 
-    addStatusReport(stationId, isWorking, comment ?? null, ip);
+    await addStatusReport(stationId, isWorking, comment ?? null, ip);
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error(e);

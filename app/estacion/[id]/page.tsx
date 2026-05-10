@@ -4,10 +4,10 @@ import StatusForm from "./StatusForm";
 
 export default async function StationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const station = getStation(parseInt(id, 10));
+  const station = await getStation(parseInt(id, 10));
   if (!station) notFound();
 
-  const reports = getStatusReports(station.id);
+  const reports = await getStatusReports(station.id);
   const connectors: string[] = JSON.parse(station.connectorTypes || "[]");
 
   const lastReport = reports[0];
