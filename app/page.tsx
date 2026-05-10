@@ -10,6 +10,10 @@ export default function Home() {
   const [error, setError] = useState("");
 
   function useGPS() {
+    if (!navigator.geolocation) {
+      setError("Tu navegador no soporta geolocalización. Ingresá una ciudad o zona.");
+      return;
+    }
     setLocating(true);
     setError("");
     navigator.geolocation.getCurrentPosition(
@@ -17,10 +21,17 @@ export default function Home() {
         const { latitude, longitude } = pos.coords;
         router.push(`/buscar?lat=${latitude}&lng=${longitude}`);
       },
-      () => {
+      (err) => {
         setLocating(false);
-        setError("No pudimos acceder a tu ubicación. Ingresá una ciudad o zona.");
-      }
+        if (err.code === 1) {
+          setError("Bloqueaste el acceso a la ubicación. Ingresá una ciudad o zona.");
+        } else if (location.protocol !== "https:" && !location.hostname.includes("localhost")) {
+          setError("La geolocalización requiere HTTPS. Usá la búsqueda por texto.");
+        } else {
+          setError("No pudimos obtener tu ubicación. Ingresá una ciudad o zona.");
+        }
+      },
+      { timeout: 8000, enableHighAccuracy: false }
     );
   }
 

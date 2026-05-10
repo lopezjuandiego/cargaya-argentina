@@ -126,6 +126,17 @@ export function searchStationsByCity(query: string, limit = 20): Station[] {
     .all(like, like, like, like, limit) as Station[];
 }
 
+export function getClosestStation(lat?: number, lng?: number): (Station & { distanceKm: number }) | null {
+  const rows = db.prepare("SELECT * FROM Station").all() as Station[];
+  if (!rows.length) return null;
+  const refLat = lat ?? -34.6037;
+  const refLng = lng ?? -58.3816;
+  const sorted = rows
+    .map((s) => ({ ...s, distanceKm: haversineKm(refLat, refLng, s.lat, s.lng) }))
+    .sort((a, b) => a.distanceKm - b.distanceKm);
+  return sorted[0] as Station & { distanceKm: number };
+}
+
 export function getAllStations(): Station[] {
   return db.prepare("SELECT * FROM Station ORDER BY province, city, name").all() as Station[];
 }
