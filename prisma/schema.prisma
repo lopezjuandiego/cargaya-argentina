@@ -1,0 +1,63 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Station {
+  id             Int      @id @default(autoincrement())
+  name           String
+  operator       String
+  category       String?
+  address        String
+  city           String
+  province       String
+  postalCode     String?
+  lat            Float
+  lng            Float
+  connectorTypes String   @default("[]")
+  powerKw        Float?
+  accessType     String   @default("public")
+  isFree         Boolean  @default(false)
+  source         String   @default("manual")
+  isVerified     Boolean  @default(false)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  reports     StatusReport[]
+  submissions UserSubmission[]
+}
+
+model StatusReport {
+  id         Int      @id @default(autoincrement())
+  stationId  Int
+  isWorking  Boolean
+  comment    String?
+  reportedAt DateTime @default(now())
+  reporterIp String?
+
+  station Station @relation(fields: [stationId], references: [id])
+}
+
+model UserSubmission {
+  id             Int      @id @default(autoincrement())
+  name           String
+  operator       String?
+  address        String
+  city           String
+  province       String
+  lat            Float?
+  lng            Float?
+  connectorTypes String   @default("[]")
+  powerKw        Float?
+  comment        String?
+  status         String   @default("pending")
+  submittedAt    DateTime @default(now())
+  stationId      Int?
+
+  station Station? @relation(fields: [stationId], references: [id])
+}

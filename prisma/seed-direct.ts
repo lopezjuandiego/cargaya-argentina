@@ -1,0 +1,96 @@
+import Database from "better-sqlite3";
+import path from "path";
+
+const db = new Database(path.resolve(process.cwd(), "dev.db"));
+
+const now = new Date().toISOString();
+
+const insert = db.prepare(`
+  INSERT OR IGNORE INTO Station (
+    name, operator, category, address, city, province, postalCode,
+    lat, lng, connectorTypes, powerKw, accessType, isFree,
+    source, isVerified, createdAt, updatedAt
+  ) VALUES (
+    @name, @operator, @category, @address, @city, @province, @postalCode,
+    @lat, @lng, @connectorTypes, @powerKw, @accessType, @isFree,
+    @source, @isVerified, @createdAt, @updatedAt
+  )
+`);
+
+const stations = [
+  // === CHARGEBOX (54 stations) ===
+  { name: "Sheraton Pilar", operator: "Chargebox", category: "Hotel", address: "Panamericana KM 49.5", city: "Pilar", province: "Buenos Aires", postalCode: "B1629", lat: -34.443861, lng: -58.950, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Kansas Acassuso", operator: "Chargebox", category: "Restaurante", address: "Av. del Libertador 15089", city: "Acassuso", province: "Buenos Aires", postalCode: "B1641", lat: -34.475734, lng: -58.515, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Vicente López", operator: "Chargebox", category: "Supermercado", address: "Av. del Libertador 125", city: "Vicente López", province: "Buenos Aires", postalCode: "B1638", lat: -34.532128, lng: -58.490, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Atalaya Zarate", operator: "Chargebox", category: "Restaurante", address: "Colectora Norte Ruta 9, Salida 12", city: "Zárate", province: "Buenos Aires", postalCode: "B2800", lat: -34.090, lng: -59.044, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Parking La Recova", operator: "Chargebox", category: "Parking", address: "Posadas 1053", city: "CABA", province: "Buenos Aires", postalCode: "C1011", lat: -34.589644, lng: -58.378, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Buquebus Buenos Aires", operator: "Chargebox", category: "Terminal / Puerto", address: "Av. Antártida Argentina 821", city: "CABA", province: "Buenos Aires", postalCode: "C1104", lat: -34.597501, lng: -58.368, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Alcorta", operator: "Chargebox", category: "Supermercado", address: "Jerónimo Salguero 3212", city: "CABA", province: "Buenos Aires", postalCode: "C1425", lat: -34.574271, lng: -58.413, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Sheraton Buenos Aires (Frente)", operator: "Chargebox", category: "Hotel", address: "San Martín 1225", city: "CABA", province: "Buenos Aires", postalCode: "C1001", lat: -34.593321, lng: -58.373, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Sheraton Buenos Aires (Subsuelo 1)", operator: "Chargebox", category: "Hotel", address: "San Martín 1225", city: "CABA", province: "Buenos Aires", postalCode: "C1001", lat: -34.593509, lng: -58.373, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Sheraton Buenos Aires (Subsuelo 2)", operator: "Chargebox", category: "Hotel", address: "San Martín 1225", city: "CABA", province: "Buenos Aires", postalCode: "C1001", lat: -34.593509, lng: -58.374, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Sheraton Buenos Aires (Subsuelo 3)", operator: "Chargebox", category: "Hotel", address: "San Martín 1225", city: "CABA", province: "Buenos Aires", postalCode: "C1001", lat: -34.593510, lng: -58.373, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Norcenter Munro", operator: "Chargebox", category: "Shopping", address: "Esteban Echeverría 3750", city: "Munro", province: "Buenos Aires", postalCode: "B1605", lat: -34.514665, lng: -58.525, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Maschwitz", operator: "Chargebox", category: "Supermercado", address: "Juan Bautista Alberdi 555", city: "Maschwitz", province: "Buenos Aires", postalCode: "B1623", lat: -34.396270, lng: -58.773, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Remeros Plaza", operator: "Chargebox", category: "Shopping", address: "Av. Sta. María de las Conchas 4711", city: "Tigre", province: "Buenos Aires", postalCode: "B1624", lat: -34.406403, lng: -58.583, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Hotel Saint German Cariló", operator: "Chargebox", category: "Hotel", address: "Laurel 63", city: "Cariló", province: "Buenos Aires", postalCode: "B7167", lat: -37.164803, lng: -56.895, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Cariló Golf", operator: "Chargebox", category: "Deporte / Entretenimiento", address: "Ñandú 964", city: "Cariló", province: "Buenos Aires", postalCode: "B7167", lat: -37.159840, lng: -56.893, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Mar del Plata", operator: "Chargebox", category: "Supermercado", address: "Av. Constitución 7598", city: "Mar del Plata", province: "Buenos Aires", postalCode: "B7600", lat: -37.953107, lng: -57.572, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "TOM Shopping Tortuguitas (1)", operator: "Chargebox", category: "Shopping", address: "Panamericana Km 36,5", city: "Tortuguitas", province: "Buenos Aires", postalCode: "B1667", lat: -34.453227, lng: -58.802, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "TOM Shopping Tortuguitas (2)", operator: "Chargebox", category: "Shopping", address: "Panamericana Km 36,6", city: "Tortuguitas", province: "Buenos Aires", postalCode: "B1667", lat: -34.453228, lng: -58.802, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Centro Comercial Nordelta", operator: "Chargebox", category: "Shopping", address: "Av. de los Lagos 7008", city: "Tigre", province: "Buenos Aires", postalCode: "B1646", lat: -34.399101, lng: -58.677, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Aeropuerto Ezeiza (1)", operator: "Chargebox", category: "Aeropuerto", address: "AU Tte. Gral. Pablo Riccheri Km 33,5", city: "Ezeiza", province: "Buenos Aires", postalCode: "B1802", lat: -34.812199, lng: -58.534, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Aeropuerto Ezeiza (2)", operator: "Chargebox", category: "Aeropuerto", address: "AU Tte. Gral. Pablo Riccheri Km 33,5", city: "Ezeiza", province: "Buenos Aires", postalCode: "B1802", lat: -34.812200, lng: -58.534, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Sport Club Martínez", operator: "Chargebox", category: "Deporte / Entretenimiento", address: "Sebastián Elcano 1718", city: "Martínez", province: "Buenos Aires", postalCode: "B1640", lat: -34.480119, lng: -58.498, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour San Miguel", operator: "Chargebox", category: "Shopping", address: "Av. Pres. Arturo Umberto Illia 3770", city: "San Miguel", province: "Buenos Aires", postalCode: "B1613", lat: -34.531160, lng: -58.714, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour San Martín", operator: "Chargebox", category: "Supermercado", address: "Av. San Martín 420", city: "San Martín", province: "Buenos Aires", postalCode: "C1419", lat: -34.586570, lng: -58.537, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Parador Atalaya Chascomús", operator: "Chargebox", category: "Restaurante", address: "Ruta 2 km 113", city: "Chascomús", province: "Buenos Aires", postalCode: "B7130", lat: -35.510729, lng: -58.012, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Howard Johnson Dolores (1)", operator: "Chargebox", category: "Hotel", address: "Belgrano 1869", city: "Dolores", province: "Buenos Aires", postalCode: "B7100", lat: -36.313868, lng: -57.679, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Howard Johnson Dolores (2)", operator: "Chargebox", category: "Hotel", address: "Belgrano 1869", city: "Dolores", province: "Buenos Aires", postalCode: "B7100", lat: -36.313869, lng: -57.679, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Sheraton Mar del Plata", operator: "Chargebox", category: "Hotel", address: "Leandro N. Alem 4221", city: "Mar del Plata", province: "Buenos Aires", postalCode: "B7600", lat: -38.031689, lng: -57.543, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "McDonald's San Isidro Centenario", operator: "Chargebox", category: "Restaurante", address: "Av. Centenario 72", city: "San Isidro", province: "Buenos Aires", postalCode: "B1642", lat: -34.473889, lng: -58.513, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "McDonald's San Isidro Club", operator: "Chargebox", category: "Restaurante", address: "Blanco Encalada 564", city: "San Isidro", province: "Buenos Aires", postalCode: "B1609", lat: -34.490473, lng: -58.517, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Kansas Pilar", operator: "Chargebox", category: "Restaurante", address: "Ruta Panamericana Ramal Pilar Km 43.5", city: "Pilar", province: "Buenos Aires", postalCode: "B1629", lat: -34.43745, lng: -58.914, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Devoto", operator: "Chargebox", category: "Supermercado", address: "José Pedro Varela 4750", city: "CABA", province: "Buenos Aires", postalCode: "C1417", lat: -34.610818, lng: -58.503, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Caballito", operator: "Chargebox", category: "Supermercado", address: "Av. Tte. Gral. Donato Álvarez 1351", city: "CABA", province: "Buenos Aires", postalCode: "C1416", lat: -34.610483, lng: -58.450, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "McDonald's Av. Córdoba", operator: "Chargebox", category: "Restaurante", address: "Av. Córdoba 3821", city: "CABA", province: "Buenos Aires", postalCode: "C1188", lat: -34.597483, lng: -58.413, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "McDonald's Neuquén", operator: "Chargebox", category: "Restaurante", address: "Eugenio Perticone 540", city: "Neuquén", province: "Neuquén", postalCode: "C8300", lat: -38.959980, lng: -68.085, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Park Zone Palermo", operator: "Chargebox", category: "Parking", address: "Uriarte 1364", city: "CABA", province: "Buenos Aires", postalCode: "C1414", lat: -34.588880, lng: -58.432, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Nordelta Unido", operator: "Chargebox", category: "Restaurante", address: "Av. Nordelta 1670", city: "Tigre", province: "Buenos Aires", postalCode: "B1671", lat: -34.438185, lng: -58.677, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Hotel Le Village San Martín de los Andes", operator: "Chargebox", category: "Hotel", address: "Roca 816", city: "San Martín de los Andes", province: "Neuquén", postalCode: "Q8370", lat: -40.15556, lng: -71.353, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "McDonald's Rosario", operator: "Chargebox", category: "Restaurante", address: "Av. Dante Alighieri 2222", city: "Rosario", province: "Santa Fe", postalCode: "S2000", lat: -32.962100, lng: -60.661, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Carrefour Avellaneda", operator: "Chargebox", category: "Supermercado", address: "Av. Hipólito Yrigoyen 299", city: "Avellaneda", province: "Buenos Aires", postalCode: "C1064", lat: -34.660163, lng: -58.370, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Park Zone Villanueva", operator: "Chargebox", category: "Parking", address: "Villanueva 1334", city: "CABA", province: "Buenos Aires", postalCode: "C1426", lat: -34.565226, lng: -58.437, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "La Rural (1)", operator: "Chargebox", category: "Parking", address: "Av. Sarmiento 2704", city: "CABA", province: "Buenos Aires", postalCode: "C1425", lat: -34.574271, lng: -58.412, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "La Rural (2)", operator: "Chargebox", category: "Parking", address: "Av. Sarmiento 2704", city: "CABA", province: "Buenos Aires", postalCode: "C1425", lat: -34.574272, lng: -58.412, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Aeroparque Parking (1)", operator: "Chargebox", category: "Aeropuerto", address: "Av. Costanera Rafael Obligado s/n", city: "CABA", province: "Buenos Aires", postalCode: "C1425", lat: -34.557735, lng: -58.416, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Aeroparque Parking (2)", operator: "Chargebox", category: "Aeropuerto", address: "Av. Costanera Rafael Obligado s/n", city: "CABA", province: "Buenos Aires", postalCode: "C1426", lat: -34.557736, lng: -58.416, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Kansas Nordelta (1)", operator: "Chargebox", category: "Restaurante", address: "Av. Agustín M. García 6550", city: "Nordelta", province: "Buenos Aires", postalCode: "B1671NAF", lat: -34.401733, lng: -58.677, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "Kansas Nordelta (2)", operator: "Chargebox", category: "Restaurante", address: "Av. Agustín M. García 6550", city: "Nordelta", province: "Buenos Aires", postalCode: "B1671NAF", lat: -34.401734, lng: -58.677, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  { name: "McDonald's General Rodríguez", operator: "Chargebox", category: "Restaurante", address: "Colectora Acceso Oeste km 51,5", city: "General Rodríguez", province: "Buenos Aires", postalCode: "B1748", lat: -34.594447, lng: -59.032, connectorTypes: '["Tipo 2"]', powerKw: null, accessType: "public", isFree: 0, source: "chargebox", isVerified: 1 },
+  // === YPF ===
+  { name: "YPF Punto Eléctrico Dolores", operator: "YPF", category: "Estación de servicio", address: "Ruta Provincial 2, Km 202", city: "Dolores", province: "Buenos Aires", postalCode: "B7100", lat: -36.313, lng: -57.677, connectorTypes: '["CCS2","CHAdeMO","Tipo 2"]', powerKw: 160, accessType: "public", isFree: 0, source: "manual", isVerified: 1 },
+  { name: "YPF Punto Eléctrico CABA Libertador", operator: "YPF", category: "Estación de servicio", address: "Av. del Libertador y Melo", city: "CABA", province: "Buenos Aires", postalCode: "C1425", lat: -34.574, lng: -58.406, connectorTypes: '["CCS2","CHAdeMO","Tipo 2"]', powerKw: 150, accessType: "public", isFree: 0, source: "manual", isVerified: 1 },
+  { name: "YPF Punto Eléctrico Pilar", operator: "YPF", category: "Estación de servicio", address: "Av. Constituyentes y General Paz", city: "Pilar", province: "Buenos Aires", postalCode: "B1629", lat: -34.443, lng: -58.857, connectorTypes: '["CCS2","CHAdeMO","Tipo 2"]', powerKw: 150, accessType: "public", isFree: 0, source: "manual", isVerified: 1 },
+  // === ENEL X ===
+  { name: "Enel X - Autopista Bs As - La Plata (1)", operator: "Enel X", category: "Autopista", address: "Autopista Buenos Aires - La Plata, Km 5", city: "Avellaneda", province: "Buenos Aires", postalCode: "", lat: -34.668, lng: -58.367, connectorTypes: '["CCS2","CHAdeMO"]', powerKw: 50, accessType: "public", isFree: 0, source: "manual", isVerified: 1 },
+  { name: "Enel X - Autopista Bs As - La Plata (2)", operator: "Enel X", category: "Autopista", address: "Autopista Buenos Aires - La Plata, Km 20", city: "Quilmes", province: "Buenos Aires", postalCode: "", lat: -34.720, lng: -58.254, connectorTypes: '["CCS2","CHAdeMO"]', powerKw: 50, accessType: "public", isFree: 0, source: "manual", isVerified: 1 },
+  // === AXION ===
+  { name: "AXION Energy Palermo", operator: "AXION Energy", category: "Estación de servicio", address: "Av. del Libertador y Olleros", city: "CABA", province: "Buenos Aires", postalCode: "C1426", lat: -34.572, lng: -58.435, connectorTypes: '["Tipo 2"]', powerKw: 22, accessType: "public", isFree: 1, source: "manual", isVerified: 0 },
+];
+
+console.log(`Inserting ${stations.length} stations...`);
+
+const insertMany = db.transaction((rows: typeof stations) => {
+  let count = 0;
+  for (const s of rows) {
+    insert.run({ ...s, createdAt: now, updatedAt: now });
+    count++;
+  }
+  return count;
+});
+
+const count = insertMany(stations);
+console.log(`✓ Inserted ${count} stations successfully.`);
+
+db.close();
