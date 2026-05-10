@@ -1,6 +1,16 @@
 import { getStation, getStatusReports } from "@/lib/stations";
 import { notFound } from "next/navigation";
 import StatusForm from "./StatusForm";
+import BackLink from "./BackLink";
+
+const CONNECTOR_INFO: Record<string, string> = {
+  "Tipo 2": "Tipo 2 (AC) — el más común en Europa y Argentina. Carga lenta/media, hasta 22 kW. Compatible con la mayoría de los autos eléctricos.",
+  "CCS2": "CCS2 (DC) — carga rápida, desde 50 hasta 350 kW. Estándar europeo para carga rápida. Compatible con la mayoría de los EVs modernos.",
+  "CHAdeMO": "CHAdeMO (DC) — carga rápida japonesa, hasta 100 kW. Usado principalmente por Nissan, Mitsubishi y algunos modelos asiáticos.",
+  "GBT": "GB/T (DC/AC) — estándar chino. Usado en vehículos de origen chino como BYD, Chery, etc.",
+  "Tesla": "Tesla Supercharger — exclusivo de Tesla (en algunos países ya permite otros autos con adaptador).",
+  "Schuko": "Schuko (AC) — enchufe doméstico europeo. Carga muy lenta, solo para emergencias. No recomendado como opción principal.",
+};
 
 export default async function StationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -11,30 +21,26 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
   const connectors: string[] = JSON.parse(station.connectorTypes || "[]");
 
   const lastReport = reports[0];
-  const statusLabel = lastReport
-    ? lastReport.isWorking
-      ? "Funciona"
-      : "Sin funcionar"
-    : "Sin reportes";
+  const statusLabel = lastReport ? (lastReport.isWorking ? "Funciona" : "Sin funcionar") : "Sin reportes";
   const statusColor = lastReport
-    ? lastReport.isWorking
-      ? "text-green-600 bg-green-50"
-      : "text-red-600 bg-red-50"
+    ? lastReport.isWorking ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"
     : "text-gray-500 bg-gray-50";
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-screen">
-      {/* Back */}
-      <a href="javascript:history.back()" className="inline-flex items-center gap-1 text-gray-400 hover:text-gray-600 mb-4 text-sm">
-        ← Volver
-      </a>
+      <BackLink />
 
       {/* Card principal */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+
         {/* Status badge */}
-        <div className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1 rounded-full ${statusColor}`}>
+        <div
+          title={!lastReport ? "Ningún usuario reportó el estado de esta estación todavía. ¡Sé el primero!" : undefined}
+          className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1 rounded-full cursor-default ${statusColor}`}
+        >
           <span>{lastReport ? (lastReport.isWorking ? "✓" : "✗") : "?"}</span>
           {statusLabel}
+          {!lastReport && <span className="text-gray-400 text-xs ml-1">ⓘ</span>}
         </div>
 
         <div>
@@ -57,15 +63,20 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
             <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Conectores</p>
             <div className="flex flex-wrap gap-2">
               {connectors.map((c) => (
-                <span key={c} className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full font-medium">
+                <span
+                  key={c}
+                  title={CONNECTOR_INFO[c] ?? `Conector tipo ${c}`}
+                  className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full font-medium cursor-help"
+                >
                   {c}
                 </span>
               ))}
             </div>
+            <p className="text-xs text-gray-400 mt-2">Pasá el cursor sobre cada conector para más info.</p>
           </div>
         )}
 
-        {/* Google Maps link */}
+        {/* Google Maps */}
         <a
           href={`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`}
           target="_blank"
@@ -78,11 +89,12 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
 
       {/* Reportar estado */}
       <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-        <h2 className="font-semibold text-gray-900 mb-3">¿Esta estación funciona?</h2>
+        <h2 className="font-semibold text-gray-900 mb-1">¿Esta estación funciona?</h2>
+        <p className="text-xs text-gray-400 mb-3">Tu reporte ayuda a otros usuarios a saber si vale la pena ir.</p>
         <StatusForm stationId={station.id} />
       </div>
 
-      {/* Historial de reportes */}
+      {/* Historial */}
       {reports.length > 0 && (
         <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
           <h2 className="font-semibold text-gray-900 mb-3">Reportes recientes</h2>

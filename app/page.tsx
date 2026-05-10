@@ -24,14 +24,19 @@ export default function Home() {
       (err) => {
         setLocating(false);
         if (err.code === 1) {
-          setError("Bloqueaste el acceso a la ubicación. Ingresá una ciudad o zona.");
-        } else if (location.protocol !== "https:" && !location.hostname.includes("localhost")) {
-          setError("La geolocalización requiere HTTPS. Usá la búsqueda por texto.");
+          // PERMISSION_DENIED
+          setError("Permiso denegado. En tu browser buscá el ícono de ubicación en la barra de dirección y desbloqueá el permiso.");
+        } else if (err.code === 2) {
+          // POSITION_UNAVAILABLE
+          setError("No se pudo determinar tu ubicación. Activá el GPS o probá desde otro dispositivo.");
+        } else if (err.code === 3) {
+          // TIMEOUT
+          setError("Tardó demasiado. Intentá de nuevo o buscá por ciudad.");
         } else {
           setError("No pudimos obtener tu ubicación. Ingresá una ciudad o zona.");
         }
       },
-      { timeout: 8000, enableHighAccuracy: false }
+      { timeout: 12000, enableHighAccuracy: false, maximumAge: 60000 }
     );
   }
 

@@ -2,6 +2,7 @@ import { getNearbyStations, getClosestStation, getLastStatus } from "@/lib/stati
 import StationCard from "./StationCard";
 import RadioSelector from "./RadioSelector";
 import BackButton from "./BackButton";
+import GpsButton from "./GpsButton";
 
 type Station = {
   id: number;
@@ -55,12 +56,14 @@ export default async function BuscarPage({
   let closest: any = null;
   let title = "";
   let resolvedLocation = "";
+  let distanceNote = ""; // clarify what the distance is measured from
   let errorMsg = "";
 
   if (params.lat && params.lng) {
     const lat = parseFloat(params.lat);
     const lng = parseFloat(params.lng);
     title = "Estaciones cercanas a vos";
+    distanceNote = "Distancia desde tu ubicación actual";
     const raw = await getNearbyStations(lat, lng, radio, 30);
     stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
     if (stations.length === 0) {
@@ -68,7 +71,7 @@ export default async function BuscarPage({
       if (c) closest = { ...c, lastStatus: await getLastStatus(c!.id) };
     }
   } else if (params.q) {
-    title = `Resultados para "${params.q}"`;
+    title = `Estaciones en "${params.q}"`;
     const geo = await geocode(params.q);
     if (!geo) {
       errorMsg = `No encontramos "${params.q}" en el mapa. Intentá con una ciudad o barrio conocido.`;
@@ -76,6 +79,7 @@ export default async function BuscarPage({
       if (c) closest = { ...c, lastStatus: await getLastStatus(c!.id) };
     } else {
       resolvedLocation = geo.display;
+      distanceNote = `Distancia desde el centro de "${params.q}" — no desde tu ubicación`;
       const raw = await getNearbyStations(geo.lat, geo.lng, radio, 30);
       stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
       if (stations.length === 0) {
@@ -92,7 +96,7 @@ export default async function BuscarPage({
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3">
         <BackButton />
         <div className="flex-1 min-w-0">
           <h1 className="text-lg font-bold text-gray-900 truncate">{title || "Búsqueda"}</h1>
@@ -106,6 +110,14 @@ export default async function BuscarPage({
           </p>
         </div>
       </div>
+
+      {/* Distance note + GPS button when searching by text */}
+      {distanceNote && (
+        <div className="flex items-center justify-between gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 mb-3">
+          <p className="text-xs text-blue-700">{distanceNote}</p>
+          {params.q && <GpsButton />}
+        </div>
+      )}
 
       {/* Radio selector */}
       <RadioSelector

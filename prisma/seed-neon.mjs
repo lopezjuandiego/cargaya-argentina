@@ -1,0 +1,139 @@
+import { neon } from "@neondatabase/serverless";
+
+const sql = neon(process.env.DATABASE_URL);
+
+async function main() {
+  console.log("Creating tables...");
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS "Station" (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      operator TEXT NOT NULL,
+      category TEXT,
+      address TEXT NOT NULL,
+      city TEXT NOT NULL,
+      province TEXT NOT NULL,
+      "postalCode" TEXT,
+      lat DOUBLE PRECISION NOT NULL,
+      lng DOUBLE PRECISION NOT NULL,
+      "connectorTypes" TEXT NOT NULL DEFAULT '[]',
+      "powerKw" DOUBLE PRECISION,
+      "accessType" TEXT NOT NULL DEFAULT 'public',
+      "isFree" BOOLEAN NOT NULL DEFAULT false,
+      source TEXT NOT NULL DEFAULT 'manual',
+      "isVerified" BOOLEAN NOT NULL DEFAULT false,
+      notes TEXT,
+      "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS "StatusReport" (
+      id SERIAL PRIMARY KEY,
+      "stationId" INTEGER NOT NULL REFERENCES "Station"(id),
+      "isWorking" BOOLEAN NOT NULL,
+      comment TEXT,
+      "reportedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      "reporterIp" TEXT
+    )
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS "UserSubmission" (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      operator TEXT,
+      address TEXT NOT NULL,
+      city TEXT NOT NULL,
+      province TEXT NOT NULL,
+      lat DOUBLE PRECISION,
+      lng DOUBLE PRECISION,
+      "connectorTypes" TEXT NOT NULL DEFAULT '[]',
+      "powerKw" DOUBLE PRECISION,
+      comment TEXT,
+      status TEXT NOT NULL DEFAULT 'pending',
+      "submittedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      "stationId" INTEGER REFERENCES "Station"(id)
+    )
+  `;
+
+  console.log("Tables created. Seeding stations...");
+
+  const stations = [
+    // CHARGEBOX
+    ["Sheraton Pilar","Chargebox","Hotel","Panamericana KM 49.5","Pilar","Buenos Aires","B1629",-34.443861,-58.950,'["Tipo 2"]',null,false],
+    ["Kansas Acassuso","Chargebox","Restaurante","Av. del Libertador 15089","Acassuso","Buenos Aires","B1641",-34.475734,-58.515,'["Tipo 2"]',null,false],
+    ["Carrefour Vicente López","Chargebox","Supermercado","Av. del Libertador 125","Vicente López","Buenos Aires","B1638",-34.532128,-58.490,'["Tipo 2"]',null,false],
+    ["Atalaya Zárate","Chargebox","Restaurante","Colectora Norte Ruta 9, Salida 12","Zárate","Buenos Aires","B2800",-34.090,-59.044,'["Tipo 2"]',null,false],
+    ["Parking La Recova","Chargebox","Parking","Posadas 1053","CABA","Buenos Aires","C1011",-34.589644,-58.378,'["Tipo 2"]',null,false],
+    ["Buquebus Buenos Aires","Chargebox","Terminal / Puerto","Av. Antártida Argentina 821","CABA","Buenos Aires","C1104",-34.597501,-58.368,'["Tipo 2"]',null,false],
+    ["Carrefour Alcorta","Chargebox","Supermercado","Jerónimo Salguero 3212","CABA","Buenos Aires","C1425",-34.574271,-58.413,'["Tipo 2"]',null,false],
+    ["Sheraton Buenos Aires (Frente)","Chargebox","Hotel","San Martín 1225","CABA","Buenos Aires","C1001",-34.593321,-58.373,'["Tipo 2"]',null,false],
+    ["Sheraton Buenos Aires (Subsuelo 1)","Chargebox","Hotel","San Martín 1225","CABA","Buenos Aires","C1001",-34.593509,-58.373,'["Tipo 2"]',null,false],
+    ["Sheraton Buenos Aires (Subsuelo 2)","Chargebox","Hotel","San Martín 1225","CABA","Buenos Aires","C1001",-34.593510,-58.374,'["Tipo 2"]',null,false],
+    ["Sheraton Buenos Aires (Subsuelo 3)","Chargebox","Hotel","San Martín 1225","CABA","Buenos Aires","C1001",-34.593511,-58.373,'["Tipo 2"]',null,false],
+    ["Norcenter Munro","Chargebox","Shopping","Esteban Echeverría 3750","Munro","Buenos Aires","B1605",-34.514665,-58.525,'["Tipo 2"]',null,false],
+    ["Carrefour Maschwitz","Chargebox","Supermercado","Juan Bautista Alberdi 555","Maschwitz","Buenos Aires","B1623",-34.396270,-58.773,'["Tipo 2"]',null,false],
+    ["Remeros Plaza","Chargebox","Shopping","Av. Sta. María de las Conchas 4711","Tigre","Buenos Aires","B1624",-34.406403,-58.583,'["Tipo 2"]',null,false],
+    ["Hotel Saint German Cariló","Chargebox","Hotel","Laurel 63","Cariló","Buenos Aires","B7167",-37.164803,-56.895,'["Tipo 2"]',null,false],
+    ["Cariló Golf","Chargebox","Deporte / Entretenimiento","Ñandú 964","Cariló","Buenos Aires","B7167",-37.159840,-56.893,'["Tipo 2"]',null,false],
+    ["Carrefour Mar del Plata","Chargebox","Supermercado","Av. Constitución 7598","Mar del Plata","Buenos Aires","B7600",-37.953107,-57.572,'["Tipo 2"]',null,false],
+    ["TOM Shopping Tortuguitas (1)","Chargebox","Shopping","Panamericana Km 36,5","Tortuguitas","Buenos Aires","B1667",-34.453227,-58.802,'["Tipo 2"]',null,false],
+    ["TOM Shopping Tortuguitas (2)","Chargebox","Shopping","Panamericana Km 36,6","Tortuguitas","Buenos Aires","B1667",-34.453228,-58.802,'["Tipo 2"]',null,false],
+    ["Centro Comercial Nordelta","Chargebox","Shopping","Av. de los Lagos 7008","Tigre","Buenos Aires","B1646",-34.399101,-58.677,'["Tipo 2"]',null,false],
+    ["Aeropuerto Ezeiza (1)","Chargebox","Aeropuerto","AU Tte. Gral. Pablo Riccheri Km 33,5","Ezeiza","Buenos Aires","B1802",-34.812199,-58.534,'["Tipo 2"]',null,false],
+    ["Aeropuerto Ezeiza (2)","Chargebox","Aeropuerto","AU Tte. Gral. Pablo Riccheri Km 33,5","Ezeiza","Buenos Aires","B1802",-34.812200,-58.534,'["Tipo 2"]',null,false],
+    ["Sport Club Martínez","Chargebox","Deporte / Entretenimiento","Sebastián Elcano 1718","Martínez","Buenos Aires","B1640",-34.480119,-58.498,'["Tipo 2"]',null,false],
+    ["Carrefour San Miguel","Chargebox","Shopping","Av. Pres. Arturo Umberto Illia 3770","San Miguel","Buenos Aires","B1613",-34.531160,-58.714,'["Tipo 2"]',null,false],
+    ["Carrefour San Martín","Chargebox","Supermercado","Av. San Martín 420","San Martín","Buenos Aires","C1419",-34.586570,-58.537,'["Tipo 2"]',null,false],
+    ["Parador Atalaya Chascomús","Chargebox","Restaurante","Ruta 2 km 113","Chascomús","Buenos Aires","B7130",-35.510729,-58.012,'["Tipo 2"]',null,false],
+    ["Howard Johnson Dolores (1)","Chargebox","Hotel","Belgrano 1869","Dolores","Buenos Aires","B7100",-36.313868,-57.679,'["Tipo 2"]',null,false],
+    ["Howard Johnson Dolores (2)","Chargebox","Hotel","Belgrano 1869","Dolores","Buenos Aires","B7100",-36.313869,-57.679,'["Tipo 2"]',null,false],
+    ["Sheraton Mar del Plata","Chargebox","Hotel","Leandro N. Alem 4221","Mar del Plata","Buenos Aires","B7600",-38.031689,-57.543,'["Tipo 2"]',null,false],
+    ["McDonald's San Isidro Centenario","Chargebox","Restaurante","Av. Centenario 72","San Isidro","Buenos Aires","B1642",-34.473889,-58.513,'["Tipo 2"]',null,false],
+    ["McDonald's San Isidro Club","Chargebox","Restaurante","Blanco Encalada 564","San Isidro","Buenos Aires","B1609",-34.490473,-58.517,'["Tipo 2"]',null,false],
+    ["Kansas Pilar","Chargebox","Restaurante","Ruta Panamericana Ramal Pilar Km 43.5","Pilar","Buenos Aires","B1629",-34.43745,-58.914,'["Tipo 2"]',null,false],
+    ["Carrefour Devoto","Chargebox","Supermercado","José Pedro Varela 4750","CABA","Buenos Aires","C1417",-34.610818,-58.503,'["Tipo 2"]',null,false],
+    ["Carrefour Caballito","Chargebox","Supermercado","Av. Tte. Gral. Donato Álvarez 1351","CABA","Buenos Aires","C1416",-34.610483,-58.450,'["Tipo 2"]',null,false],
+    ["McDonald's Av. Córdoba","Chargebox","Restaurante","Av. Córdoba 3821","CABA","Buenos Aires","C1188",-34.597483,-58.413,'["Tipo 2"]',null,false],
+    ["McDonald's Neuquén","Chargebox","Restaurante","Eugenio Perticone 540","Neuquén","Neuquén","C8300",-38.959980,-68.085,'["Tipo 2"]',null,false],
+    ["Park Zone Palermo","Chargebox","Parking","Uriarte 1364","CABA","Buenos Aires","C1414",-34.588880,-58.432,'["Tipo 2"]',null,false],
+    ["Nordelta Unido","Chargebox","Restaurante","Av. Nordelta 1670","Tigre","Buenos Aires","B1671",-34.438185,-58.677,'["Tipo 2"]',null,false],
+    ["Hotel Le Village San Martín de los Andes","Chargebox","Hotel","Roca 816","San Martín de los Andes","Neuquén","Q8370",-40.15556,-71.353,'["Tipo 2"]',null,false],
+    ["McDonald's Rosario","Chargebox","Restaurante","Av. Dante Alighieri 2222","Rosario","Santa Fe","S2000",-32.962100,-60.661,'["Tipo 2"]',null,false],
+    ["Carrefour Avellaneda","Chargebox","Supermercado","Av. Hipólito Yrigoyen 299","Avellaneda","Buenos Aires","C1064",-34.660163,-58.370,'["Tipo 2"]',null,false],
+    ["Park Zone Villanueva","Chargebox","Parking","Villanueva 1334","CABA","Buenos Aires","C1426",-34.565226,-58.437,'["Tipo 2"]',null,false],
+    ["La Rural (1)","Chargebox","Parking","Av. Sarmiento 2704","CABA","Buenos Aires","C1425",-34.574271,-58.412,'["Tipo 2"]',null,false],
+    ["La Rural (2)","Chargebox","Parking","Av. Sarmiento 2704","CABA","Buenos Aires","C1425",-34.574272,-58.412,'["Tipo 2"]',null,false],
+    ["Aeroparque Parking (1)","Chargebox","Aeropuerto","Av. Costanera Rafael Obligado s/n","CABA","Buenos Aires","C1425",-34.557735,-58.416,'["Tipo 2"]',null,false],
+    ["Aeroparque Parking (2)","Chargebox","Aeropuerto","Av. Costanera Rafael Obligado s/n","CABA","Buenos Aires","C1426",-34.557736,-58.416,'["Tipo 2"]',null,false],
+    ["Kansas Nordelta (1)","Chargebox","Restaurante","Av. Agustín M. García 6550","Nordelta","Buenos Aires","B1671NAF",-34.401733,-58.677,'["Tipo 2"]',null,false],
+    ["Kansas Nordelta (2)","Chargebox","Restaurante","Av. Agustín M. García 6550","Nordelta","Buenos Aires","B1671NAF",-34.401734,-58.677,'["Tipo 2"]',null,false],
+    ["McDonald's General Rodríguez","Chargebox","Restaurante","Colectora Acceso Oeste km 51,5","General Rodríguez","Buenos Aires","B1748",-34.594447,-59.032,'["Tipo 2"]',null,false],
+    // YPF
+    ["YPF Punto Eléctrico Dolores","YPF","Estación de servicio","Ruta Provincial 2, Km 202","Dolores","Buenos Aires","B7100",-36.313,-57.677,'["CCS2","CHAdeMO","Tipo 2"]',160,false],
+    ["YPF Punto Eléctrico CABA Libertador","YPF","Estación de servicio","Av. del Libertador y Melo","CABA","Buenos Aires","C1425",-34.574,-58.406,'["CCS2","CHAdeMO","Tipo 2"]',150,false],
+    ["YPF Punto Eléctrico Pilar","YPF","Estación de servicio","Av. Constituyentes y General Paz","Pilar","Buenos Aires","B1629",-34.443,-58.857,'["CCS2","CHAdeMO","Tipo 2"]',150,false],
+    // Enel X
+    ["Enel X - Autopista Bs As - La Plata (1)","Enel X","Autopista","Autopista Buenos Aires - La Plata, Km 5","Avellaneda","Buenos Aires","",-34.668,-58.367,'["CCS2","CHAdeMO"]',50,false],
+    ["Enel X - Autopista Bs As - La Plata (2)","Enel X","Autopista","Autopista Buenos Aires - La Plata, Km 20","Quilmes","Buenos Aires","",-34.720,-58.254,'["CCS2","CHAdeMO"]',50,false],
+    // AXION
+    ["AXION Energy Palermo","AXION Energy","Estación de servicio","Av. del Libertador y Olleros","CABA","Buenos Aires","C1426",-34.572,-58.435,'["Tipo 2"]',22,true],
+  ];
+
+  for (const s of stations) {
+    const [name,operator,category,address,city,province,postalCode,lat,lng,connectorTypes,powerKw,isFree] = s;
+    await sql`
+      INSERT INTO "Station" (name, operator, category, address, city, province, "postalCode", lat, lng, "connectorTypes", "powerKw", "accessType", "isFree", source, "isVerified")
+      VALUES (${name}, ${operator}, ${category}, ${address}, ${city}, ${province}, ${postalCode}, ${lat}, ${lng}, ${connectorTypes}, ${powerKw}, 'public', ${isFree}, 'chargebox', true)
+      ON CONFLICT DO NOTHING
+    `;
+  }
+
+  const [{ n }] = await sql`SELECT COUNT(*) as n FROM "Station"`;
+  console.log(`✓ Done. ${n} stations in database.`);
+}
+
+main().catch(e => { console.error(e); process.exit(1); });
