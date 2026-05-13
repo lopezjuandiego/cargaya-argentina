@@ -51,6 +51,7 @@ type RouteStation = {
   powerKw: number | null;
   isFree: boolean;
   distanceKm: number;
+  position: number;
   lastStatus: "working" | "not_working" | null;
 };
 
@@ -77,7 +78,10 @@ function statusBadge(s: "working" | "not_working" | null) {
 function StationCard({ station: s }: { station: RouteStation }) {
   const connectors: string[] = JSON.parse(s.connectorTypes || "[]");
   const operatorClass = OPERATOR_COLORS[s.operator] ?? OPERATOR_COLORS.default;
-  const dist = s.distanceKm < 1 ? `${Math.round(s.distanceKm * 1000)} m` : `${s.distanceKm.toFixed(1)} km`;
+  const dist =
+    s.distanceKm < 1
+      ? `${Math.round(s.distanceKm * 1000)} m`
+      : `${s.distanceKm.toFixed(1)} km`;
 
   return (
     <a
@@ -122,12 +126,100 @@ function StationCard({ station: s }: { station: RouteStation }) {
   );
 }
 
+function GapIndicator({ gapKm, autonomy }: { gapKm: number; autonomy: number }) {
+  if (gapKm < 10) return null;
+  const critical = gapKm > autonomy;
+  const warning = gapKm > autonomy * 0.75;
+  const colorClass = critical
+    ? "text-red-500 border-red-200"
+    : warning
+    ? "text-amber-500 border-amber-200"
+    : "text-gray-300 border-gray-100";
+
+  return (
+    <div className={`flex items-center gap-2 py-0.5 ${colorClass}`}>
+      <div className="flex-1 border-t border-current border-dashed opacity-50" />
+      <span className="text-xs font-medium whitespace-nowrap">
+        {critical ? "⚠️ " : ""}{Math.round(gapKm)} km sin cargadores
+      </span>
+      <div className="flex-1 border-t border-current border-dashed opacity-50" />
+    </div>
+  );
+}
+
+function Semaphore({
+  stations,
+  routeDistanceKm,
+  autonomy,
+}: {
+  stations: RouteStation[];
+  routeDistanceKm: number;
+  autonomy: number;
+}) {
+  const gaps: number[] = [];
+
+  if (stations.length === 0) {
+    gaps.push(routeDistanceKm);
+  } else {
+    gaps.push(stations[0].position);
+    for (let i = 1; i < stations.length; i++) {
+      gaps.push(stations[i].position - stations[i - 1].position);
+    }
+    gaps.push(routeDistanceKm - stations[stations.length - 1].position);
+  }
+
+  const maxGap = Math.round(Math.max(...gaps));
+  const critical = maxGap > autonomy;
+  const warning = maxGap > autonomy * 0.75;
+
+  const icon = critical ? "🔴" : warning ? "🟡" : "🟢";
+  const label = critical
+    ? "Gap crítico"
+    : warning
+    ? "Posible con planificación"
+    : "Viaje viable";
+  const labelColor = critical
+    ? "text-red-700"
+    : warning
+    ? "text-amber-700"
+    : "text-green-700";
+  const bgClass = critical
+    ? "bg-red-50 border-red-100"
+    : warning
+    ? "bg-amber-50 border-amber-100"
+    : "bg-green-50 border-green-100";
+  const desc = critical
+    ? `El gap más largo es ${maxGap} km y supera tu autonomía de ${autonomy} km.`
+    : warning
+    ? `El gap más largo es ${maxGap} km — cerca de tu autonomía de ${autonomy} km.`
+    : `Gap máximo ${maxGap} km · bien dentro de tus ${autonomy} km de autonomía.`;
+
+  return (
+    <div className={`rounded-2xl border px-4 py-3 mb-3 ${bgClass}`}>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className={`text-sm font-bold ${labelColor}`}>
+            {icon} {label}
+          </p>
+          <p className="text-xs text-gray-600 mt-0.5">{desc}</p>
+        </div>
+        <div className="text-right flex-shrink-0">
+          <div className={`text-xl font-bold ${labelColor}`}>{maxGap} km</div>
+          <div className="text-xs text-gray-400">gap máx.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type GeoResult = { lat: number; lng: number; display: string };
 
 async function geocode(q: string): Promise<GeoResult | null> {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ", Argentina")}&format=json&limit=1&countrycodes=ar`,
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+        q + ", Argentina"
+      )}&format=json&limit=1&countrycodes=ar`,
       { headers: { "User-Agent": "CargaYa/1.0 (contacto@cargaya.com.ar)" } }
     );
     const data = await res.json();
@@ -161,6 +253,7 @@ export default function RutaClient() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [radio, setRadio] = useState(10);
+  const [autonomy, setAutonomy] = useState(300);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<RouteResult | null>(null);
@@ -222,9 +315,19 @@ export default function RutaClient() {
     setLoading(true);
     try {
       const data = await fetchRoute(coords.from, coords.to, newRadio);
-      setResult((prev) => prev ? { ...prev, stations: data.stations } : prev);
+      setResult((prev) => (prev ? { ...prev, stations: data.stations } : prev));
     } catch { /* ignore */ }
     setLoading(false);
+  }
+
+  // Compute gaps to interleave with station cards
+  function buildGaps(stations: RouteStation[], routeDistanceKm: number): number[] {
+    if (stations.length === 0) return [];
+    return [
+      stations[0].position,
+      ...stations.slice(1).map((s, i) => s.position - stations[i].position),
+      routeDistanceKm - stations[stations.length - 1].position,
+    ];
   }
 
   return (
@@ -277,6 +380,21 @@ export default function RutaClient() {
           </div>
         </div>
 
+        {/* Autonomy input */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500 whitespace-nowrap">Mi autonomía:</span>
+          <input
+            type="number"
+            min={50}
+            max={800}
+            step={10}
+            value={autonomy}
+            onChange={(e) => setAutonomy(Math.max(50, parseInt(e.target.value) || 300))}
+            className="w-20 border border-gray-200 rounded-xl px-3 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <span className="text-xs text-gray-400">km</span>
+        </div>
+
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-gray-500">Corredor:</span>
@@ -323,7 +441,8 @@ export default function RutaClient() {
       {/* Results */}
       {result && !loading && (
         <>
-          <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 mb-4">
+          {/* Route summary */}
+          <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 mb-3">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <p className="text-xs text-green-700 font-medium truncate">
@@ -337,20 +456,42 @@ export default function RutaClient() {
                 <div className="text-2xl font-bold text-green-700">
                   {result.stations.length}
                 </div>
-                <div className="text-xs text-green-600">cargador{result.stations.length !== 1 ? "es" : ""}</div>
+                <div className="text-xs text-green-600">
+                  cargador{result.stations.length !== 1 ? "es" : ""}
+                </div>
               </div>
             </div>
           </div>
 
+          {/* Semaphore */}
+          <Semaphore
+            stations={result.stations}
+            routeDistanceKm={result.route.distanceKm}
+            autonomy={autonomy}
+          />
+
           {result.stations.length > 0 ? (
             <>
               <p className="text-xs text-gray-400 px-1 mb-2">
-                Distancia = desvío desde la ruta · Orden: de inicio a fin
+                Desvío desde la ruta · Orden: de inicio a fin
               </p>
-              <div className="space-y-3">
-                {result.stations.map((s) => (
-                  <StationCard key={s.id} station={s} />
-                ))}
+              <div className="space-y-1">
+                {(() => {
+                  const gaps = buildGaps(result.stations, result.route.distanceKm);
+                  return result.stations.map((s, i) => (
+                    <div key={s.id}>
+                      <GapIndicator gapKm={gaps[i]} autonomy={autonomy} />
+                      <div className="py-1">
+                        <StationCard station={s} />
+                      </div>
+                    </div>
+                  ));
+                })()}
+                {/* Gap after last station */}
+                <GapIndicator
+                  gapKm={buildGaps(result.stations, result.route.distanceKm).at(-1) ?? 0}
+                  autonomy={autonomy}
+                />
                 <p className="text-xs text-center text-gray-400 pt-2">
                   ¿Falta alguna?{" "}
                   <a href="/agregar" className="text-green-600 hover:underline">

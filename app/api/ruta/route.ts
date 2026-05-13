@@ -151,7 +151,7 @@ export async function GET(req: NextRequest) {
     reports.forEach((r) => statusMap.set(r.stationId, r.isWorking));
   }
 
-  const stations = candidates.map(({ position: _pos, ...s }) => ({
+  const stations = candidates.map((s) => ({
     ...s,
     lastStatus: statusMap.has(s.id)
       ? statusMap.get(s.id)
