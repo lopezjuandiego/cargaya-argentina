@@ -234,20 +234,29 @@ function GapIndicator({ gapKm, autonomy, label }: { gapKm: number; autonomy: num
   if (gapKm < 15) return null;
   const critical = gapKm > autonomy;
   const warning = gapKm > autonomy * 0.75;
-  const pillClass = critical
-    ? "bg-red-100 text-red-700 border-red-200"
-    : warning
-    ? "bg-amber-100 text-amber-700 border-amber-200"
-    : "bg-gray-100 text-gray-500 border-gray-200";
+  const text = label ?? `${Math.round(gapKm)} km sin cargadores`;
 
+  if (critical || warning) {
+    const pillClass = critical
+      ? "bg-red-100 text-red-700 border-red-200"
+      : "bg-amber-100 text-amber-700 border-amber-200";
+    return (
+      <div className="flex items-center gap-3 py-2">
+        <div className="flex-1 h-px bg-gray-200" />
+        <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border whitespace-nowrap ${pillClass}`}>
+          {critical ? "⚠️ " : ""}{text}
+        </span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+    );
+  }
+
+  // Safe gap — subtle, just informational
   return (
-    <div className="flex items-center gap-3 py-2">
-      <div className="flex-1 h-px bg-gray-200" />
-      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border whitespace-nowrap ${pillClass}`}>
-        {critical ? "⚠️ " : ""}
-        {label ?? `${Math.round(gapKm)} km sin cargadores`}
-      </span>
-      <div className="flex-1 h-px bg-gray-200" />
+    <div className="flex items-center gap-2 py-2">
+      <div className="flex-1 h-px bg-gray-100" />
+      <span className="text-xs text-gray-300 whitespace-nowrap">{text}</span>
+      <div className="flex-1 h-px bg-gray-100" />
     </div>
   );
 }
