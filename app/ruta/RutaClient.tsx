@@ -84,13 +84,41 @@ const AR_CITIES: Record<string, { lat: number; lng: number; display: string }> =
   "alta gracia": { lat: -31.6552, lng: -64.4317, display: "Alta Gracia, Córdoba" },
 };
 
+function normalizeKey(s: string): string {
+  return s.toLowerCase().trim().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ");
+}
+
+function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  const row = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    let prev = row[0];
+    row[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const temp = row[j];
+      row[j] = a[i - 1] === b[j - 1] ? prev : 1 + Math.min(prev, row[j], row[j - 1]);
+      prev = temp;
+    }
+  }
+  return row[n];
+}
+
 function lookupCity(q: string): { lat: number; lng: number; display: string } | null {
-  const key = q
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
-  return AR_CITIES[key] ?? null;
+  const key = normalizeKey(q);
+
+  // Exact match first
+  if (AR_CITIES[key]) return AR_CITIES[key];
+
+  // Fuzzy match: allow 1 edit for ≤8 chars, 2 for longer
+  const maxDist = key.length <= 8 ? 1 : 2;
+  let best: { lat: number; lng: number; display: string } | null = null;
+  let bestDist = maxDist + 1;
+
+  for (const [cityKey, cityData] of Object.entries(AR_CITIES)) {
+    const d = levenshtein(key, cityKey);
+    if (d < bestDist) { bestDist = d; best = cityData; }
+  }
+  return bestDist <= maxDist ? best : null;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
