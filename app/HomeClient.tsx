@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function HomeClient({ stationCount }: { stationCount: number }) {
+export default function HomeClient({ stationCount, lastUpdated }: { stationCount: number; lastUpdated: string }) {
   const router = useRouter();
   const [locating, setLocating] = useState(false);
   const [query, setQuery] = useState("");
@@ -139,22 +139,27 @@ export default function HomeClient({ stationCount }: { stationCount: number }) {
         </p>
 
         {/* Data sources */}
-        <p className="text-xs text-gray-400 pt-2 border-t border-gray-200">
-          Datos de{" "}
-          <a href="https://openchargemap.org" target="_blank" rel="noopener noreferrer" className="hover:underline">
-            Open Charge Map
-          </a>
-          {" · "}
-          <a href="https://mapa.ypf.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
-            YPF Punto Eléctrico
-          </a>
-          {" · "}
-          <a href="https://www.chargebox.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
-            Chargebox
-          </a>
-          {" · "}
-          comunidad
-        </p>
+        <div className="pt-2 border-t border-gray-200 space-y-1">
+          <p className="text-xs text-gray-400">
+            Datos de{" "}
+            <a href="https://openchargemap.org" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Open Charge Map
+            </a>
+            {" · "}
+            <a href="https://mapa.ypf.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              YPF Punto Eléctrico
+            </a>
+            {" · "}
+            <a href="https://www.chargebox.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Chargebox
+            </a>
+            {" · "}
+            comunidad
+          </p>
+          {lastUpdated && (
+            <p className="text-xs text-gray-300">Última actualización: {lastUpdated}</p>
+          )}
+        </div>
       </div>
     </main>
   );
