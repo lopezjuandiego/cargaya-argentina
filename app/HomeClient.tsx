@@ -141,22 +141,16 @@ export default function HomeClient({ stationCount }: { stationCount: number }) {
         {/* Data sources */}
         <p className="text-xs text-gray-400 pt-2 border-t border-gray-200">
           Datos de{" "}
-          <a
-            href="https://openchargemap.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
+          <a href="https://openchargemap.org" target="_blank" rel="noopener noreferrer" className="hover:underline">
             Open Charge Map
           </a>
           {" · "}
-          <a
-            href="https://mapa.ypf.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
-            YPF
+          <a href="https://mapa.ypf.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+            YPF Punto Eléctrico
+          </a>
+          {" · "}
+          <a href="https://www.chargebox.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+            Chargebox
           </a>
           {" · "}
           comunidad

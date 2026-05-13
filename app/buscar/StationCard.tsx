@@ -1,3 +1,32 @@
+const CONNECTOR_INFO: Record<string, string> = {
+  "Tipo 2": "AC (hasta 43 kW) · Compatible: VW ID.4, Fiat 500e, Renault Kangoo ZE, Peugeot e-208, BMW i3...",
+  "CCS2": "Carga rápida DC (hasta 350 kW) · Compatible: VW ID.4, BMW iX, Audi e-tron, Peugeot e-208, Fiat 500e...",
+  "CHAdeMO": "Carga rápida DC · Compatible: Nissan Leaf, Mitsubishi Outlander PHEV...",
+  "NACS": "Tesla / SAE J3400 · Compatible con todos los Tesla y nuevos modelos con adaptador",
+  "CCS1": "Carga rápida DC (estándar americano) · Compatible con algunos modelos americanos y asiáticos",
+  "Tipo 1": "AC (hasta 7.4 kW) · Compatible: Nissan Leaf (gen 1), algunos modelos asiáticos y americanos",
+  "Tesla SC": "Supercharger Tesla · Exclusivo para vehículos Tesla",
+  "Tesla": "Conector Tesla (Roadster)",
+  "Tipo 3": "AC europeo antiguo · Poco común en Argentina",
+};
+
+function ConnectorBadge({ type }: { type: string }) {
+  const info = CONNECTOR_INFO[type];
+  return (
+    <span className="relative group/tip inline-block">
+      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full cursor-help select-none">
+        {type}
+      </span>
+      {info && (
+        <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tip:block z-20 w-56 bg-gray-900 text-white text-xs rounded-xl px-3 py-2 leading-snug text-center shadow-lg">
+          {info}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+        </span>
+      )}
+    </span>
+  );
+}
+
 const OPERATOR_COLORS: Record<string, string> = {
   Chargebox: "bg-blue-100 text-blue-700",
   YPF: "bg-yellow-100 text-yellow-700",
@@ -87,12 +116,7 @@ export default function StationCard({
       {connectors.length > 0 && (
         <div className="flex gap-1.5 flex-wrap mt-2.5">
           {connectors.map((c) => (
-            <span
-              key={c}
-              className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
-            >
-              {c}
-            </span>
+            <ConnectorBadge key={c} type={c} />
           ))}
         </div>
       )}
