@@ -251,12 +251,12 @@ function GapIndicator({ gapKm, autonomy, label }: { gapKm: number; autonomy: num
     );
   }
 
-  // Safe gap — subtle, just informational
+  // Safe gap — visible but not alarming
   return (
-    <div className="flex items-center gap-2 py-2">
-      <div className="flex-1 h-px bg-gray-100" />
-      <span className="text-xs text-gray-300 whitespace-nowrap">{text}</span>
-      <div className="flex-1 h-px bg-gray-100" />
+    <div className="flex items-center gap-3 py-2">
+      <div className="flex-1 h-px bg-gray-200" />
+      <span className="text-xs font-medium text-gray-400 whitespace-nowrap">{text}</span>
+      <div className="flex-1 h-px bg-gray-200" />
     </div>
   );
 }
