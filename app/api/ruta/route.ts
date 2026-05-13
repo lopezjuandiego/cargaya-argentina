@@ -29,7 +29,6 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Perpendicular distance from point P to segment AB, returns dist + param t in [0,1]
 function pointToSegmentKm(
   plat: number, plng: number,
   alat: number, alng: number,
@@ -51,7 +50,6 @@ function pointToSegmentKm(
   };
 }
 
-// Min distance from point to polyline + position along route (km from start)
 function distanceToRoute(
   plat: number,
   plng: number,
@@ -86,7 +84,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Coordenadas inválidas" }, { status: 400 });
   }
 
-  // OSRM route (note: OSRM uses lng,lat order)
   const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
   let routeCoords: [number, number][];
   let distanceKm: number;
@@ -113,10 +110,16 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Bounding box pre-filter with buffer
-  const lats = routeCoords.map(([, lat]) => lat);
-  const lngs = routeCoords.map(([lng]) => lng);
-  const avgLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+  // Bounding box via loop (safe for large polylines)
+  let minLat = Infinity, maxLat = -Infinity;
+  let minLng = Infinity, maxLng = -Infinity;
+  for (const [lng, lat] of routeCoords) {
+    if (lat < minLat) minLat = lat;
+    if (lat > maxLat) maxLat = lat;
+    if (lng < minLng) minLng = lng;
+    if (lng > maxLng) maxLng = lng;
+  }
+  const avgLat = (minLat + maxLat) / 2;
   const latBuf = radio / 111;
   const lngBuf = radio / (111 * Math.cos((avgLat * Math.PI) / 180));
 
@@ -125,11 +128,10 @@ export async function GET(req: NextRequest) {
     SELECT id, name, operator, category, address, city, province,
            lat, lng, "connectorTypes", "powerKw", "isFree", "isVerified"
     FROM "Station"
-    WHERE lat BETWEEN ${Math.min(...lats) - latBuf} AND ${Math.max(...lats) + latBuf}
-      AND lng BETWEEN ${Math.min(...lngs) - lngBuf} AND ${Math.max(...lngs) + lngBuf}
+    WHERE lat BETWEEN ${minLat - latBuf} AND ${maxLat + latBuf}
+      AND lng BETWEEN ${minLng - lngBuf} AND ${maxLng + lngBuf}
   `) as Station[];
 
-  // Compute distance to route and sort by position along route
   const candidates = rows
     .map((s) => {
       const { distKm, position } = distanceToRoute(s.lat, s.lng, routeCoords);
@@ -138,7 +140,6 @@ export async function GET(req: NextRequest) {
     .filter((s) => s.distanceKm <= radio)
     .sort((a, b) => a.position - b.position);
 
-  // Batch-fetch last status for all candidate stations
   const ids = candidates.map((s) => s.id);
   const statusMap = new Map<number, boolean>();
   if (ids.length > 0) {

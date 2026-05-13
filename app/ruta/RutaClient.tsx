@@ -78,10 +78,11 @@ function statusBadge(s: "working" | "not_working" | null) {
 function StationCard({ station: s }: { station: RouteStation }) {
   const connectors: string[] = JSON.parse(s.connectorTypes || "[]");
   const operatorClass = OPERATOR_COLORS[s.operator] ?? OPERATOR_COLORS.default;
-  const dist =
-    s.distanceKm < 1
-      ? `${Math.round(s.distanceKm * 1000)} m`
-      : `${s.distanceKm.toFixed(1)} km`;
+  const desvio = s.distanceKm < 0.3
+    ? null
+    : s.distanceKm < 1
+    ? `${Math.round(s.distanceKm * 1000)} m desvío`
+    : `${s.distanceKm.toFixed(1)} km desvío`;
 
   return (
     <a
@@ -109,10 +110,9 @@ function StationCard({ station: s }: { station: RouteStation }) {
           </p>
         </div>
         <div className="text-right flex-shrink-0 pl-2">
-          <div className="text-green-600 font-bold text-base">{dist}</div>
-          {s.powerKw && (
-            <div className="text-xs text-gray-400 mt-0.5">{s.powerKw} kW</div>
-          )}
+          <div className="text-green-700 font-bold text-base">km {Math.round(s.position)}</div>
+          {desvio && <div className="text-xs text-gray-400 mt-0.5">{desvio}</div>}
+          {s.powerKw && <div className="text-xs text-gray-400 mt-0.5">{s.powerKw} kW</div>}
         </div>
       </div>
       {connectors.length > 0 && (
@@ -126,23 +126,32 @@ function StationCard({ station: s }: { station: RouteStation }) {
   );
 }
 
-function GapIndicator({ gapKm, autonomy }: { gapKm: number; autonomy: number }) {
-  if (gapKm < 10) return null;
+function GapIndicator({
+  gapKm,
+  autonomy,
+  label,
+}: {
+  gapKm: number;
+  autonomy: number;
+  label?: string;
+}) {
+  if (gapKm < 15) return null;
   const critical = gapKm > autonomy;
   const warning = gapKm > autonomy * 0.75;
   const colorClass = critical
-    ? "text-red-500 border-red-200"
+    ? "text-red-500"
     : warning
-    ? "text-amber-500 border-amber-200"
-    : "text-gray-300 border-gray-100";
+    ? "text-amber-500"
+    : "text-gray-300";
 
   return (
-    <div className={`flex items-center gap-2 py-0.5 ${colorClass}`}>
-      <div className="flex-1 border-t border-current border-dashed opacity-50" />
+    <div className={`flex items-center gap-2 py-1 ${colorClass}`}>
+      <div className="flex-1 border-t border-current border-dashed opacity-40" />
       <span className="text-xs font-medium whitespace-nowrap">
-        {critical ? "⚠️ " : ""}{Math.round(gapKm)} km sin cargadores
+        {critical ? "⚠️ " : ""}
+        {label ?? `${Math.round(gapKm)} km sin cargadores`}
       </span>
-      <div className="flex-1 border-t border-current border-dashed opacity-50" />
+      <div className="flex-1 border-t border-current border-dashed opacity-40" />
     </div>
   );
 }
@@ -156,17 +165,14 @@ function Semaphore({
   routeDistanceKm: number;
   autonomy: number;
 }) {
-  const gaps: number[] = [];
-
-  if (stations.length === 0) {
-    gaps.push(routeDistanceKm);
-  } else {
-    gaps.push(stations[0].position);
-    for (let i = 1; i < stations.length; i++) {
-      gaps.push(stations[i].position - stations[i - 1].position);
-    }
-    gaps.push(routeDistanceKm - stations[stations.length - 1].position);
-  }
+  const gaps =
+    stations.length === 0
+      ? [routeDistanceKm]
+      : [
+          stations[0].position,
+          ...stations.slice(1).map((s, i) => s.position - stations[i].position),
+          routeDistanceKm - stations[stations.length - 1].position,
+        ];
 
   const maxGap = Math.round(Math.max(...gaps));
   const critical = maxGap > autonomy;
@@ -178,33 +184,29 @@ function Semaphore({
     : warning
     ? "Posible con planificación"
     : "Viaje viable";
-  const labelColor = critical
-    ? "text-red-700"
-    : warning
-    ? "text-amber-700"
-    : "text-green-700";
+  const colorClass = critical ? "text-red-700" : warning ? "text-amber-700" : "text-green-700";
   const bgClass = critical
     ? "bg-red-50 border-red-100"
     : warning
     ? "bg-amber-50 border-amber-100"
     : "bg-green-50 border-green-100";
   const desc = critical
-    ? `El gap más largo es ${maxGap} km y supera tu autonomía de ${autonomy} km.`
+    ? `Tramo máximo de ${maxGap} km supera tu autonomía de ${autonomy} km`
     : warning
-    ? `El gap más largo es ${maxGap} km — cerca de tu autonomía de ${autonomy} km.`
-    : `Gap máximo ${maxGap} km · bien dentro de tus ${autonomy} km de autonomía.`;
+    ? `Tramo máximo de ${maxGap} km, cerca de tus ${autonomy} km de autonomía`
+    : `Tramo máximo ${maxGap} km · dentro de tus ${autonomy} km de autonomía`;
 
   return (
     <div className={`rounded-2xl border px-4 py-3 mb-3 ${bgClass}`}>
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className={`text-sm font-bold ${labelColor}`}>
+        <div className="min-w-0">
+          <p className={`text-sm font-bold ${colorClass}`}>
             {icon} {label}
           </p>
-          <p className="text-xs text-gray-600 mt-0.5">{desc}</p>
+          <p className="text-xs text-gray-600 mt-0.5 leading-snug">{desc}</p>
         </div>
         <div className="text-right flex-shrink-0">
-          <div className={`text-xl font-bold ${labelColor}`}>{maxGap} km</div>
+          <div className={`text-xl font-bold ${colorClass}`}>{maxGap} km</div>
           <div className="text-xs text-gray-400">gap máx.</div>
         </div>
       </div>
@@ -215,23 +217,41 @@ function Semaphore({
 type GeoResult = { lat: number; lng: number; display: string };
 
 async function geocode(q: string): Promise<GeoResult | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-        q + ", Argentina"
-      )}&format=json&limit=1&countrycodes=ar`,
-      { headers: { "User-Agent": "CargaYa/1.0 (contacto@cargaya.com.ar)" } }
-    );
-    const data = await res.json();
-    if (!data.length) return null;
-    return {
-      lat: parseFloat(data[0].lat),
-      lng: parseFloat(data[0].lon),
-      display: data[0].display_name.split(",").slice(0, 2).join(", "),
-    };
-  } catch {
-    return null;
-  }
+  const trySearch = async (query: string, withCountry: boolean) => {
+    const url =
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1` +
+      (withCountry ? "&countrycodes=ar" : "");
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": "CargaYa/1.0 (contacto@cargaya.com.ar)" },
+      });
+      const data = await res.json();
+      if (!data.length) return null;
+      const r = data[0];
+      // When not restricting by country, verify result is in Argentina bounds
+      if (!withCountry) {
+        const lat = parseFloat(r.lat);
+        const lng = parseFloat(r.lon);
+        if (lat < -55 || lat > -22 || lng < -74 || lng > -53) return null;
+      }
+      return {
+        lat: parseFloat(r.lat),
+        lng: parseFloat(r.lon),
+        display: r.display_name.split(",").slice(0, 2).join(", "),
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  // 1. Try with ", Argentina" suffix + country restriction
+  const r1 = await trySearch(`${q}, Argentina`, true);
+  if (r1) return r1;
+  // 2. Fallback: try bare query with country restriction (handles accents/typos better)
+  const r2 = await trySearch(q, true);
+  if (r2) return r2;
+  // 3. Last resort: no country restriction but validate bounds
+  return trySearch(q, false);
 }
 
 function formatDuration(min: number) {
@@ -249,6 +269,8 @@ type RouteResult = {
   toDisplay: string;
 };
 
+type GeoCoords = { from: GeoResult; to: GeoResult };
+
 export default function RutaClient() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -257,11 +279,12 @@ export default function RutaClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<RouteResult | null>(null);
-  const [coords, setCoords] = useState<{ from: GeoResult; to: GeoResult } | null>(null);
+  const [coords, setCoords] = useState<GeoCoords | null>(null);
+  const [formCollapsed, setFormCollapsed] = useState(false);
 
-  async function fetchRoute(fromGeo: GeoResult, toGeo: GeoResult, r: number) {
+  async function fetchRoute(geo: GeoCoords, r: number) {
     const res = await fetch(
-      `/api/ruta?from_lat=${fromGeo.lat}&from_lng=${fromGeo.lng}&to_lat=${toGeo.lat}&to_lng=${toGeo.lng}&radio=${r}`
+      `/api/ruta?from_lat=${geo.from.lat}&from_lng=${geo.from.lng}&to_lat=${geo.to.lat}&to_lng=${geo.to.lng}&radio=${r}`
     );
     if (!res.ok) {
       const data = await res.json();
@@ -276,6 +299,7 @@ export default function RutaClient() {
     setLoading(true);
     setError("");
     setResult(null);
+    setFormCollapsed(false);
 
     const [fromGeo, toGeo] = await Promise.all([
       geocode(from.trim()),
@@ -283,26 +307,28 @@ export default function RutaClient() {
     ]);
 
     if (!fromGeo) {
-      setError(`No encontramos "${from}" en Argentina.`);
+      setError(`No encontramos "${from}" en Argentina. Verificá la ortografía o usá el nombre oficial.`);
       setLoading(false);
       return;
     }
     if (!toGeo) {
-      setError(`No encontramos "${to}" en Argentina.`);
+      setError(`No encontramos "${to}" en Argentina. Verificá la ortografía o usá el nombre oficial.`);
       setLoading(false);
       return;
     }
 
-    setCoords({ from: fromGeo, to: toGeo });
+    const geo = { from: fromGeo, to: toGeo };
+    setCoords(geo);
 
     try {
-      const data = await fetchRoute(fromGeo, toGeo, radio);
+      const data = await fetchRoute(geo, radio);
       setResult({
         stations: data.stations,
         route: data.route,
         fromDisplay: fromGeo.display,
         toDisplay: toGeo.display,
       });
+      setFormCollapsed(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error de conexión.");
     }
@@ -314,26 +340,30 @@ export default function RutaClient() {
     if (!result || !coords) return;
     setLoading(true);
     try {
-      const data = await fetchRoute(coords.from, coords.to, newRadio);
+      const data = await fetchRoute(coords, newRadio);
       setResult((prev) => (prev ? { ...prev, stations: data.stations } : prev));
     } catch { /* ignore */ }
     setLoading(false);
   }
 
-  // Compute gaps to interleave with station cards
-  function buildGaps(stations: RouteStation[], routeDistanceKm: number): number[] {
-    if (stations.length === 0) return [];
-    return [
-      stations[0].position,
-      ...stations.slice(1).map((s, i) => s.position - stations[i].position),
-      routeDistanceKm - stations[stations.length - 1].position,
-    ];
-  }
+  // Derived: gaps between consecutive stations (including start→first and last→end)
+  const gaps: number[] =
+    result && result.stations.length > 0
+      ? [
+          result.stations[0].position,
+          ...result.stations
+            .slice(1)
+            .map((s, i) => s.position - result.stations[i].position),
+          result.route.distanceKm - result.stations[result.stations.length - 1].position,
+        ]
+      : result
+      ? [result.route.distanceKm]
+      : [];
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-5">
         <a
           href="/"
           className="flex items-center justify-center w-9 h-9 rounded-xl bg-white border border-gray-200 shadow-sm text-gray-600 hover:bg-gray-50 transition-colors text-lg"
@@ -346,82 +376,110 @@ export default function RutaClient() {
         </div>
       </div>
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3 mb-4"
-      >
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs flex items-center justify-center font-bold flex-shrink-0">
-              A
-            </span>
-            <input
-              type="text"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              placeholder="Origen (ciudad, barrio...)"
-              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-              required
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-red-100 text-red-700 text-xs flex items-center justify-center font-bold flex-shrink-0">
-              B
-            </span>
-            <input
-              type="text"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-              placeholder="Destino (ciudad, barrio...)"
-              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Autonomy input */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 whitespace-nowrap">Mi autonomía:</span>
-          <input
-            type="number"
-            min={50}
-            max={800}
-            step={10}
-            value={autonomy}
-            onChange={(e) => setAutonomy(Math.max(50, parseInt(e.target.value) || 300))}
-            className="w-20 border border-gray-200 rounded-xl px-3 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <span className="text-xs text-gray-400">km</span>
-        </div>
-
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-500">Corredor:</span>
-            {[5, 10, 20].map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => handleRadioChange(r)}
-                className={`text-xs px-3 py-1 rounded-full border transition-colors ${
-                  radio === r
-                    ? "bg-green-600 text-white border-green-600"
-                    : "border-gray-200 text-gray-600 hover:border-green-400"
-                }`}
-              >
-                {r} km
-              </button>
-            ))}
+      {/* Collapsed form summary */}
+      {formCollapsed && result && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3 mb-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-gray-900 truncate">
+              {from} → {to}
+            </p>
+            <p className="text-xs text-gray-400">
+              Corredor {radio} km · Autonomía {autonomy} km
+            </p>
           </div>
           <button
-            type="submit"
-            disabled={loading}
-            className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
+            onClick={() => setFormCollapsed(false)}
+            className="text-sm text-green-600 hover:underline flex-shrink-0"
           >
-            {loading ? "Calculando..." : "Ver ruta"}
+            Editar
           </button>
         </div>
-      </form>
+      )}
+
+      {/* Full form */}
+      {!formCollapsed && (
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4 mb-4"
+        >
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs flex items-center justify-center font-bold flex-shrink-0">
+                A
+              </span>
+              <input
+                type="text"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+                placeholder="Origen (ciudad, barrio...)"
+                className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-red-100 text-red-700 text-xs flex items-center justify-center font-bold flex-shrink-0">
+                B
+              </span>
+              <input
+                type="text"
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
+                placeholder="Destino (ciudad, barrio...)"
+                className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Autonomy slider */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">Mi autonomía</span>
+              <span className="text-sm font-bold text-gray-800">{autonomy} km</span>
+            </div>
+            <input
+              type="range"
+              min={100}
+              max={600}
+              step={25}
+              value={autonomy}
+              onChange={(e) => setAutonomy(parseInt(e.target.value))}
+              className="w-full accent-green-600 h-1.5 rounded-full cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-300">
+              <span>100 km</span>
+              <span>600 km</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-500">Corredor:</span>
+              {[5, 10, 20].map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => handleRadioChange(r)}
+                  className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+                    radio === r
+                      ? "bg-green-600 text-white border-green-600"
+                      : "border-gray-200 text-gray-600 hover:border-green-400"
+                  }`}
+                >
+                  {r} km
+                </button>
+              ))}
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
+            >
+              {loading ? "Calculando..." : "Ver ruta"}
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Error */}
       {error && (
@@ -431,7 +489,7 @@ export default function RutaClient() {
       )}
 
       {/* Loading */}
-      {loading && !result && (
+      {loading && (
         <div className="text-center py-12 text-gray-400">
           <div className="text-4xl mb-3 animate-pulse">🗺️</div>
           <p className="text-sm">Calculando ruta y buscando cargadores...</p>
@@ -470,36 +528,41 @@ export default function RutaClient() {
             autonomy={autonomy}
           />
 
+          {/* Station list or empty state */}
           {result.stations.length > 0 ? (
-            <>
-              <p className="text-xs text-gray-400 px-1 mb-2">
-                Desvío desde la ruta · Orden: de inicio a fin
+            <div className="space-y-0.5">
+              {result.stations.map((s, i) => (
+                <div key={s.id}>
+                  <GapIndicator
+                    gapKm={gaps[i]}
+                    autonomy={autonomy}
+                    label={
+                      i === 0 && gaps[i] > 15
+                        ? `${Math.round(gaps[i])} km desde el inicio`
+                        : undefined
+                    }
+                  />
+                  <div className="py-1">
+                    <StationCard station={s} />
+                  </div>
+                </div>
+              ))}
+              <GapIndicator
+                gapKm={gaps[gaps.length - 1] ?? 0}
+                autonomy={autonomy}
+                label={
+                  (gaps[gaps.length - 1] ?? 0) > 15
+                    ? `${Math.round(gaps[gaps.length - 1])} km hasta el destino`
+                    : undefined
+                }
+              />
+              <p className="text-xs text-center text-gray-400 pt-3">
+                ¿Falta alguna?{" "}
+                <a href="/agregar" className="text-green-600 hover:underline">
+                  Agregala →
+                </a>
               </p>
-              <div className="space-y-1">
-                {(() => {
-                  const gaps = buildGaps(result.stations, result.route.distanceKm);
-                  return result.stations.map((s, i) => (
-                    <div key={s.id}>
-                      <GapIndicator gapKm={gaps[i]} autonomy={autonomy} />
-                      <div className="py-1">
-                        <StationCard station={s} />
-                      </div>
-                    </div>
-                  ));
-                })()}
-                {/* Gap after last station */}
-                <GapIndicator
-                  gapKm={buildGaps(result.stations, result.route.distanceKm).at(-1) ?? 0}
-                  autonomy={autonomy}
-                />
-                <p className="text-xs text-center text-gray-400 pt-2">
-                  ¿Falta alguna?{" "}
-                  <a href="/agregar" className="text-green-600 hover:underline">
-                    Agregala →
-                  </a>
-                </p>
-              </div>
-            </>
+            </div>
           ) : (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-6 text-center">
               <div className="text-3xl mb-2">🔌</div>
@@ -516,7 +579,7 @@ export default function RutaClient() {
         </>
       )}
 
-      {/* Idle state */}
+      {/* Idle */}
       {!result && !error && !loading && (
         <div className="text-center py-12 text-gray-400">
           <div className="text-4xl mb-3">🗺️</div>
