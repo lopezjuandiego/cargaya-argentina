@@ -166,6 +166,11 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
           {lastUpdated && (
             <p className="text-xs text-gray-300">Última actualización: {lastUpdated}</p>
           )}
+          <p className="text-xs text-gray-300 pt-1">
+            <a href="/terminos" className="hover:underline">Términos de uso</a>
+            {" · "}
+            <a href="/privacidad" className="hover:underline">Privacidad</a>
+          </p>
         </div>
       </div>
     </main>

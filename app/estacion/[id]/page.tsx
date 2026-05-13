@@ -1,7 +1,33 @@
 import { getStation, getStatusReports } from "@/lib/stations";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import StatusForm from "./StatusForm";
 import BackLink from "./BackLink";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const station = await getStation(parseInt(id, 10));
+  if (!station) return { title: "Estación no encontrada" };
+
+  const connectors: string[] = JSON.parse(station.connectorTypes || "[]");
+  const connectorStr = connectors.length ? ` · Conectores: ${connectors.join(", ")}` : "";
+
+  return {
+    title: `${station.name} – Cargador en ${station.city}`,
+    description: `Estación de carga eléctrica ${station.operator} en ${station.address}, ${station.city}, ${station.province}${connectorStr}. Verificá disponibilidad en CargaYa.`,
+    openGraph: {
+      title: `${station.name} – ${station.city}`,
+      description: `${station.operator} · ${station.address}, ${station.city}, ${station.province}`,
+    },
+    alternates: {
+      canonical: `https://cargaya-argentina.vercel.app/estacion/${id}`,
+    },
+  };
+}
 
 const CONNECTOR_INFO: Record<string, string> = {
   "Tipo 2": "Tipo 2 (AC) — el más común en Europa y Argentina. Carga lenta/media, hasta 22 kW. Compatible con la mayoría de los autos eléctricos.",
