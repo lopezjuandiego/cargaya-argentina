@@ -80,7 +80,9 @@ export async function GET(req: NextRequest) {
   const toLng = parseFloat(p.get("to_lng") ?? "");
   const radio = Math.min(50, Math.max(1, parseFloat(p.get("radio") ?? "10")));
 
-  if ([fromLat, fromLng, toLat, toLng].some(isNaN)) {
+  const validCoord = (n: number) => Number.isFinite(n) && n >= -90 && n <= 90;
+  const validLng = (n: number) => Number.isFinite(n) && n >= -180 && n <= 180;
+  if (!validCoord(fromLat) || !validCoord(toLat) || !validLng(fromLng) || !validLng(toLng)) {
     return NextResponse.json({ error: "Coordenadas inválidas" }, { status: 400 });
   }
 

@@ -9,6 +9,9 @@ export async function POST(req: NextRequest) {
     if (typeof stationId !== "number" || typeof isWorking !== "boolean") {
       return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
     }
+    if (comment !== undefined && (typeof comment !== "string" || comment.length > 500)) {
+      return NextResponse.json({ error: "Comentario demasiado largo (máx. 500 caracteres)" }, { status: 400 });
+    }
 
     const station = await getStation(stationId);
     if (!station) {
