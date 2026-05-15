@@ -23,12 +23,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     WHERE province IS NOT NULL AND province <> '' AND province <> 'Rocha'
   `) as { province: string }[];
 
-  const { provinceToSlug } = await import("@/lib/provinces");
+  const cityRows = (await sql`
+    SELECT DISTINCT province, city FROM "Station"
+    WHERE province IS NOT NULL AND province <> '' AND province <> 'Rocha'
+      AND city IS NOT NULL AND city <> ''
+  `) as { province: string; city: string }[];
+
+  const { provinceToSlug, cityToSlug } = await import("@/lib/provinces");
+
   const provinceUrls: MetadataRoute.Sitemap = provinceRows.map((r) => ({
     url: `${BASE}/estaciones/${provinceToSlug(r.province)}`,
     lastModified: new Date(),
     changeFrequency: "weekly",
     priority: 0.8,
+  }));
+
+  const cityUrls: MetadataRoute.Sitemap = cityRows.map((r) => ({
+    url: `${BASE}/estaciones/${provinceToSlug(r.province)}/${cityToSlug(r.city)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.7,
   }));
 
   return [
@@ -39,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/terminos`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/privacidad`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     ...provinceUrls,
+    ...cityUrls,
     ...stationUrls,
   ];
 }

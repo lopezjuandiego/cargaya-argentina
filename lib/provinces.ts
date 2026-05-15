@@ -37,3 +37,12 @@ export function provinceToSlug(province: string): string {
 export function slugToProvince(slug: string): string | null {
   return PROVINCE_SLUGS[slug] ?? null;
 }
+
+export function cityToSlug(city: string): string {
+  return city
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}

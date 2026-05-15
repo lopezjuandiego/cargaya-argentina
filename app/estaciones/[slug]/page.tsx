@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { slugToProvince } from "@/lib/provinces";
+import { slugToProvince, cityToSlug } from "@/lib/provinces";
 
 export const dynamic = "force-dynamic";
 
@@ -166,7 +166,27 @@ export default async function ProvincePage({
         ))}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-gray-100 text-center space-y-2">
+      {/* Cities index */}
+      {byCity.size > 1 && (
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            Ciudades con cargadores
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {Array.from(byCity.entries()).map(([city, cityStations]) => (
+              <a
+                key={city}
+                href={`/estaciones/${slug}/${cityToSlug(city)}`}
+                className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-green-400 hover:text-green-700 transition-colors"
+              >
+                {city} <span className="text-gray-400">({cityStations.length})</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-6 pt-4 border-t border-gray-100 text-center space-y-2">
         <p className="text-sm text-gray-500">
           ¿No encontrás tu zona?{" "}
           <a href="/" className="text-green-600 hover:underline">Buscá por ubicación →</a>
