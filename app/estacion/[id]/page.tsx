@@ -141,6 +141,9 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
         >
           Cómo llegar →
         </a>
+        <p className="text-xs text-gray-400 text-center">
+          La dirección en Google Maps puede diferir del nombre del lugar, pero las coordenadas apuntan al sitio correcto.
+        </p>
       </div>
 
       {/* Reportar estado */}

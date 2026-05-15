@@ -1,126 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import RouteMap from "./RouteMap";
-
-// ─── Local city lookup (O(1), no network) ────────────────────────────────────
-// Keys are lowercase, no accents. Covers capitals, GBA, turismo y costa.
-const AR_CITIES: Record<string, { lat: number; lng: number; display: string }> = {
-  // Capitales provinciales
-  "buenos aires": { lat: -34.6037, lng: -58.3816, display: "Buenos Aires" },
-  "caba": { lat: -34.6037, lng: -58.3816, display: "Buenos Aires" },
-  "cordoba": { lat: -31.4135, lng: -64.1811, display: "Córdoba, Córdoba" },
-  "rosario": { lat: -32.9442, lng: -60.6505, display: "Rosario, Santa Fe" },
-  "mendoza": { lat: -32.8908, lng: -68.8272, display: "Mendoza, Mendoza" },
-  "la plata": { lat: -34.9215, lng: -57.9545, display: "La Plata, Buenos Aires" },
-  "tucuman": { lat: -26.8083, lng: -65.2176, display: "San Miguel de Tucumán, Tucumán" },
-  "san miguel de tucuman": { lat: -26.8083, lng: -65.2176, display: "San Miguel de Tucumán" },
-  "salta": { lat: -24.7821, lng: -65.4232, display: "Salta, Salta" },
-  "santa fe": { lat: -31.6333, lng: -60.7000, display: "Santa Fe, Santa Fe" },
-  "san juan": { lat: -31.5375, lng: -68.5364, display: "San Juan, San Juan" },
-  "resistencia": { lat: -27.4606, lng: -58.9867, display: "Resistencia, Chaco" },
-  "neuquen": { lat: -38.9516, lng: -68.0591, display: "Neuquén, Neuquén" },
-  "corrientes": { lat: -27.4806, lng: -58.8341, display: "Corrientes, Corrientes" },
-  "posadas": { lat: -27.3671, lng: -55.8961, display: "Posadas, Misiones" },
-  "bahia blanca": { lat: -38.7183, lng: -62.2663, display: "Bahía Blanca, Buenos Aires" },
-  "parana": { lat: -31.7333, lng: -60.5333, display: "Paraná, Entre Ríos" },
-  "santiago del estero": { lat: -27.7951, lng: -64.2615, display: "Santiago del Estero" },
-  "formosa": { lat: -26.1775, lng: -58.1781, display: "Formosa, Formosa" },
-  "san luis": { lat: -33.3027, lng: -66.3375, display: "San Luis, San Luis" },
-  "jujuy": { lat: -24.1858, lng: -65.2995, display: "San Salvador de Jujuy, Jujuy" },
-  "san salvador de jujuy": { lat: -24.1858, lng: -65.2995, display: "San Salvador de Jujuy" },
-  "viedma": { lat: -40.8135, lng: -62.9967, display: "Viedma, Río Negro" },
-  "rawson": { lat: -43.3002, lng: -65.1023, display: "Rawson, Chubut" },
-  "rio gallegos": { lat: -51.6230, lng: -69.2168, display: "Río Gallegos, Santa Cruz" },
-  "ushuaia": { lat: -54.8019, lng: -68.3030, display: "Ushuaia, Tierra del Fuego" },
-  "santa rosa": { lat: -36.6167, lng: -64.2903, display: "Santa Rosa, La Pampa" },
-  // Turismo y costa
-  "bariloche": { lat: -41.1335, lng: -71.3103, display: "Bariloche, Río Negro" },
-  "san carlos de bariloche": { lat: -41.1335, lng: -71.3103, display: "Bariloche, Río Negro" },
-  "mar del plata": { lat: -38.0023, lng: -57.5575, display: "Mar del Plata, Buenos Aires" },
-  "villa gesell": { lat: -37.2636, lng: -56.9706, display: "Villa Gesell, Buenos Aires" },
-  "pinamar": { lat: -37.1102, lng: -56.8681, display: "Pinamar, Buenos Aires" },
-  "mar de las pampas": { lat: -37.3167, lng: -56.9667, display: "Mar de las Pampas, Buenos Aires" },
-  "miramar": { lat: -38.2701, lng: -57.8372, display: "Miramar, Buenos Aires" },
-  "necochea": { lat: -38.5555, lng: -58.7390, display: "Necochea, Buenos Aires" },
-  "monte hermoso": { lat: -38.9872, lng: -61.2983, display: "Monte Hermoso, Buenos Aires" },
-  "villa carlos paz": { lat: -31.4222, lng: -64.4975, display: "Villa Carlos Paz, Córdoba" },
-  "carlos paz": { lat: -31.4222, lng: -64.4975, display: "Villa Carlos Paz, Córdoba" },
-  "villa la angostura": { lat: -40.7581, lng: -71.6475, display: "Villa La Angostura, Neuquén" },
-  "san martin de los andes": { lat: -40.1564, lng: -71.3542, display: "San Martín de los Andes" },
-  "mendoza capital": { lat: -32.8908, lng: -68.8272, display: "Mendoza, Mendoza" },
-  "comodoro rivadavia": { lat: -45.8648, lng: -67.4979, display: "Comodoro Rivadavia, Chubut" },
-  "puerto madryn": { lat: -42.7692, lng: -65.0385, display: "Puerto Madryn, Chubut" },
-  "el calafate": { lat: -50.3402, lng: -72.2647, display: "El Calafate, Santa Cruz" },
-  // GBA y Gran Buenos Aires
-  "olivos": { lat: -34.5048, lng: -58.4944, display: "Olivos, Buenos Aires" },
-  "san isidro": { lat: -34.4736, lng: -58.5271, display: "San Isidro, Buenos Aires" },
-  "vicente lopez": { lat: -34.5260, lng: -58.4758, display: "Vicente López, Buenos Aires" },
-  "tigre": { lat: -34.4260, lng: -58.5797, display: "Tigre, Buenos Aires" },
-  "quilmes": { lat: -34.7206, lng: -58.2544, display: "Quilmes, Buenos Aires" },
-  "avellaneda": { lat: -34.6653, lng: -58.3656, display: "Avellaneda, Buenos Aires" },
-  "lanus": { lat: -34.7012, lng: -58.3934, display: "Lanús, Buenos Aires" },
-  "lomas de zamora": { lat: -34.7613, lng: -58.4036, display: "Lomas de Zamora, Buenos Aires" },
-  "moron": { lat: -34.6522, lng: -58.6197, display: "Morón, Buenos Aires" },
-  "pilar": { lat: -34.4587, lng: -58.9143, display: "Pilar, Buenos Aires" },
-  "lujan": { lat: -34.5697, lng: -59.1036, display: "Luján, Buenos Aires" },
-  "san justo": { lat: -34.6773, lng: -58.5578, display: "San Justo, Buenos Aires" },
-  "haedo": { lat: -34.6439, lng: -58.5919, display: "Haedo, Buenos Aires" },
-  "palermo": { lat: -34.5875, lng: -58.4266, display: "Palermo, Buenos Aires" },
-  "belgrano": { lat: -34.5637, lng: -58.4578, display: "Belgrano, Buenos Aires" },
-  "recoleta": { lat: -34.5875, lng: -58.3930, display: "Recoleta, Buenos Aires" },
-  "microcentro": { lat: -34.6076, lng: -58.3712, display: "Microcentro, Buenos Aires" },
-  // Interior bonaerense
-  "chascomus": { lat: -35.5667, lng: -58.0167, display: "Chascomús, Buenos Aires" },
-  "dolores": { lat: -36.3167, lng: -57.6833, display: "Dolores, Buenos Aires" },
-  "general madariaga": { lat: -37.0000, lng: -57.1167, display: "General Madariaga, Buenos Aires" },
-  "pergamino": { lat: -33.8899, lng: -60.5716, display: "Pergamino, Buenos Aires" },
-  "junin": { lat: -34.5833, lng: -60.9500, display: "Junín, Buenos Aires" },
-  "mercedes": { lat: -34.6500, lng: -59.4333, display: "Mercedes, Buenos Aires" },
-  "chivilcoy": { lat: -34.8977, lng: -60.0218, display: "Chivilcoy, Buenos Aires" },
-  // Córdoba interior
-  "villa maria": { lat: -32.4077, lng: -63.2429, display: "Villa María, Córdoba" },
-  "rio cuarto": { lat: -33.1232, lng: -64.3493, display: "Río Cuarto, Córdoba" },
-  "san francisco": { lat: -31.4284, lng: -62.0820, display: "San Francisco, Córdoba" },
-  "alta gracia": { lat: -31.6552, lng: -64.4317, display: "Alta Gracia, Córdoba" },
-};
-
-function normalizeKey(s: string): string {
-  return s.toLowerCase().trim().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ");
-}
-
-function levenshtein(a: string, b: string): number {
-  const m = a.length, n = b.length;
-  const row = Array.from({ length: n + 1 }, (_, j) => j);
-  for (let i = 1; i <= m; i++) {
-    let prev = row[0];
-    row[0] = i;
-    for (let j = 1; j <= n; j++) {
-      const temp = row[j];
-      row[j] = a[i - 1] === b[j - 1] ? prev : 1 + Math.min(prev, row[j], row[j - 1]);
-      prev = temp;
-    }
-  }
-  return row[n];
-}
-
-function lookupCity(q: string): { lat: number; lng: number; display: string } | null {
-  const key = normalizeKey(q);
-
-  // Exact match first
-  if (AR_CITIES[key]) return AR_CITIES[key];
-
-  // Fuzzy match: allow 1 edit for ≤8 chars, 2 for longer
-  const maxDist = key.length <= 8 ? 1 : 2;
-  let best: { lat: number; lng: number; display: string } | null = null;
-  let bestDist = maxDist + 1;
-
-  for (const [cityKey, cityData] of Object.entries(AR_CITIES)) {
-    const d = levenshtein(key, cityKey);
-    if (d < bestDist) { bestDist = d; best = cityData; }
-  }
-  return bestDist <= maxDist ? best : null;
-}
+import { searchCities, lookupCity, type CityResult } from "@/lib/cities";
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -325,6 +207,82 @@ type GeoCoords = { from: GeoResult; to: GeoResult };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// ─── CityInput — autocomplete dropdown ───────────────────────────────────────
+
+function CityInput({
+  value,
+  onChange,
+  onSelect,
+  placeholder,
+  required,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSelect: (city: CityResult) => void;
+  placeholder: string;
+  required?: boolean;
+}) {
+  const [suggestions, setSuggestions] = useState<CityResult[]>([]);
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  function handleChange(text: string) {
+    onChange(text);
+    const results = searchCities(text);
+    setSuggestions(results);
+    setOpen(results.length > 0);
+  }
+
+  function handleSelect(city: CityResult) {
+    onChange(city.display);
+    onSelect(city);
+    setSuggestions([]);
+    setOpen(false);
+  }
+
+  return (
+    <div ref={containerRef} className="relative flex-1">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => handleChange(e.target.value)}
+        onFocus={() => suggestions.length > 0 && setOpen(true)}
+        placeholder={placeholder}
+        required={required}
+        autoComplete="off"
+        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+      />
+      {open && suggestions.length > 0 ? (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+          {suggestions.map((s, i) => (
+            <button
+              key={i}
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); handleSelect(s); }}
+              className="w-full text-left px-3 py-2.5 text-sm hover:bg-green-50 flex items-center gap-2 border-b border-gray-50 last:border-0 transition-colors"
+            >
+              <span className="text-gray-300 text-xs flex-shrink-0">📍</span>
+              <span className="text-gray-800 truncate">{s.display}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// ─── Geocoding ────────────────────────────────────────────────────────────────
+
 async function geocode(q: string): Promise<GeoResult | null> {
   // 1. Local lookup first — instant, no network
   const local = lookupCity(q);
@@ -390,6 +348,8 @@ function buildSegments(stations: RouteStation[], gaps: number[]): Segment[] {
 export default function RutaClient() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [fromResolved, setFromResolved] = useState<CityResult | null>(null);
+  const [toResolved, setToResolved] = useState<CityResult | null>(null);
   const [radio, setRadio] = useState(10);
   const [autonomy, setAutonomy] = useState(300);
   const [loading, setLoading] = useState(false);
@@ -427,7 +387,11 @@ export default function RutaClient() {
     setFormCollapsed(false);
     setExpandedSegments(new Set());
 
-    const [fromGeo, toGeo] = await Promise.all([geocode(from.trim()), geocode(to.trim())]);
+    // Use pre-resolved coords from autocomplete, fallback to geocoding
+    const [fromGeo, toGeo] = await Promise.all([
+      fromResolved ?? geocode(from.trim()),
+      toResolved ?? geocode(to.trim()),
+    ]);
 
     if (!fromGeo) {
       setError(`No encontramos "${from}" en Argentina. Verificá la ortografía.`);
@@ -508,11 +472,23 @@ export default function RutaClient() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs flex items-center justify-center font-bold flex-shrink-0">A</span>
-              <input type="text" value={from} onChange={(e) => setFrom(e.target.value)} placeholder="Origen (ciudad, barrio...)" className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              <CityInput
+                value={from}
+                onChange={(v) => { setFrom(v); setFromResolved(null); }}
+                onSelect={(c) => { setFrom(c.display); setFromResolved(c); }}
+                placeholder="Origen (ciudad, barrio...)"
+                required
+              />
             </div>
             <div className="flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-red-100 text-red-700 text-xs flex items-center justify-center font-bold flex-shrink-0">B</span>
-              <input type="text" value={to} onChange={(e) => setTo(e.target.value)} placeholder="Destino (ciudad, barrio...)" className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              <CityInput
+                value={to}
+                onChange={(v) => { setTo(v); setToResolved(null); }}
+                onSelect={(c) => { setTo(c.display); setToResolved(c); }}
+                placeholder="Destino (ciudad, barrio...)"
+                required
+              />
             </div>
           </div>
 
