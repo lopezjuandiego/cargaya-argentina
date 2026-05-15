@@ -1,13 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { searchCities, type CityResult } from "@/lib/cities";
 
 export default function HomeClient({ stationCount, lastUpdated }: { stationCount: number; lastUpdated: string }) {
   const router = useRouter();
   const [locating, setLocating] = useState(false);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState<CityResult[]>([]);
+  const [showSugg, setShowSugg] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClickOut(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setShowSugg(false);
+    }
+    document.addEventListener("mousedown", onClickOut);
+    return () => document.removeEventListener("mousedown", onClickOut);
+  }, []);
+
+  function handleQueryChange(v: string) {
+    setQuery(v);
+    const r = searchCities(v);
+    setSuggestions(r);
+    setShowSugg(r.length > 0);
+  }
+
+  function selectCity(city: CityResult) {
+    setQuery(city.display);
+    setSuggestions([]);
+    setShowSugg(false);
+    navigator.geolocation?.getCurrentPosition(
+      (pos) => router.push(`/buscar?q=${encodeURIComponent(city.display)}&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`),
+      () => router.push(`/buscar?q=${encodeURIComponent(city.display)}&lat=${city.lat}&lng=${city.lng}`)
+    );
+  }
 
   function useGPS() {
     if (!navigator.geolocation) {
@@ -99,15 +128,34 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
             <div className="flex-1 h-px bg-gray-300" />
           </div>
 
-          {/* Text Search */}
+          {/* Text Search with autocomplete */}
           <form onSubmit={handleSearch} className="flex gap-2">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Palermo, San Isidro, Mar del Plata..."
-              className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-            />
+            <div ref={searchRef} className="relative flex-1">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => handleQueryChange(e.target.value)}
+                onFocus={() => suggestions.length > 0 && setShowSugg(true)}
+                placeholder="Palermo, San Isidro, Mar del Plata..."
+                autoComplete="off"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              />
+              {showSugg && suggestions.length > 0 ? (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden text-left">
+                  {suggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onMouseDown={(e) => { e.preventDefault(); selectCity(s); }}
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-green-50 flex items-center gap-2 border-b border-gray-50 last:border-0 transition-colors"
+                    >
+                      <span className="text-gray-300 text-xs">📍</span>
+                      <span className="text-gray-800">{s.display}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
             <button
               type="submit"
               className="bg-gray-800 hover:bg-gray-900 text-white px-5 py-3 rounded-xl font-medium transition-colors"

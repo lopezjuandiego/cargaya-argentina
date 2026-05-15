@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import RutaClient from "./RutaClient";
 
 export const metadata = {
@@ -7,5 +8,9 @@ export const metadata = {
 };
 
 export default function RutaPage() {
-  return <RutaClient />;
+  return (
+    <Suspense>
+      <RutaClient />
+    </Suspense>
+  );
 }

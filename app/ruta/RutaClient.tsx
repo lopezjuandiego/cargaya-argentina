@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import RouteMap from "./RouteMap";
 import { searchCities, lookupCity, type CityResult } from "@/lib/cities";
 
@@ -343,15 +344,35 @@ function buildSegments(stations: RouteStation[], gaps: number[]): Segment[] {
   return segs;
 }
 
+function ShareButton({ from, to, radio, autonomy }: { from: string; to: string; radio: number; autonomy: number }) {
+  const [copied, setCopied] = useState(false);
+
+  function share() {
+    const p = new URLSearchParams({ from, to, radio: String(radio), autonomy: String(autonomy) });
+    const url = `${window.location.origin}/ruta?${p.toString()}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <button onClick={share} className="text-xs text-gray-400 hover:text-green-600 transition-colors">
+      {copied ? "✓ Copiado" : "Compartir"}
+    </button>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function RutaClient() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const sp = useSearchParams();
+  const [from, setFrom] = useState(sp.get("from") ?? "");
+  const [to, setTo] = useState(sp.get("to") ?? "");
   const [fromResolved, setFromResolved] = useState<CityResult | null>(null);
   const [toResolved, setToResolved] = useState<CityResult | null>(null);
-  const [radio, setRadio] = useState(10);
-  const [autonomy, setAutonomy] = useState(300);
+  const [radio, setRadio] = useState(sp.get("radio") ? parseInt(sp.get("radio")!) : 10);
+  const [autonomy, setAutonomy] = useState(sp.get("autonomy") ? parseInt(sp.get("autonomy")!) : 300);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<RouteResult | null>(null);
@@ -462,9 +483,12 @@ export default function RutaClient() {
             <p className="text-sm font-semibold text-gray-900 truncate">{from} → {to}</p>
             <p className="text-xs text-gray-400">Desvío máx. {radio} km · Autonomía {autonomy} km</p>
           </div>
-          <button onClick={() => setFormCollapsed(false)} className="text-sm text-green-600 hover:underline flex-shrink-0">
-            Editar
-          </button>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <ShareButton from={from} to={to} radio={radio} autonomy={autonomy} />
+            <button onClick={() => setFormCollapsed(false)} className="text-sm text-green-600 hover:underline">
+              Editar
+            </button>
+          </div>
         </div>
       ) : (
         /* Full form */

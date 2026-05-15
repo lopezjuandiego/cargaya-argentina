@@ -70,8 +70,42 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
   });
   const noReportsTooltip = `Ningún usuario reportó el estado todavía. Esta estación fue agregada el ${addedDate}.`;
 
+  const BASE = "https://cargaya-argentina.vercel.app";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ElectricVehicleChargingStation",
+    name: station.name,
+    description: `Estación de carga eléctrica ${station.operator} en ${station.address}, ${station.city}, ${station.province}, Argentina.`,
+    url: `${BASE}/estacion/${station.id}`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: station.address,
+      addressLocality: station.city,
+      addressRegion: station.province,
+      addressCountry: "AR",
+      ...(station.postalCode ? { postalCode: station.postalCode } : {}),
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: station.lat,
+      longitude: station.lng,
+    },
+    ...(station.powerKw ? { electricVehicleChargingDuration: `PT${Math.round(200 / station.powerKw)}H` } : {}),
+    openingHours: "Mo-Su 00:00-24:00",
+    isAccessibleForFree: station.isFree,
+    amenityFeature: connectors.map((c) => ({
+      "@type": "LocationFeatureSpecification",
+      name: `Conector ${c}`,
+      value: true,
+    })),
+  };
+
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <BackLink />
 
       {/* Card principal */}

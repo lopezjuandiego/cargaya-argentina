@@ -93,12 +93,20 @@ export default async function ProvincePage({
     <div className="max-w-lg mx-auto px-4 py-8 min-h-screen">
       <a href="/estaciones" className="text-sm text-green-600 hover:underline">← Todas las provincias</a>
 
-      <div className="mt-4 mb-6">
+      <div className="mt-4 mb-5">
         <h1 className="text-2xl font-bold text-gray-900">
-          Cargadores en {province}
+          Cargadores eléctricos en {province}
         </h1>
         <p className="text-gray-500 mt-1">
-          {stations.length} estación{stations.length !== 1 ? "es" : ""} de carga
+          {stations.length} estación{stations.length !== 1 ? "es" : ""} de carga en {byCity.size} ciudad{byCity.size !== 1 ? "es" : ""}
+        </p>
+        <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+          {province} cuenta con {stations.length} estaciones de carga para vehículos eléctricos,
+          distribuidas en {Array.from(byCity.keys()).slice(0, 3).join(", ")}
+          {byCity.size > 3 ? ` y ${byCity.size - 3} localidad${byCity.size - 3 !== 1 ? "es" : ""} más` : ""}.
+          Incluye redes como{" "}
+          {[...new Set(stations.map((s) => s.operator))].slice(0, 3).join(", ")}.
+          Todos los datos son verificados por la comunidad de CargaYa.
         </p>
       </div>
 

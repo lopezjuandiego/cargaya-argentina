@@ -1,6 +1,7 @@
 import { getNearbyStations, getClosestStation, getLastStatus } from "@/lib/stations";
 import StationCard from "./StationCard";
 import RadioSelector from "./RadioSelector";
+import Filtros from "./Filtros";
 import BackButton from "./BackButton";
 import GpsButton from "./GpsButton";
 
@@ -45,10 +46,12 @@ async function geocode(q: string): Promise<{ lat: number; lng: number; display: 
 export default async function BuscarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lat?: string; lng?: string; q?: string; radio?: string }>;
+  searchParams: Promise<{ lat?: string; lng?: string; q?: string; radio?: string; gratis?: string; conector?: string }>;
 }) {
   const params = await searchParams;
   const radio = params.radio ? parseInt(params.radio) : 15;
+  const filterGratis = params.gratis === "1";
+  const filterConector = params.conector ?? "";
 
   const userLat = params.lat ? parseFloat(params.lat) : null;
   const userLng = params.lng ? parseFloat(params.lng) : null;
@@ -112,6 +115,13 @@ export default async function BuscarPage({
     errorMsg = "Ingresá una ciudad, barrio o usá tu ubicación.";
   }
 
+  // Apply filters
+  if (filterGratis) stations = stations.filter((s) => s.isFree);
+  if (filterConector) stations = stations.filter((s) => {
+    try { return (JSON.parse(s.connectorTypes || "[]") as string[]).includes(filterConector); }
+    catch { return false; }
+  });
+
   const hasResults = stations.length > 0;
 
   return (
@@ -146,6 +156,14 @@ export default async function BuscarPage({
         lat={params.lat}
         lng={params.lng}
         q={params.q}
+      />
+      <Filtros
+        lat={params.lat}
+        lng={params.lng}
+        q={params.q}
+        radio={radio}
+        gratis={filterGratis}
+        conector={filterConector}
       />
 
       {/* Error */}
