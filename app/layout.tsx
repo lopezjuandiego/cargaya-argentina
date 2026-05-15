@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import FeedbackButton from "./FeedbackButton";
 
 const BASE_URL = "https://cargaya-argentina.vercel.app";
 
@@ -34,7 +35,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body className="min-h-screen flex flex-col">{children}</body>
+      <body className="min-h-screen flex flex-col">
+        {children}
+        <FeedbackButton />
+      </body>
     </html>
   );
 }

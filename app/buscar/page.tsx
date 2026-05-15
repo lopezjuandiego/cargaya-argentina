@@ -106,8 +106,8 @@ export default async function BuscarPage({
         distanceNote = `Distancia desde el centro de "${params.q}" — no desde tu ubicación`;
       }
       if (stations.length === 0) {
-        const ref = hasUserLocation ? { lat: userLat!, lng: userLng! } : { lat: geo.lat, lng: geo.lng };
-        const c = await getClosestStation(ref.lat, ref.lng);
+        // Always use the searched city coords, not the user's GPS
+        const c = await getClosestStation(geo.lat, geo.lng);
         if (c) closest = { ...c, lastStatus: await getLastStatus(c.id) };
       }
     }

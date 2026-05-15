@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminPage() {
   const sql = getDb();
 
-  const [pending, stats] = await Promise.all([
+  const [pending, stats, feedbacks] = await Promise.all([
     sql`
       SELECT id, name, operator, address, city, province, lat, lng,
              "connectorTypes", "powerKw", comment, "submittedAt"
@@ -20,6 +20,12 @@ export default async function AdminPage() {
         COUNT(*) FILTER (WHERE status = 'approved')::int  AS approved,
         COUNT(*) FILTER (WHERE status = 'rejected')::int  AS rejected
       FROM "UserSubmission"
+    `,
+    sql`
+      SELECT id, type, message, email, page, "createdAt"
+      FROM "Feedback"
+      ORDER BY "createdAt" DESC
+      LIMIT 20
     `,
   ]);
 
@@ -57,6 +63,30 @@ export default async function AdminPage() {
         Pendientes de revisión
       </h2>
       <SubmissionList submissions={pending as Parameters<typeof SubmissionList>[0]["submissions"]} />
+
+      {/* Feedbacks */}
+      {(feedbacks as { id: number; type: string; message: string; email: string | null; page: string | null; createdAt: string }[]).length > 0 && (
+        <>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 mt-8">
+            Feedback reciente
+          </h2>
+          <div className="space-y-3">
+            {(feedbacks as { id: number; type: string; message: string; email: string | null; page: string | null; createdAt: string }[]).map((f) => (
+              <div key={f.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{f.type}</span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(f.createdAt).toLocaleDateString("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-800 leading-snug">{f.message}</p>
+                {f.email && <p className="text-xs text-gray-400">{f.email}</p>}
+                {f.page && <p className="text-xs text-gray-300">Página: {f.page}</p>}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="mt-8 pt-4 border-t border-gray-100 text-center">
         <a href="/" className="text-sm text-gray-400 hover:text-green-600">← Volver al sitio</a>
