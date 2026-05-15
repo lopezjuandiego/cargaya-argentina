@@ -120,13 +120,14 @@ export async function addUserSubmission(data: {
   connectorTypes: string;
   powerKw: number | null;
   comment: string | null;
+  submitterIp: string | null;
 }): Promise<void> {
   await getDb()`
     INSERT INTO "UserSubmission"
-      (name, operator, address, city, province, lat, lng, "connectorTypes", "powerKw", comment, status, "submittedAt")
+      (name, operator, address, city, province, lat, lng, "connectorTypes", "powerKw", comment, status, "submittedAt", "submitterIp")
     VALUES
       (${data.name}, ${data.operator}, ${data.address}, ${data.city}, ${data.province},
        ${data.lat}, ${data.lng}, ${data.connectorTypes}, ${data.powerKw}, ${data.comment},
-       'pending', NOW())
+       'pending', NOW(), ${data.submitterIp})
   `;
 }
