@@ -18,12 +18,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const provinceRows = (await sql`
+    SELECT DISTINCT province FROM "Station"
+    WHERE province IS NOT NULL AND province <> '' AND province <> 'Rocha'
+  `) as { province: string }[];
+
+  const { provinceToSlug } = await import("@/lib/provinces");
+  const provinceUrls: MetadataRoute.Sitemap = provinceRows.map((r) => ({
+    url: `${BASE}/estaciones/${provinceToSlug(r.province)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
   return [
     { url: BASE, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
     { url: `${BASE}/ruta`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/estaciones`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/agregar`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/terminos`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/privacidad`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    ...provinceUrls,
     ...stationUrls,
   ];
 }
