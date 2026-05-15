@@ -106,7 +106,7 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">10. Contacto</h2>
           <p>
-            Para consultas: <strong>contacto@cargaya.com.ar</strong>
+            Para consultas: <strong>lopezjuandiego@gmail.com</strong>
           </p>
         </section>
       </div>

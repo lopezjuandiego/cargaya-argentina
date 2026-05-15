@@ -108,7 +108,7 @@ export default function PrivacidadPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-2">7. Tus derechos</h2>
           <p>
             Si enviaste una estación y querés solicitar su eliminación o corrección, contactanos en{" "}
-            <strong>contacto@cargaya.com.ar</strong>. Dado que no almacenamos datos personales
+            <strong>lopezjuandiego@gmail.com</strong>. Dado que no almacenamos datos personales
             identificables, no es posible asociar un reporte de estado a una persona específica.
           </p>
         </section>
@@ -124,7 +124,7 @@ export default function PrivacidadPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">9. Contacto</h2>
           <p>
-            Para consultas sobre privacidad: <strong>contacto@cargaya.com.ar</strong>
+            Para consultas sobre privacidad: <strong>lopezjuandiego@gmail.com</strong>
           </p>
         </section>
       </div>
