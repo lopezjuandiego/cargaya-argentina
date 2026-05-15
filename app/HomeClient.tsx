@@ -92,7 +92,7 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
         <div>
           <div className="text-6xl mb-4">⚡</div>
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">CargaYa</h1>
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">DóndeCargar</h1>
             <span className="text-xs font-semibold bg-green-100 text-green-700 px-2 py-0.5 rounded-full border border-green-200 tracking-wide">
               Beta
             </span>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad",
-  description: "Política de privacidad de CargaYa — cómo recopilamos y usamos tu información.",
+  description: "Política de privacidad de DóndeCargar — cómo recopilamos y usamos tu información.",
   robots: "noindex",
 };
 
@@ -15,9 +15,9 @@ export default function PrivacidadPage() {
 
       <div className="prose prose-sm max-w-none text-gray-700 space-y-6">
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">1. ¿Qué es CargaYa?</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">1. ¿Qué es DóndeCargar?</h2>
           <p>
-            CargaYa (<strong>cargaya-argentina.vercel.app</strong>) es un directorio comunitario de
+            DóndeCargar (<strong>cargaya-argentina.vercel.app</strong>) es un directorio comunitario de
             estaciones de carga para vehículos eléctricos en Argentina. No requerimos registro ni
             creación de cuenta para utilizar el servicio.
           </p>
@@ -57,7 +57,7 @@ export default function PrivacidadPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">4. Servicios de terceros</h2>
-          <p>CargaYa utiliza los siguientes servicios externos:</p>
+          <p>DóndeCargar utiliza los siguientes servicios externos:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
               <strong>Nominatim / OpenStreetMap</strong> — geocodificación de ciudades y barrios.
@@ -90,7 +90,7 @@ export default function PrivacidadPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">5. Cookies</h2>
           <p>
-            CargaYa no utiliza cookies propias. Los servicios de terceros (especialmente Google
+            DóndeCargar no utiliza cookies propias. Los servicios de terceros (especialmente Google
             AdSense) pueden establecer cookies en tu navegador. Podés gestionar las cookies desde
             la configuración de tu navegador.
           </p>

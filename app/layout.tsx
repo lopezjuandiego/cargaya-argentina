@@ -7,8 +7,8 @@ const BASE_URL = "https://cargaya-argentina.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "CargaYa – Cargadores eléctricos en Argentina",
-    template: "%s | CargaYa",
+    default: "DóndeCargar – Cargadores eléctricos en Argentina",
+    template: "%s | DóndeCargar",
   },
   description:
     "Encontrá la estación de carga eléctrica más cercana en Argentina. Más de 230 cargadores: YPF, Chargebox, Scame y más. Buscá por ciudad o planificá tu ruta.",
@@ -20,10 +20,10 @@ export const metadata: Metadata = {
     "mapa cargadores Argentina",
   ],
   openGraph: {
-    siteName: "CargaYa",
+    siteName: "DóndeCargar",
     locale: "es_AR",
     type: "website",
-    title: "CargaYa – Cargadores eléctricos en Argentina",
+    title: "DóndeCargar – Cargadores eléctricos en Argentina",
     description:
       "Más de 230 estaciones de carga para autos eléctricos en todo el país. Buscá por ubicación o planificá tu ruta.",
     url: BASE_URL,

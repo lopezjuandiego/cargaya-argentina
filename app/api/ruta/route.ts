@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
   let durationMin: number;
   try {
     const osrmRes = await fetch(osrmUrl, {
-      headers: { "User-Agent": "CargaYa/1.0 (contacto@cargaya.com.ar)" },
+      headers: { "User-Agent": "DóndeCargar/1.0 (contacto@cargaya.com.ar)" },
       next: { revalidate: 3600 },
     });
     const osrmData = await osrmRes.json();

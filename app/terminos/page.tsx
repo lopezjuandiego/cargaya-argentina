@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Términos de Uso",
-  description: "Términos y condiciones de uso de CargaYa.",
+  description: "Términos y condiciones de uso de DóndeCargar.",
   robots: "noindex",
 };
 
@@ -17,7 +17,7 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">1. Aceptación de los términos</h2>
           <p>
-            Al acceder y utilizar CargaYa (<strong>cargaya-argentina.vercel.app</strong>), aceptás
+            Al acceder y utilizar DóndeCargar (<strong>cargaya-argentina.vercel.app</strong>), aceptás
             estos Términos de Uso. Si no estás de acuerdo, no uses el servicio.
           </p>
         </section>
@@ -25,7 +25,7 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">2. Descripción del servicio</h2>
           <p>
-            CargaYa es un directorio comunitario de estaciones de carga para vehículos eléctricos
+            DóndeCargar es un directorio comunitario de estaciones de carga para vehículos eléctricos
             en Argentina. La información proviene de fuentes públicas (Open Charge Map, redes de
             operadores) y aportes de la comunidad. El servicio es gratuito y de acceso libre.
           </p>
@@ -34,10 +34,10 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">3. Exactitud de la información</h2>
           <p>
-            CargaYa <strong>no garantiza</strong> la exactitud, completitud ni disponibilidad de la
+            DóndeCargar <strong>no garantiza</strong> la exactitud, completitud ni disponibilidad de la
             información sobre las estaciones. Los datos pueden estar desactualizados. Siempre
             verificá el estado de una estación antes de planificar un viaje largo que dependa de
-            ella. CargaYa no se responsabiliza por daños derivados del uso de información
+            ella. DóndeCargar no se responsabiliza por daños derivados del uso de información
             incorrecta o desactualizada.
           </p>
         </section>
@@ -49,11 +49,11 @@ export default function TerminosPage() {
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>La información que proporcionás es correcta y de buena fe.</li>
-            <li>Cedés a CargaYa el derecho de publicar y modificar dicha información.</li>
+            <li>Cedés a DóndeCargar el derecho de publicar y modificar dicha información.</li>
             <li>No enviás contenido falso, spam o con intención de dañar el servicio.</li>
           </ul>
           <p className="mt-2">
-            CargaYa se reserva el derecho de eliminar contenido inapropiado o incorrecto sin previo aviso.
+            DóndeCargar se reserva el derecho de eliminar contenido inapropiado o incorrecto sin previo aviso.
           </p>
         </section>
 
@@ -71,7 +71,7 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">6. Propiedad intelectual</h2>
           <p>
-            El código, diseño y contenido editorial de CargaYa son propiedad de sus creadores.
+            El código, diseño y contenido editorial de DóndeCargar son propiedad de sus creadores.
             Los datos de estaciones provenientes de Open Charge Map están sujetos a la licencia
             Creative Commons de ese proyecto. Los datos aportados por la comunidad se comparten
             bajo licencia abierta.
@@ -81,7 +81,7 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">7. Limitación de responsabilidad</h2>
           <p>
-            CargaYa se provee "tal cual es" sin garantías de ningún tipo. En ningún caso CargaYa
+            DóndeCargar se provee "tal cual es" sin garantías de ningún tipo. En ningún caso DóndeCargar
             será responsable por daños directos, indirectos, incidentales o consecuentes derivados
             del uso o imposibilidad de uso del servicio.
           </p>

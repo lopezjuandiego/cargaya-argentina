@@ -106,7 +106,7 @@ export default async function ProvincePage({
           {byCity.size > 3 ? ` y ${byCity.size - 3} localidad${byCity.size - 3 !== 1 ? "es" : ""} más` : ""}.
           Incluye redes como{" "}
           {[...new Set(stations.map((s) => s.operator))].slice(0, 3).join(", ")}.
-          Todos los datos son verificados por la comunidad de CargaYa.
+          Todos los datos son verificados por la comunidad de DóndeCargar.
         </p>
       </div>
 

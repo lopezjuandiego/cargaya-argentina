@@ -71,7 +71,7 @@ export default function FeedbackButton() {
             <div className="text-center py-6">
               <div className="text-4xl mb-3">🙌</div>
               <p className="font-bold text-gray-900 text-lg">¡Gracias!</p>
-              <p className="text-gray-500 text-sm mt-1">Tu feedback nos ayuda a mejorar CargaYa.</p>
+              <p className="text-gray-500 text-sm mt-1">Tu feedback nos ayuda a mejorar DóndeCargar.</p>
               <button
                 onClick={handleClose}
                 className="mt-5 text-sm text-green-600 hover:underline"

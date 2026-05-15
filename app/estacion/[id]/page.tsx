@@ -18,7 +18,7 @@ export async function generateMetadata({
 
   return {
     title: `${station.name} – Cargador en ${station.city}`,
-    description: `Estación de carga eléctrica ${station.operator} en ${station.address}, ${station.city}, ${station.province}${connectorStr}. Verificá disponibilidad en CargaYa.`,
+    description: `Estación de carga eléctrica ${station.operator} en ${station.address}, ${station.city}, ${station.province}${connectorStr}. Verificá disponibilidad en DóndeCargar.`,
     openGraph: {
       title: `${station.name} – ${station.city}`,
       description: `${station.operator} · ${station.address}, ${station.city}, ${station.province}`,

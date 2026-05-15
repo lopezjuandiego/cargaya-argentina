@@ -28,7 +28,7 @@ async function geocode(q: string): Promise<{ lat: number; lng: number; display: 
   const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&countrycodes=ar`;
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "CargaYa/1.0 (contacto@cargaya.com.ar)" },
+      headers: { "User-Agent": "DóndeCargar/1.0 (contacto@cargaya.com.ar)" },
       next: { revalidate: 3600 },
     });
     const data = await res.json();

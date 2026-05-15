@@ -20,13 +20,13 @@ export async function GET() {
     .map((r) => `  - ${r.province}: ${r.n} estaciones`)
     .join("\n");
 
-  const content = `# CargaYa
+  const content = `# DóndeCargar
 
 > Directorio de estaciones de carga para vehículos eléctricos en Argentina
 
 ## Descripción
 
-CargaYa es un directorio comunitario y gratuito de estaciones de carga eléctrica para autos eléctricos (EVs) en Argentina. Permite buscar cargadores por ubicación GPS, por ciudad o planificar rutas A→B mostrando los cargadores disponibles en el corredor.
+DóndeCargar es un directorio comunitario y gratuito de estaciones de carga eléctrica para autos eléctricos (EVs) en Argentina. Permite buscar cargadores por ubicación GPS, por ciudad o planificar rutas A→B mostrando los cargadores disponibles en el corredor.
 
 ## Datos actuales
 

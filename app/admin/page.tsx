@@ -39,7 +39,7 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Panel Admin</h1>
-          <p className="text-xs text-gray-400">CargaYa · Estaciones enviadas por usuarios</p>
+          <p className="text-xs text-gray-400">DóndeCargar · Estaciones enviadas por usuarios</p>
         </div>
         <AdminLogout />
       </div>

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import RutaClient from "./RutaClient";
 
 export const metadata = {
-  title: "Planificá tu ruta – CargaYa",
+  title: "Planificá tu ruta – DóndeCargar",
   description:
     "Encontrá estaciones de carga eléctrica en tu camino entre dos puntos de Argentina.",
 };

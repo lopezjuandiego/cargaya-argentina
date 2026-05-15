@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
         <div className="text-center mb-6">
           <div className="text-3xl mb-2">⚡</div>
           <h1 className="text-lg font-bold text-gray-900">Panel Admin</h1>
-          <p className="text-sm text-gray-400">CargaYa</p>
+          <p className="text-sm text-gray-400">DóndeCargar</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
