@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import RouteMap from "./RouteMap";
 
 // ─── Local city lookup (O(1), no network) ────────────────────────────────────
 // Keys are lowercase, no accents. Covers capitals, GBA, turismo y costa.
@@ -168,6 +169,8 @@ type RouteStation = {
   operator: string;
   address: string;
   city: string;
+  lat: number;
+  lng: number;
   connectorTypes: string;
   powerKw: number | null;
   isFree: boolean;
@@ -313,6 +316,7 @@ type GeoResult = { lat: number; lng: number; display: string };
 type RouteResult = {
   stations: RouteStation[];
   route: { distanceKm: number; durationMin: number };
+  geometry: [number, number][];
   fromDisplay: string;
   toDisplay: string;
 };
@@ -441,7 +445,7 @@ export default function RutaClient() {
 
     try {
       const data = await fetchRoute(geo, radio);
-      setResult({ stations: data.stations, route: data.route, fromDisplay: fromGeo.display, toDisplay: toGeo.display });
+      setResult({ stations: data.stations, route: data.route, geometry: data.geometry ?? [], fromDisplay: fromGeo.display, toDisplay: toGeo.display });
       setFormCollapsed(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error de conexión.");
@@ -568,6 +572,18 @@ export default function RutaClient() {
               </div>
             </div>
           </div>
+
+          {/* Map */}
+          {result.geometry.length > 0 && coords ? (
+            <div className="mb-3 overflow-hidden rounded-2xl shadow-sm border border-gray-100">
+              <RouteMap
+                geometry={result.geometry}
+                stations={result.stations.filter((s) => s.lat && s.lng)}
+                fromLatLng={[coords.from.lat, coords.from.lng]}
+                toLatLng={[coords.to.lat, coords.to.lng]}
+              />
+            </div>
+          ) : null}
 
           {/* Semaphore */}
           <Semaphore stations={result.stations} routeDistanceKm={result.route.distanceKm} autonomy={autonomy} />

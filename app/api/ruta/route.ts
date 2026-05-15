@@ -163,8 +163,12 @@ export async function GET(req: NextRequest) {
       : null,
   }));
 
+  // Convert OSRM [lng, lat] → [lat, lng] for Leaflet
+  const geometry = routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]);
+
   return NextResponse.json({
     stations,
     route: { distanceKm: Math.round(distanceKm), durationMin },
+    geometry,
   });
 }
