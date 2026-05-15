@@ -24,7 +24,7 @@ export async function generateMetadata({
       description: `${station.operator} · ${station.address}, ${station.city}, ${station.province}`,
     },
     alternates: {
-      canonical: `https://cargaya-argentina.vercel.app/estacion/${id}`,
+      canonical: `https://dondecargar.com.ar/estacion/${id}`,
     },
   };
 }
@@ -70,7 +70,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
   });
   const noReportsTooltip = `Ningún usuario reportó el estado todavía. Esta estación fue agregada el ${addedDate}.`;
 
-  const BASE = "https://cargaya-argentina.vercel.app";
+  const BASE = "https://dondecargar.com.ar";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ElectricVehicleChargingStation",

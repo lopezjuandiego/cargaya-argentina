@@ -17,7 +17,7 @@ export default function PrivacidadPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">1. ¿Qué es DóndeCargar?</h2>
           <p>
-            DóndeCargar (<strong>cargaya-argentina.vercel.app</strong>) es un directorio comunitario de
+            DóndeCargar (<strong>dondecargar.com.ar</strong>) es un directorio comunitario de
             estaciones de carga para vehículos eléctricos en Argentina. No requerimos registro ni
             creación de cuenta para utilizar el servicio.
           </p>

@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { getDb } from "@/lib/db";
 
-const BASE = "https://cargaya-argentina.vercel.app";
+const BASE = "https://dondecargar.com.ar";
 
 export const dynamic = "force-dynamic";
 

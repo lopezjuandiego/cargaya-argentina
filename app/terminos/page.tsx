@@ -17,7 +17,7 @@ export default function TerminosPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">1. Aceptación de los términos</h2>
           <p>
-            Al acceder y utilizar DóndeCargar (<strong>cargaya-argentina.vercel.app</strong>), aceptás
+            Al acceder y utilizar DóndeCargar (<strong>dondecargar.com.ar</strong>), aceptás
             estos Términos de Uso. Si no estás de acuerdo, no uses el servicio.
           </p>
         </section>

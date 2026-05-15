@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/buscar"],
     },
-    sitemap: "https://cargaya-argentina.vercel.app/sitemap.xml",
+    sitemap: "https://dondecargar.com.ar/sitemap.xml",
   };
 }

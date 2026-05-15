@@ -57,13 +57,13 @@ ${provinces}
 
 ## URLs principales
 
-- Home: https://cargaya-argentina.vercel.app
-- Planificador de rutas: https://cargaya-argentina.vercel.app/ruta
-- Estaciones por provincia: https://cargaya-argentina.vercel.app/estaciones
-- Estaciones en Buenos Aires: https://cargaya-argentina.vercel.app/estaciones/buenos-aires
-- Estaciones en Córdoba: https://cargaya-argentina.vercel.app/estaciones/cordoba
-- Agregar estación: https://cargaya-argentina.vercel.app/agregar
-- Sitemap: https://cargaya-argentina.vercel.app/sitemap.xml
+- Home: https://dondecargar.com.ar
+- Planificador de rutas: https://dondecargar.com.ar/ruta
+- Estaciones por provincia: https://dondecargar.com.ar/estaciones
+- Estaciones en Buenos Aires: https://dondecargar.com.ar/estaciones/buenos-aires
+- Estaciones en Córdoba: https://dondecargar.com.ar/estaciones/cordoba
+- Agregar estación: https://dondecargar.com.ar/agregar
+- Sitemap: https://dondecargar.com.ar/sitemap.xml
 
 ## Fuentes de datos
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import FeedbackButton from "./FeedbackButton";
 
-const BASE_URL = "https://cargaya-argentina.vercel.app";
+const BASE_URL = "https://dondecargar.com.ar";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

@@ -39,7 +39,7 @@ export async function generateMetadata({
     title: `Cargadores eléctricos en ${province}`,
     description: `Listado completo de estaciones de carga para autos eléctricos en ${province}, Argentina. Encontrá el cargador más cercano a vos.`,
     alternates: {
-      canonical: `https://cargaya-argentina.vercel.app/estaciones/${slug}`,
+      canonical: `https://dondecargar.com.ar/estaciones/${slug}`,
     },
   };
 }
