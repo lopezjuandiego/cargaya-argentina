@@ -175,6 +175,13 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
             🗺️ Planificá tu ruta A→B
             <span className="text-gray-300 text-xs ml-auto">→</span>
           </a>
+          <a
+            href="/blog"
+            className="flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-2xl px-4 py-3 bg-white hover:border-green-400 hover:text-green-700 hover:bg-green-50 transition-all shadow-sm w-full"
+          >
+            📖 Guías sobre autos eléctricos
+            <span className="text-gray-300 text-xs ml-auto">→</span>
+          </a>
         </div>
 
         {/* Stats */}

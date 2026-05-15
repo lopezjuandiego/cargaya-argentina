@@ -45,6 +45,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  const blogRows = (await sql`
+    SELECT slug, "publishedAt", "updatedAt" FROM "BlogPost"
+    WHERE published = true ORDER BY "publishedAt" DESC
+  `) as { slug: string; publishedAt: string; updatedAt: string }[];
+
+  const blogUrls: MetadataRoute.Sitemap = [
+    { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    ...blogRows.map((p) => ({
+      url: `${BASE}/blog/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+  ];
+
   return [
     { url: BASE, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
     { url: `${BASE}/ruta`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
@@ -52,6 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/agregar`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/terminos`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/privacidad`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    ...blogUrls,
     ...provinceUrls,
     ...cityUrls,
     ...stationUrls,
