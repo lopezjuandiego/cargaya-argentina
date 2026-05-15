@@ -114,17 +114,21 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
           <div>
             <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Conectores</p>
             <div className="flex flex-wrap gap-2">
-              {connectors.map((c) => (
-                <span
-                  key={c}
-                  title={CONNECTOR_INFO[c] ?? `Conector tipo ${c}`}
-                  className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full font-medium cursor-help"
-                >
-                  {c}
-                </span>
-              ))}
+              {connectors.map((c) => {
+                const info = CONNECTOR_INFO[c] ?? `Conector tipo ${c}`;
+                return (
+                  <span key={c} className="relative group/tip inline-block">
+                    <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full font-medium cursor-help select-none inline-block">
+                      {c}
+                    </span>
+                    <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tip:block z-20 w-64 bg-gray-900 text-white text-xs rounded-xl px-3 py-2.5 leading-snug text-center shadow-lg">
+                      {info}
+                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                    </span>
+                  </span>
+                );
+              })}
             </div>
-            <p className="text-xs text-gray-400 mt-2">Pasá el cursor sobre cada conector para más info.</p>
           </div>
         )}
 

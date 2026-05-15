@@ -62,7 +62,12 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
         {/* Logo / Header */}
         <div>
           <div className="text-6xl mb-4">⚡</div>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">CargaYa</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">CargaYa</h1>
+            <span className="text-xs font-semibold bg-green-100 text-green-700 px-2 py-0.5 rounded-full border border-green-200 tracking-wide">
+              Beta
+            </span>
+          </div>
           <p className="mt-3 text-gray-500 text-lg leading-snug">
             Encontrá la estación de carga eléctrica<br className="hidden sm:block" /> más cercana en Argentina
           </p>
