@@ -76,9 +76,12 @@ export default function AgregarPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-screen">
-      <a href="javascript:history.back()" className="inline-flex items-center gap-1 text-gray-400 hover:text-gray-600 mb-4 text-sm">
+      <button
+        onClick={() => router.back()}
+        className="inline-flex items-center gap-1 text-gray-400 hover:text-gray-600 mb-4 text-sm"
+      >
         ← Volver
-      </a>
+      </button>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
         <h1 className="text-xl font-bold text-gray-900 mb-1">Agregar estación</h1>

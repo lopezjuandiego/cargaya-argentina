@@ -61,10 +61,10 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
       <div className="w-full max-w-md space-y-8 text-center">
         {/* Logo / Header */}
         <div>
-          <div className="text-5xl mb-3">⚡</div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">CargaYa</h1>
-          <p className="mt-2 text-gray-500 text-base">
-            Encontrá la estación de carga eléctrica más cercana en Argentina
+          <div className="text-6xl mb-4">⚡</div>
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">CargaYa</h1>
+          <p className="mt-3 text-gray-500 text-lg leading-snug">
+            Encontrá la estación de carga eléctrica<br className="hidden sm:block" /> más cercana en Argentina
           </p>
         </div>
 
@@ -117,22 +117,23 @@ export default function HomeClient({ stationCount, lastUpdated }: { stationCount
 
           <a
             href="/ruta"
-            className="flex items-center justify-center gap-2 text-sm text-gray-600 border border-gray-200 rounded-xl px-4 py-2.5 bg-white hover:border-green-300 hover:text-green-700 transition-colors shadow-sm w-full"
+            className="flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-2xl px-4 py-3 bg-white hover:border-green-400 hover:text-green-700 hover:bg-green-50 transition-all shadow-sm w-full"
           >
             🗺️ Planificá tu ruta A→B
+            <span className="text-gray-300 text-xs ml-auto">→</span>
           </a>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 pt-4">
+        <div className="grid grid-cols-3 gap-3 pt-2">
           {[
             { value: `${stationCount}`, label: "Estaciones" },
             { value: "7+", label: "Redes" },
-            { value: "Todo el país", label: "Cobertura" },
+            { value: "24", label: "Provincias" },
           ].map((s) => (
-            <div key={s.label} className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-              <div className="font-bold text-gray-900 text-lg">{s.value}</div>
-              <div className="text-gray-500 text-xs mt-0.5">{s.label}</div>
+            <div key={s.label} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+              <div className="font-bold text-green-700 text-xl">{s.value}</div>
+              <div className="text-gray-400 text-xs mt-0.5 font-medium">{s.label}</div>
             </div>
           ))}
         </div>

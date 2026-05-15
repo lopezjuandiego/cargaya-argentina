@@ -89,8 +89,8 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
 
         <div>
           <h1 className="text-2xl font-bold text-gray-900 leading-tight">{station.name}</h1>
-          <p className="text-gray-500 mt-1">{station.address}, {station.city}</p>
-          <p className="text-gray-400 text-sm">{station.province} {station.postalCode ? `(${station.postalCode})` : ""}</p>
+          <p className="text-gray-600 mt-1 font-medium">{station.address}, {station.city}</p>
+          <p className="text-gray-400 text-sm mt-0.5">{station.province}{station.postalCode ? ` (${station.postalCode})` : ""}</p>
         </div>
 
         {/* Info grid */}
@@ -133,9 +133,9 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
           href={`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors"
+          className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-2xl font-semibold transition-colors shadow-sm"
         >
-          🗺️ Cómo llegar
+          Cómo llegar →
         </a>
       </div>
 
