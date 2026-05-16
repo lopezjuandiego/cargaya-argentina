@@ -15,7 +15,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!post) notFound();
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 min-h-screen">
+    <div className="max-w-5xl mx-auto px-4 py-6 min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <a href="/admin/blog" className="text-sm text-gray-400 hover:text-green-600">← Blog</a>

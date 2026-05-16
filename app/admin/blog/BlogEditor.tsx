@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { marked } from "marked";
 
 type Post = {
   id?: number; title: string; slug: string; excerpt: string;
@@ -24,6 +25,15 @@ export default function BlogEditor({ post }: { post?: Post & { id: number } }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState("");
+
+  async function togglePreview() {
+    if (!preview) {
+      const html = await marked(content, { async: true });
+      setPreviewHtml(html as string);
+    }
+    setPreview(!preview);
+  }
 
   async function save(pub: boolean) {
     setSaving(true);
@@ -46,80 +56,116 @@ export default function BlogEditor({ post }: { post?: Post & { id: number } }) {
 
   return (
     <div className="space-y-4">
-      {/* Title */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
-        <input
-          value={title}
-          onChange={(e) => { setTitle(e.target.value); if (!isEdit) setSlug(slugify(e.target.value)); }}
-          placeholder="Cómo planificar un viaje en auto eléctrico..."
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-      </div>
-
-      {/* Slug */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400">/blog/</span>
+      {/* Fila superior: título + slug + excerpt */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
           <input
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={title}
+            onChange={(e) => { setTitle(e.target.value); if (!isEdit) setSlug(slugify(e.target.value)); }}
+            placeholder="Cómo planificar un viaje en auto eléctrico..."
+            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 whitespace-nowrap">/blog/</span>
+            <input
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Resumen (excerpt)</label>
+          <textarea
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            rows={2}
+            placeholder="Una o dos oraciones que resuman el artículo..."
+            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
           />
         </div>
       </div>
 
-      {/* Excerpt */}
+      {/* Editor / Preview en dos columnas si hay espacio */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Resumen (excerpt) *</label>
-        <textarea
-          value={excerpt}
-          onChange={(e) => setExcerpt(e.target.value)}
-          rows={2}
-          placeholder="Una o dos oraciones que resuman el artículo..."
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-        />
-      </div>
-
-      {/* Content */}
-      <div>
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-2">
           <label className="block text-sm font-medium text-gray-700">Contenido (Markdown) *</label>
-          <button
-            type="button"
-            onClick={() => setPreview(!preview)}
-            className="text-xs text-green-600 hover:underline"
-          >
-            {preview ? "✎ Editar" : "👁 Vista previa"}
-          </button>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-gray-400">{content.length} caracteres</span>
+            <button
+              type="button"
+              onClick={togglePreview}
+              className="text-xs font-medium text-green-600 hover:underline"
+            >
+              {preview ? "✎ Solo editor" : "👁 Vista previa"}
+            </button>
+          </div>
         </div>
+
         {preview ? (
-          <div
-            className="min-h-64 border border-gray-200 rounded-xl p-4 prose prose-sm max-w-none text-gray-700 bg-gray-50"
-            dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, "<br>") }}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <textarea
+              value={content}
+              onChange={(e) => { setContent(e.target.value); marked(e.target.value, { async: true }).then((h) => setPreviewHtml(h as string)); }}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+              style={{ minHeight: "600px" }}
+            />
+            <div
+              className="border border-gray-100 rounded-xl p-5 bg-gray-50 overflow-auto prose prose-green prose-sm max-w-none text-gray-700
+                prose-headings:font-bold prose-headings:text-gray-900
+                prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-2
+                prose-h3:text-lg prose-h3:mt-4 prose-h3:mb-1
+                prose-p:mb-3 prose-li:mb-1
+                prose-a:text-green-600
+                prose-strong:text-gray-900"
+              style={{ minHeight: "600px" }}
+              dangerouslySetInnerHTML={{ __html: previewHtml }}
+            />
+          </div>
         ) : (
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={20}
-            placeholder="## Introducción&#10;&#10;Escribí el artículo en Markdown..."
             className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
+            style={{ minHeight: "600px" }}
+            placeholder={"## Introducción\n\nEscribí el artículo en Markdown...\n\n## Segunda sección\n\n![Descripción de la foto](https://url-de-tu-imagen.jpg)"}
           />
         )}
-        <p className="text-xs text-gray-400 mt-1">Usá Markdown: **negrita**, ## títulos, - listas, [link](url)</p>
+
+        {/* Cheatsheet rápida */}
+        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+          {[
+            ["**negrita**", "negrita"],
+            ["## Título", "título H2"],
+            ["### Subtítulo", "H3"],
+            ["- ítem", "lista"],
+            ["[texto](url)", "link"],
+            ["![alt](url)", "foto"],
+            ["---", "separador"],
+            ["> texto", "cita"],
+          ].map(([code, label]) => (
+            <span key={code} className="text-xs text-gray-400">
+              <code className="bg-gray-100 px-1 rounded text-gray-600">{code}</code> {label}
+            </span>
+          ))}
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</p>}
 
-      <div className="flex items-center gap-3 pt-2 flex-wrap">
+      <div className="flex items-center gap-3 pt-2 flex-wrap border-t border-gray-100">
         <button
           onClick={() => save(true)}
           disabled={saving}
           className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm"
         >
-          {saving ? "Guardando..." : published ? "Actualizar" : "Publicar"}
+          {saving ? "Guardando..." : isEdit ? "Actualizar" : "Publicar"}
         </button>
         <button
           onClick={() => save(false)}
@@ -131,6 +177,16 @@ export default function BlogEditor({ post }: { post?: Post & { id: number } }) {
         <a href="/admin/blog" className="text-sm text-gray-400 hover:text-gray-600">
           Cancelar
         </a>
+        {isEdit && (
+          <a
+            href={`/blog/${post.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto text-sm text-green-600 hover:underline"
+          >
+            Ver publicado →
+          </a>
+        )}
       </div>
     </div>
   );
