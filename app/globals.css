@@ -1,7 +1,93 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: #f3f4f6;
   color: #111827;
+}
+
+/* Blog content — espaciado explícito, no depende de modificadores prose */
+.blog-content h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.blog-content h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+.blog-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+}
+.blog-content ul,
+.blog-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+.blog-content li {
+  margin-bottom: 0.4rem;
+  line-height: 1.7;
+}
+.blog-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2.5rem 0;
+}
+.blog-content blockquote {
+  border-left: 4px solid #16a34a;
+  background: #f0fdf4;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  margin: 1.5rem 0;
+  font-style: normal;
+}
+.blog-content blockquote p {
+  margin-bottom: 0.4rem;
+}
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+.blog-content th {
+  background: #f9fafb;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+}
+.blog-content td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+.blog-content tr:last-child td {
+  border-bottom: none;
+}
+.blog-content a {
+  color: #16a34a;
+}
+.blog-content a:hover {
+  text-decoration: underline;
+}
+.blog-content strong {
+  color: #111827;
+}
+.blog-content img {
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  max-width: 100%;
+}
+.blog-content code {
+  background: #f3f4f6;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
 }

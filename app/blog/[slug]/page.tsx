@@ -2,9 +2,33 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
-// Allow raw HTML (for <br>, <figure>, etc.) and convert single newlines to <br>
 marked.setOptions({ breaks: true });
+
+const ALLOWED_TAGS = [
+  "h1","h2","h3","h4","h5","h6","p","br","hr","strong","em","del","code","pre",
+  "blockquote","ul","ol","li","a","img","table","thead","tbody","tr","th","td",
+  "figure","figcaption","div","span",
+];
+
+function sanitize(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: {
+      a: ["href", "target", "rel"],
+      img: ["src", "alt", "width", "height"],
+      "*": ["class"],
+    },
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    transformTags: {
+      a: (_, attribs) => ({
+        tagName: "a",
+        attribs: { ...attribs, rel: "noopener noreferrer" },
+      }),
+    },
+  });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +61,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = rows[0] as Post | undefined;
   if (!post) notFound();
 
-  const html = await marked(post.content, { async: true });
+  const raw = await marked(post.content, { async: true });
+  const html = sanitize(raw as string);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -78,19 +103,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Rendered markdown */}
         <div
-          className="prose prose-green prose-sm max-w-none text-gray-700 leading-relaxed
-            prose-headings:font-bold prose-headings:text-gray-900
-            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-            prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3
-            prose-p:mb-5 prose-p:leading-7
-            prose-li:mb-2 prose-ul:mb-5 prose-ol:mb-5
-            prose-hr:my-10 prose-hr:border-gray-200
-            prose-blockquote:border-green-400 prose-blockquote:bg-green-50 prose-blockquote:rounded-xl prose-blockquote:px-5 prose-blockquote:py-3 prose-blockquote:not-italic prose-blockquote:my-6
-            prose-table:my-6
-            prose-img:rounded-xl prose-img:my-8
-            prose-a:text-green-600 prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-gray-900
-            prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded"
+          className="blog-content text-gray-700 text-[0.95rem]"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </article>
