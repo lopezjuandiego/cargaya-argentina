@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { marked } from "marked";
 
+// Allow raw HTML (for <br>, <figure>, etc.) and convert single newlines to <br>
+marked.setOptions({ breaks: true });
+
 export const dynamic = "force-dynamic";
 
 type Post = {
@@ -77,9 +80,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div
           className="prose prose-green prose-sm max-w-none text-gray-700 leading-relaxed
             prose-headings:font-bold prose-headings:text-gray-900
-            prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3
-            prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2
-            prose-p:mb-4 prose-li:mb-1
+            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
+            prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3
+            prose-p:mb-5 prose-p:leading-7
+            prose-li:mb-2 prose-ul:mb-5 prose-ol:mb-5
+            prose-hr:my-10 prose-hr:border-gray-200
+            prose-blockquote:border-green-400 prose-blockquote:bg-green-50 prose-blockquote:rounded-xl prose-blockquote:px-5 prose-blockquote:py-3 prose-blockquote:not-italic prose-blockquote:my-6
+            prose-table:my-6
+            prose-img:rounded-xl prose-img:my-8
             prose-a:text-green-600 prose-a:no-underline hover:prose-a:underline
             prose-strong:text-gray-900
             prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded"

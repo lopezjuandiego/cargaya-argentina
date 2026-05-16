@@ -85,26 +85,10 @@ export default async function BuscarPage({
       if (c) closest = { ...c, lastStatus: await getLastStatus(c!.id) };
     } else {
       resolvedLocation = geo.display;
-      // Find stations near the searched zone
+      // Distances always from the searched location center — never from user GPS
       const raw = await getNearbyStations(geo.lat, geo.lng, radio, 30);
-      // Recalculate distances from user's real location if available
-      if (hasUserLocation) {
-        const R = 6371;
-        function hav(lat1: number, lng1: number, lat2: number, lng2: number) {
-          const dLat = ((lat2 - lat1) * Math.PI) / 180;
-          const dLng = ((lng2 - lng1) * Math.PI) / 180;
-          const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-          return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        }
-        const withRealDist = raw.map((s) => ({
-          ...s,
-          distanceKm: hav(userLat!, userLng!, s.lat, s.lng),
-        })).sort((a, b) => a.distanceKm - b.distanceKm);
-        stations = await Promise.all(withRealDist.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
-      } else {
-        stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
-        distanceNote = `Distancia desde el centro de "${params.q}" — no desde tu ubicación`;
-      }
+      stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
+      distanceNote = `Distancias desde el centro de "${params.q}"`;
       if (stations.length === 0) {
         // Always use the searched city coords, not the user's GPS
         const c = await getClosestStation(geo.lat, geo.lng);
