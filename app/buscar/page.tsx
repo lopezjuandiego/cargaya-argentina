@@ -49,7 +49,7 @@ export default async function BuscarPage({
   searchParams: Promise<{ lat?: string; lng?: string; q?: string; radio?: string; gratis?: string; conector?: string }>;
 }) {
   const params = await searchParams;
-  const radio = params.radio ? parseInt(params.radio) : 15;
+  const radio = params.radio ? parseInt(params.radio) : 5;
   const filterGratis = params.gratis === "1";
   const filterConector = params.conector ?? "";
 

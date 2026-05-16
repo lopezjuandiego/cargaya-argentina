@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-const RADIOS = [5, 10, 15, 25, 50];
+const RADIOS = [1, 3, 5, 10];
 
 export default function RadioSelector({
   current,

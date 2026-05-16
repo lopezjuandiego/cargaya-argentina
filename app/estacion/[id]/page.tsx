@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import StatusForm from "./StatusForm";
 import BackLink from "./BackLink";
+import ShareButtons from "./ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -178,6 +179,17 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
         <p className="text-xs text-gray-400 text-center">
           La dirección en Google Maps puede diferir del nombre del lugar, pero las coordenadas apuntan al sitio correcto.
         </p>
+
+        {/* Compartir */}
+        <div>
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Compartir esta estación</p>
+          <ShareButtons
+            stationId={station.id}
+            name={station.name}
+            address={station.address}
+            city={station.city}
+          />
+        </div>
       </div>
 
       {/* Reportar estado */}

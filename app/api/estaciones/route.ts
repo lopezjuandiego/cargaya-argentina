@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const latParam = searchParams.get("lat");
   const lngParam = searchParams.get("lng");
-  const radio = searchParams.get("radio") ? parseFloat(searchParams.get("radio")!) : 15;
+  const radio = searchParams.get("radio") ? parseFloat(searchParams.get("radio")!) : 5;
 
   try {
     if (latParam && lngParam) {
