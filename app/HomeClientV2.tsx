@@ -90,9 +90,9 @@ export default function HomeClientV2({ stationCount, lastUpdated }: { stationCou
             <p className="text-green-400 text-sm font-semibold tracking-widest uppercase">
               {stationCount}+ estaciones en Argentina
             </p>
-            <h1 className="text-5xl sm:text-6xl font-black text-white leading-tight tracking-tight">
-              Encontrá dónde cargar<br />
-              <span className="text-green-400">tu auto eléctrico</span>
+            <h1 className="text-[1.9rem] min-[480px]:text-[2.4rem] sm:text-[2.9rem] font-black text-white leading-tight tracking-tight">
+              <span className="block whitespace-nowrap">Encontrá dónde cargar</span>
+              <span className="text-green-400 whitespace-nowrap">tu auto eléctrico</span>
             </h1>
             <p className="text-gray-400 text-lg">
               El directorio más completo de cargadores eléctricos en Argentina.
