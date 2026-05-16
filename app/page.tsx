@@ -1,5 +1,5 @@
 import { getDb } from "@/lib/db";
-import HomeClient from "./HomeClient";
+import HomeClient from "./HomeClientV2"; // PREVIEW — cambiar a HomeClient para volver
 
 export const revalidate = 3600;
 
