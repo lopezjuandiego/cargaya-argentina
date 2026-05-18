@@ -55,6 +55,12 @@ ${provinces}
 - Reporte comunitario de estado (funciona / no funciona)
 - Páginas indexables por provincia
 
+## Dominio canónico y aliases
+
+- Dominio principal: https://dondecargar.com.ar
+- También accesible en: https://dondecargarelectrico.com.ar → redirige a dondecargar.com.ar
+- También accesible en: https://dondecargoelectrico.com.ar → redirige a dondecargar.com.ar
+
 ## URLs principales
 
 - Home: https://dondecargar.com.ar
