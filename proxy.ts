@@ -7,7 +7,7 @@ const ALIAS_HOSTS = new Set([
   "dondecargoelectrico.com.ar",
 ]);
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const host = (req.headers.get("host") ?? "").split(":")[0];
   if (ALIAS_HOSTS.has(host)) {
     const url = req.nextUrl.clone();
