@@ -53,7 +53,11 @@ export default async function AdminBlogPage() {
                 <p className="font-semibold text-gray-900 text-sm truncate">{p.title}</p>
                 <p className="text-xs text-gray-400 mt-0.5">
                   /blog/{p.slug} ·{" "}
-                  {new Date(p.createdAt).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}
+                  {p.published
+                    ? `Publicado ${new Date(p.publishedAt!).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
+                    : p.publishedAt
+                    ? `Programado ${new Date(p.publishedAt).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                    : `Creado ${new Date(p.createdAt).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`}
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
