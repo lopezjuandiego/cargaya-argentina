@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
+import { ShareButtons } from "./ShareButtons";
 
 marked.setOptions({ breaks: true });
 
@@ -108,7 +109,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         />
       </article>
 
-      <div className="mt-12 pt-6 border-t border-gray-100 space-y-3">
+      <ShareButtons title={post.title} slug={post.slug} />
+
+      <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
         <p className="text-sm text-gray-600">
           ¿Buscás cargadores cerca tuyo?{" "}
           <a href="/" className="text-green-600 font-medium hover:underline">
