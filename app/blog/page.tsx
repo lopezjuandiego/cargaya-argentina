@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Blog – Guías sobre autos eléctricos en Argentina",
+  title: "Autos Eléctricos: guías y consejos en Argentina",
   description:
     "Guías, consejos y noticias sobre vehículos eléctricos en Argentina: cómo cargar, cuánto cuesta, mejores rutas y redes de carga.",
   alternates: { canonical: "https://dondecargar.com.ar/blog" },
@@ -26,9 +26,9 @@ export default async function BlogPage() {
       <a href="/" className="text-sm text-green-600 hover:underline">← Inicio</a>
 
       <div className="mt-4 mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Blog</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Autos Eléctricos: guías y consejos</h1>
         <p className="text-gray-500 mt-2">
-          Guías sobre autos eléctricos, carga y movilidad sostenible en Argentina.
+          Todo lo que necesitás saber sobre autos eléctricos en Argentina.
         </p>
       </div>
 
