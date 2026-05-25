@@ -150,8 +150,9 @@ export async function GET(req: NextRequest) {
           WHERE ROUND(lat::numeric, 3) = ROUND(${s.lat}::numeric, 3)
             AND ROUND(lng::numeric, 3) = ROUND(${s.lng}::numeric, 3)
         )
+        RETURNING id
       `;
-      if (result.count > 0) inserted++;
+      if (result.length > 0) inserted++;
       else skipped++;
     }
 
