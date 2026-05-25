@@ -42,6 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body className="min-h-screen flex flex-col">
         {children}
+        <footer className="mt-auto px-4 py-6 text-center text-xs text-gray-400 border-t border-gray-100">
+          La información sobre estaciones de carga es provista por usuarios y fuentes públicas (OpenStreetMap, Open Charge Map).
+          DóndeCargar no garantiza que los datos estén actualizados ni que las estaciones estén operativas al momento de tu visita.
+          Verificá siempre con la app del operador antes de salir.
+        </footer>
         <FeedbackButton />
         <Analytics />
         <Script

@@ -23,7 +23,10 @@ type OsmNode = {
   name?: string; operator?: string; address?: string; city?: string;
 };
 
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 async function reverseGeocode(lat: number, lng: number): Promise<{ address: string; city: string }> {
+  await sleep(1100); // Nominatim ToS: max 1 req/sec
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
     const res = await fetch(url, {

@@ -71,7 +71,10 @@ function parseConnectors(tags: Record<string, string>): string[] {
   return set.size ? [...set] : ["Tipo 2"];
 }
 
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 async function reverseGeocode(lat: number, lng: number): Promise<{ address: string; city: string; province: string }> {
+  await sleep(1100); // Nominatim ToS: max 1 req/sec
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
     const res = await fetch(url, {
