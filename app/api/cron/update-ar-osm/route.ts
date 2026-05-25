@@ -135,8 +135,11 @@ export async function GET(req: NextRequest) {
 
     const sql = getDb();
     let inserted = 0, skipped = 0, managed = 0;
+    const START = Date.now();
+    const BUDGET_MS = 50_000;
 
     for (const s of stations) {
+      if (Date.now() - START > BUDGET_MS) break; // stay within Vercel timeout
       if (isManagedOperator(s.operator)) { managed++; continue; }
 
       let address = s.address ?? "";
@@ -174,6 +177,9 @@ export async function GET(req: NextRequest) {
       else skipped++;
     }
 
+    const elapsed = Date.now() - START;
+    const timedOut = elapsed >= BUDGET_MS;
+
     return NextResponse.json({
       ok: true,
       inserted,
@@ -181,6 +187,8 @@ export async function GET(req: NextRequest) {
       managed_skipped: managed,
       raw_nodes: arNodes.length,
       after_clustering: stations.length,
+      elapsed_ms: elapsed,
+      timed_out: timedOut,
     });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
