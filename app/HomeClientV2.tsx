@@ -201,7 +201,7 @@ export default function HomeClientV2({ stationCount, lastUpdated }: { stationCou
             {[
               { value: `${stationCount}`, label: "Estaciones" },
               { value: "7+", label: "Redes" },
-              { value: "24", label: "Provincias" },
+              { value: "2", label: "Países" },
             ].map((s) => (
               <div key={s.label} className="bg-[#0c0c0c] px-4 py-5 text-center">
                 <div className="text-2xl font-black text-green-400">{s.value}</div>
