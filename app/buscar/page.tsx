@@ -24,23 +24,30 @@ type Station = {
 };
 
 async function geocode(q: string): Promise<{ lat: number; lng: number; display: string } | null> {
-  const query = encodeURIComponent(`${q}, Argentina`);
-  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&countrycodes=ar`;
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": "DóndeCargar/1.0 (contacto@cargaya.com.ar)" },
-      next: { revalidate: 3600 },
-    });
-    const data = await res.json();
-    if (!data.length) return null;
-    return {
-      lat: parseFloat(data[0].lat),
-      lng: parseFloat(data[0].lon),
-      display: data[0].display_name.split(",").slice(0, 2).join(", "),
-    };
-  } catch {
-    return null;
-  }
+  const tryNominatim = async (query: string) => {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=ar,uy`;
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": "DóndeCargar/1.0 (contacto@cargaya.com.ar)" },
+        next: { revalidate: 3600 },
+      });
+      const data = await res.json();
+      if (!data.length) return null;
+      const r = data[0];
+      const lat = parseFloat(r.lat), lng = parseFloat(r.lon);
+      // Bounding box: Argentina + Uruguay
+      if (lat < -55 || lat > -29 || lng < -74 || lng > -52) return null;
+      return { lat, lng, display: r.display_name.split(",").slice(0, 2).join(", ") };
+    } catch { return null; }
+  };
+  // Try bare query first (Nominatim ranks capitals above small towns)
+  return (await tryNominatim(q)) ?? (await tryNominatim(`${q}, Argentina`)) ?? (await tryNominatim(`${q}, Uruguay`));
+}
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 export default async function BuscarPage({
@@ -90,9 +97,11 @@ export default async function BuscarPage({
       stations = await Promise.all(raw.map(async (s) => ({ ...s, lastStatus: await getLastStatus(s.id) })));
       distanceNote = `Distancias desde el centro de "${params.q}"`;
       if (stations.length === 0) {
-        // Always use the searched city coords, not the user's GPS
+        // Only show closest if it's within 150 km (avoid showing AR stations when searching UY)
         const c = await getClosestStation(geo.lat, geo.lng);
-        if (c) closest = { ...c, lastStatus: await getLastStatus(c.id) };
+        if (c && haversineKm(geo.lat, geo.lng, c.lat, c.lng) <= 150) {
+          closest = { ...c, lastStatus: await getLastStatus(c.id) };
+        }
       }
     }
   } else {
