@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import RutaClient from "./RutaClient";
 
 export const metadata = {
-  title: "Planificá tu ruta – DóndeCargar",
+  title: "Planificador de viaje eléctrico – DóndeCargar",
   description:
-    "Encontrá estaciones de carga eléctrica en tu camino entre dos puntos de Argentina.",
+    "Planificá tu viaje con tu auto eléctrico en Argentina. Calculá cargadores en tu ruta, conocé los gaps de autonomía y encontrá estaciones DC y AC en el camino.",
 };
 
 export default function RutaPage() {

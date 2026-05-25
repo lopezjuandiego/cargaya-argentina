@@ -75,7 +75,7 @@ export default function HomeClientV2({ stationCount, lastUpdated }: { stationCou
           <span className="text-[10px] font-semibold bg-green-900/60 text-green-400 px-1.5 py-0.5 rounded-full border border-green-800">Beta</span>
         </div>
         <div className="flex items-center gap-5 text-sm text-gray-400">
-          <a href="/ruta" className="hover:text-white transition-colors">Planificador</a>
+          <a href="/ruta" className="text-green-400 hover:text-green-300 font-semibold transition-colors">Planificar viaje</a>
           <a href="/blog" className="hover:text-white transition-colors">Blog</a>
           <a href="/agregar" className="hover:text-white transition-colors">Agregar</a>
         </div>
@@ -165,12 +165,26 @@ export default function HomeClientV2({ stationCount, lastUpdated }: { stationCou
             )}
           </div>
 
+          {/* Planner CTA */}
+          <a
+            href="/ruta"
+            className="block w-full border border-white/10 hover:border-green-500/50 rounded-2xl px-5 py-4 bg-white/5 hover:bg-green-950/40 transition-all text-left group"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-white font-bold text-sm group-hover:text-green-400 transition-colors">
+                  Planificá tu viaje con tu eléctrico
+                </p>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  Calculá cargadores en ruta y gaps de autonomía
+                </p>
+              </div>
+              <span className="text-green-500 text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </a>
+
           {/* Quick links */}
           <div className="flex gap-3 justify-center flex-wrap">
-            <a href="/ruta" className="flex items-center gap-2 text-sm text-gray-400 hover:text-green-400 transition-colors">
-              <span>🗺️</span> Planificador A→B
-            </a>
-            <span className="text-white/10">·</span>
             <a href="/blog" className="flex items-center gap-2 text-sm text-gray-400 hover:text-green-400 transition-colors">
               <span>📖</span> Guías EV
             </a>

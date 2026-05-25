@@ -471,8 +471,8 @@ export default function RutaClient() {
       <div className="flex items-center gap-3 mb-5">
         <a href="/" className="flex items-center justify-center w-9 h-9 rounded-xl bg-white border border-gray-200 shadow-sm text-gray-600 hover:bg-gray-50 transition-colors text-lg">←</a>
         <div>
-          <h1 className="text-lg font-bold text-gray-900">Ruta con cargadores</h1>
-          <p className="text-xs text-gray-400">Estaciones en el camino entre dos puntos</p>
+          <h1 className="text-xl font-black text-gray-900 leading-tight">Planificá tu viaje con tu eléctrico</h1>
+          <p className="text-xs text-gray-400 mt-0.5">Cargadores en ruta · gap de autonomía · Argentina</p>
         </div>
       </div>
 
