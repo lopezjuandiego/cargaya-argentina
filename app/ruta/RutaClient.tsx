@@ -293,7 +293,7 @@ async function geocode(q: string): Promise<GeoResult | null> {
   const trySearch = async (query: string, countryCode: boolean) => {
     const url =
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1` +
-      (countryCode ? "&countrycodes=ar" : "");
+      (countryCode ? "&countrycodes=ar,uy" : "");
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -301,7 +301,7 @@ async function geocode(q: string): Promise<GeoResult | null> {
       const r = data[0];
       if (!countryCode) {
         const lat = parseFloat(r.lat), lng = parseFloat(r.lon);
-        if (lat < -55 || lat > -22 || lng < -74 || lng > -53) return null;
+        if (lat < -55 || lat > -22 || lng < -74 || lng > -52) return null;
       }
       return {
         lat: parseFloat(r.lat),
@@ -313,6 +313,7 @@ async function geocode(q: string): Promise<GeoResult | null> {
 
   return (
     (await trySearch(`${q}, Argentina`, true)) ??
+    (await trySearch(`${q}, Uruguay`, true)) ??
     (await trySearch(q, true)) ??
     (await trySearch(q, false))
   );

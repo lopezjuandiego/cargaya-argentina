@@ -9,25 +9,28 @@ const BASE_URL = "https://dondecargar.com.ar";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "DóndeCargar – Cargadores eléctricos en Argentina",
+    default: "DóndeCargar – Cargadores eléctricos en Argentina y Uruguay",
     template: "%s | DóndeCargar",
   },
   description:
-    "Encontrá la estación de carga eléctrica más cercana en Argentina. Más de 230 cargadores: YPF, Chargebox, Scame y más. Buscá por ciudad o planificá tu ruta.",
+    "Encontrá la estación de carga eléctrica más cercana en Argentina y Uruguay. Más de 240 cargadores: YPF, Chargebox, Scame y más. Buscá por ciudad o planificá tu ruta.",
   keywords: [
     "cargadores eléctricos Argentina",
+    "cargadores eléctricos Uruguay",
     "estaciones de carga EV",
     "autos eléctricos Argentina",
     "dónde cargar auto eléctrico",
     "mapa cargadores Argentina",
+    "cargadores Montevideo",
+    "planificador viaje eléctrico",
   ],
   openGraph: {
     siteName: "DóndeCargar",
     locale: "es_AR",
     type: "website",
-    title: "DóndeCargar – Cargadores eléctricos en Argentina",
+    title: "DóndeCargar – Cargadores eléctricos en Argentina y Uruguay",
     description:
-      "Más de 230 estaciones de carga para autos eléctricos en todo el país. Buscá por ubicación o planificá tu ruta.",
+      "Más de 240 estaciones de carga para autos eléctricos en Argentina y Uruguay. Buscá por ubicación o planificá tu ruta.",
     url: BASE_URL,
   },
   twitter: { card: "summary" },

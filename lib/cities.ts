@@ -192,6 +192,39 @@ const AR_CITIES: Record<string, CityResult> = {
   "rio grande":            { lat: -53.7878, lng: -67.7027, display: "Río Grande, Tierra del Fuego" },
 };
 
+// ─── Uruguay ──────────────────────────────────────────────────────────────────
+const UY_CITIES: Record<string, CityResult> = {
+  "montevideo":             { lat: -34.9011, lng: -56.1645, display: "Montevideo, Uruguay" },
+  "punta del este":         { lat: -34.9674, lng: -54.9544, display: "Punta del Este, Uruguay" },
+  "maldonado":              { lat: -34.9029, lng: -54.9602, display: "Maldonado, Uruguay" },
+  "colonia del sacramento": { lat: -34.4640, lng: -57.8405, display: "Colonia del Sacramento, Uruguay" },
+  "colonia":                { lat: -34.4640, lng: -57.8405, display: "Colonia del Sacramento, Uruguay" },
+  "salto":                  { lat: -31.3833, lng: -57.9667, display: "Salto, Uruguay" },
+  "paysandu":               { lat: -32.3228, lng: -58.0756, display: "Paysandú, Uruguay" },
+  "rivera":                 { lat: -30.9058, lng: -55.5512, display: "Rivera, Uruguay" },
+  "fray bentos":            { lat: -33.1270, lng: -58.3038, display: "Fray Bentos, Uruguay" },
+  "mercedes":               { lat: -33.2582, lng: -58.0215, display: "Mercedes, Uruguay" },
+  "tacuarembo":             { lat: -31.7232, lng: -55.9831, display: "Tacuarembó, Uruguay" },
+  "melo":                   { lat: -32.3668, lng: -54.1740, display: "Melo, Uruguay" },
+  "florida uy":             { lat: -34.0986, lng: -56.2158, display: "Florida, Uruguay" },
+  "canelones":              { lat: -34.5272, lng: -56.2816, display: "Canelones, Uruguay" },
+  "san jose de mayo":       { lat: -34.3393, lng: -56.7132, display: "San José de Mayo, Uruguay" },
+  "durazno":                { lat: -33.3782, lng: -56.5192, display: "Durazno, Uruguay" },
+  "rocha":                  { lat: -34.4800, lng: -54.3357, display: "Rocha, Uruguay" },
+  "artigas":                { lat: -30.4039, lng: -56.4758, display: "Artigas, Uruguay" },
+  "treinta y tres":         { lat: -33.2334, lng: -54.3810, display: "Treinta y Tres, Uruguay" },
+  "minas":                  { lat: -34.3748, lng: -55.2383, display: "Minas, Uruguay" },
+  "las piedras":            { lat: -34.7266, lng: -56.2213, display: "Las Piedras, Uruguay" },
+  "pando":                  { lat: -34.7222, lng: -55.9583, display: "Pando, Uruguay" },
+  "carmelo":                { lat: -33.9990, lng: -58.2892, display: "Carmelo, Uruguay" },
+  "nueva helvecia":         { lat: -34.2906, lng: -57.2497, display: "Nueva Helvecia, Uruguay" },
+  "trinidad":               { lat: -33.5372, lng: -56.8981, display: "Trinidad, Uruguay" },
+  "young":                  { lat: -32.6891, lng: -57.6272, display: "Young, Uruguay" },
+  "ciudad de la costa":     { lat: -34.8225, lng: -55.9639, display: "Ciudad de la Costa, Uruguay" },
+};
+
+const ALL_CITIES: Record<string, CityResult> = { ...AR_CITIES, ...UY_CITIES };
+
 function normalizeKey(s: string): string {
   return s
     .toLowerCase()
@@ -218,13 +251,13 @@ function levenshtein(a: string, b: string): number {
 
 export function lookupCity(q: string): CityResult | null {
   const key = normalizeKey(q);
-  if (AR_CITIES[key]) return AR_CITIES[key];
+  if (ALL_CITIES[key]) return ALL_CITIES[key];
 
   // Fuzzy fallback: 1 edit for ≤8 chars, 2 for longer
   const maxDist = key.length <= 8 ? 1 : 2;
   let best: CityResult | null = null;
   let bestDist = maxDist + 1;
-  for (const [cityKey, cityData] of Object.entries(AR_CITIES)) {
+  for (const [cityKey, cityData] of Object.entries(ALL_CITIES)) {
     const d = levenshtein(key, cityKey);
     if (d < bestDist) { bestDist = d; best = cityData; }
   }
@@ -237,7 +270,7 @@ export function searchCities(query: string, limit = 6): CityResult[] {
 
   const results: Array<{ city: CityResult; score: number }> = [];
 
-  for (const [key, city] of Object.entries(AR_CITIES)) {
+  for (const [key, city] of Object.entries(ALL_CITIES)) {
     let score = 0;
     if (key === q) {
       score = 1000;

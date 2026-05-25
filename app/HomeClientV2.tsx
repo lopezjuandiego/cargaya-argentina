@@ -88,14 +88,14 @@ export default function HomeClientV2({ stationCount, lastUpdated }: { stationCou
           {/* Headline */}
           <div className="space-y-3">
             <p className="text-green-400 text-sm font-semibold tracking-widest uppercase">
-              {stationCount}+ estaciones en Argentina
+              {stationCount}+ estaciones · Argentina y Uruguay
             </p>
             <h1 className="text-[1.9rem] min-[480px]:text-[2.4rem] sm:text-[2.9rem] font-black text-white leading-tight tracking-tight">
               <span className="block whitespace-nowrap">Encontrá dónde cargar</span>
               <span className="text-green-400 whitespace-nowrap">tu auto eléctrico</span>
             </h1>
             <p className="text-gray-400 text-lg">
-              El directorio más completo de cargadores eléctricos en Argentina.
+              El directorio más completo de cargadores eléctricos en Argentina y Uruguay.
             </p>
           </div>
 
