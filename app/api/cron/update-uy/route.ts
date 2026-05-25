@@ -26,6 +26,24 @@ type OsmNode = {
   name?: string; operator?: string; address?: string; city?: string;
 };
 
+async function reverseGeocode(lat: number, lng: number): Promise<{ address: string; city: string }> {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+    const res = await fetch(url, {
+      headers: { "User-Agent": "DóndeCargar/1.0 (lopezjuandiego@gmail.com)" },
+    });
+    if (!res.ok) return { address: "", city: "" };
+    const data = await res.json() as { address?: Record<string, string> };
+    const a = data.address ?? {};
+    const road = a["road"] ?? a["pedestrian"] ?? a["path"] ?? "";
+    const num = a["house_number"] ?? "";
+    const city = a["city"] ?? a["town"] ?? a["village"] ?? a["suburb"] ?? "";
+    return { address: [road, num].filter(Boolean).join(" "), city };
+  } catch {
+    return { address: "", city: "" };
+  }
+}
+
 // Cluster nodes within 50 m into one station
 function clusterNodes(nodes: OsmNode[]): OsmNode[] {
   const CLUSTER_KM = 0.05;
@@ -135,13 +153,22 @@ export async function GET(req: NextRequest) {
       const operatorName = s.operator ?? "UTE";
       const stationName = s.name ?? `${operatorName} — Uruguay`;
 
+      // Fall back to reverse geocoding when OSM has no address data
+      let address = s.address ?? "";
+      let city = s.city ?? "";
+      if (!address || !city) {
+        const geo = await reverseGeocode(s.lat, s.lng);
+        if (!address) address = geo.address;
+        if (!city) city = geo.city;
+      }
+
       // WHERE NOT EXISTS makes each insert atomic — safe under concurrent cron runs
       const result = await sql`
         INSERT INTO "Station"
           (name, operator, address, city, province, lat, lng,
            "connectorTypes", "powerKw", "accessType", "isFree", source, "isVerified")
         SELECT
-          ${stationName}, ${operatorName}, ${s.address}, ${s.city},
+          ${stationName}, ${operatorName}, ${address}, ${city},
           'Uruguay', ${s.lat}, ${s.lng},
           ${JSON.stringify(["CCS2", "Tipo 2"])}, ${null},
           'public', false, 'osm_uy', false
