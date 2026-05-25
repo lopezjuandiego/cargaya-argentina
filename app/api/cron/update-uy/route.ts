@@ -129,31 +129,30 @@ export async function GET(req: NextRequest) {
     const stations = clusterNodes(uyNodes);
 
     const sql = getDb();
-    const existing = await sql`SELECT lat, lng FROM "Station"`;
-    const existingSet = new Set(
-      existing.map((s) => `${parseFloat(String(s.lat)).toFixed(3)},${parseFloat(String(s.lng)).toFixed(3)}`)
-    );
 
     let inserted = 0, skipped = 0;
     for (const s of stations) {
-      const key = `${s.lat.toFixed(3)},${s.lng.toFixed(3)}`;
-      if (existingSet.has(key)) { skipped++; continue; }
-
       const operatorName = s.operator ?? "UTE";
       const stationName = s.name ?? `${operatorName} — Uruguay`;
 
-      await sql`
+      // WHERE NOT EXISTS makes each insert atomic — safe under concurrent cron runs
+      const result = await sql`
         INSERT INTO "Station"
           (name, operator, address, city, province, lat, lng,
            "connectorTypes", "powerKw", "accessType", "isFree", source, "isVerified")
-        VALUES
-          (${stationName}, ${operatorName}, ${s.address}, ${s.city},
-           'Uruguay', ${s.lat}, ${s.lng},
-           ${JSON.stringify(["CCS2", "Tipo 2"])}, ${null},
-           'public', false, 'osm_uy', false)
+        SELECT
+          ${stationName}, ${operatorName}, ${s.address}, ${s.city},
+          'Uruguay', ${s.lat}, ${s.lng},
+          ${JSON.stringify(["CCS2", "Tipo 2"])}, ${null},
+          'public', false, 'osm_uy', false
+        WHERE NOT EXISTS (
+          SELECT 1 FROM "Station"
+          WHERE ROUND(lat::numeric, 3) = ROUND(${s.lat}::numeric, 3)
+            AND ROUND(lng::numeric, 3) = ROUND(${s.lng}::numeric, 3)
+        )
       `;
-      existingSet.add(key);
-      inserted++;
+      if (result.count > 0) inserted++;
+      else skipped++;
     }
 
     return NextResponse.json({
