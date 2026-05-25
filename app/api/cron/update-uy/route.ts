@@ -2,17 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
 // Overpass API — free, no key needed
-// Queries all charging stations in Uruguay's bounding box
+// Queries charging stations within Uruguay's administrative boundary (not a bbox)
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 const OVERPASS_QUERY = `
-[out:json][timeout:30];
-node[amenity=charging_station](-35.0,-58.5,-30.0,-53.0);
+[out:json][timeout:60];
+area["ISO3166-1"="UY"]->.uy;
+node[amenity=charging_station](area.uy);
 out;
 `.trim();
-
-// Uruguay bounding box (strict)
-const UY_LAT_MIN = -35.0, UY_LAT_MAX = -30.0;
-const UY_LNG_MIN = -58.5, UY_LNG_MAX = -53.0;
 
 // Haversine distance in km
 function distKm(lat1: number, lng1: number, lat2: number, lng2: number) {
@@ -122,15 +119,9 @@ export async function GET(req: NextRequest) {
     const data = await res.json() as { elements: OverpassElement[] };
     const elements = data.elements ?? [];
 
-    // Filter to Uruguay only and exclude known-Argentine coords
+    // Overpass area filter already restricts to Uruguay — no extra bbox needed
     const uyNodes: OsmNode[] = elements
-      .filter((e) => {
-        const { lat, lon: lng } = e;
-        return (
-          lat >= UY_LAT_MIN && lat <= UY_LAT_MAX &&
-          lng >= UY_LNG_MIN && lng <= UY_LNG_MAX
-        );
-      })
+      .filter((e) => e.lat !== undefined && e.lon !== undefined)
       .map((e) => {
         const t = e.tags ?? {};
         const addr = [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") || t["description"] || "";
