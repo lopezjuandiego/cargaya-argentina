@@ -312,9 +312,9 @@ async function geocode(q: string): Promise<GeoResult | null> {
   };
 
   return (
+    (await trySearch(q, true)) ??           // sin sufijo, Nominatim elige el más prominente
     (await trySearch(`${q}, Argentina`, true)) ??
     (await trySearch(`${q}, Uruguay`, true)) ??
-    (await trySearch(q, true)) ??
     (await trySearch(q, false))
   );
 }

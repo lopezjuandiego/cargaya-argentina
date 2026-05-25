@@ -55,13 +55,12 @@ function mapProvince(raw: string | undefined): string {
   return (raw ?? "").replace(/^Province of\s+/i, "").trim();
 }
 
-// Operators we already manage via dedicated crons — skip to avoid duplicates
-const MANAGED_OPERATORS = new Set([
-  "ypf", "y.p.f.", "scame", "scame e-mobility",
-]);
+// Prefixes of operators managed by dedicated crons — skip to avoid cross-source duplicates
+const MANAGED_PREFIXES = ["ypf", "y.p.f.", "scame"];
 
 function isManagedOperator(name: string | undefined): boolean {
-  return MANAGED_OPERATORS.has((name ?? "").toLowerCase().trim());
+  const n = (name ?? "").toLowerCase().trim();
+  return MANAGED_PREFIXES.some((p) => n.startsWith(p) || n.includes(p));
 }
 
 export async function GET(req: NextRequest) {
@@ -84,7 +83,8 @@ export async function GET(req: NextRequest) {
     const stations = (await res.json()) as OcmStation[];
 
     const sql = getDb();
-    const existing = await sql`SELECT lat, lng FROM "Station" WHERE source = 'ocm'`;
+    // Check ALL sources to avoid cross-source duplicates (e.g. Scame in OCM)
+    const existing = await sql`SELECT lat, lng FROM "Station"`;
     const existingSet = new Set(
       existing.map((s) => `${parseFloat(String(s.lat)).toFixed(3)},${parseFloat(String(s.lng)).toFixed(3)}`)
     );
