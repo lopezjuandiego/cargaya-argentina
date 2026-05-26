@@ -70,6 +70,7 @@ export async function GET(req: NextRequest) {
   }
 
   const apiKey = process.env.OCM_API_KEY;
+  console.log("[update-ocm] key present:", !!apiKey, "length:", apiKey?.length);
   if (!apiKey) {
     return NextResponse.json({ error: "OCM_API_KEY not set" }, { status: 500 });
   }
@@ -153,6 +154,7 @@ export async function GET(req: NextRequest) {
       total_from_ocm: stations.length,
     });
   } catch (e) {
+    console.error("[update-ocm] error:", String(e));
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }
 }
