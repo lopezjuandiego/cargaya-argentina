@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db";
 // Open Charge Map API — free key at openchargemap.org
 // Add OCM_API_KEY to Vercel env vars
 const OCM_URL =
-  "https://api.openchargemap.io/v3/poi/?output=json&countrycode=AR&maxresults=2000&compact=false&verbose=false";
+  "https://api.openchargemap.io/v3/poi/?output=json&countrycode=AR&maxresults=500&compact=false&verbose=false";
 
 type OcmConnection = {
   ConnectionType?: { Title?: string };
@@ -78,7 +78,10 @@ export async function GET(req: NextRequest) {
     const res = await fetch(`${OCM_URL}&key=${apiKey}`, {
       headers: { "User-Agent": "DóndeCargar/1.0 (lopezjuandiego@gmail.com)" },
     });
-    if (!res.ok) throw new Error(`OCM API ${res.status}`);
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`OCM API ${res.status}: ${body.slice(0, 300)}`);
+    }
 
     const stations = (await res.json()) as OcmStation[];
 
