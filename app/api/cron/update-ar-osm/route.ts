@@ -78,7 +78,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<{ address: stri
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
     const res = await fetch(url, {
-      headers: { "User-Agent": "DóndeCargar/1.0 (lopezjuandiego@gmail.com)" },
+      headers: { "User-Agent": "DondeCargar/1.0 (lopezjuandiego@gmail.com)" },
     });
     if (!res.ok) return { address: "", city: "", province: "" };
     const data = await res.json() as { address?: Record<string, string> };
@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "DóndeCargar/1.0 (lopezjuandiego@gmail.com)",
+        "User-Agent": "DondeCargar/1.0 (lopezjuandiego@gmail.com)",
       },
       body: `data=${encodeURIComponent(OVERPASS_QUERY)}`,
     });
