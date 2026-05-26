@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(`${OCM_URL}&key=${apiKey}`, {
-      headers: { "User-Agent": "DóndeCargar/1.0 (lopezjuandiego@gmail.com)" },
+      headers: { "User-Agent": "DondeCargar/1.0 (lopezjuandiego@gmail.com)" },
     });
     if (!res.ok) {
       const body = await res.text();
