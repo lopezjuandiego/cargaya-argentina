@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
-const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
+const OVERPASS_ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+];
 const OVERPASS_QUERY = `
 [out:json][timeout:90];
 area["ISO3166-1"="AR"]->.ar;
@@ -102,15 +105,19 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const res = await fetch(OVERPASS_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "DondeCargar/1.0 (lopezjuandiego@gmail.com)",
-      },
-      body: `data=${encodeURIComponent(OVERPASS_QUERY)}`,
-    });
-    if (!res.ok) throw new Error(`Overpass ${res.status}`);
+    let res: Response | null = null;
+    for (const endpoint of OVERPASS_ENDPOINTS) {
+      res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "DondeCargar/1.0 (lopezjuandiego@gmail.com)",
+        },
+        body: `data=${encodeURIComponent(OVERPASS_QUERY)}`,
+      });
+      if (res.ok) break;
+    }
+    if (!res || !res.ok) throw new Error(`Overpass ${res?.status ?? "unreachable"}`);
 
     const data = await res.json() as { elements: OverpassElement[] };
     const elements = data.elements ?? [];
