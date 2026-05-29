@@ -23,6 +23,8 @@ const securityHeaders = [
       "frame-src 'none'",
       // Objetos: bloqueados
       "object-src 'none'",
+      // Service Worker
+      "worker-src 'self'",
       // Base URI: solo propio
       "base-uri 'self'",
       // Form action: solo propio

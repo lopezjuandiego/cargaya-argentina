@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import FeedbackButton from "./FeedbackButton";
+import RegisterSW from "./RegisterSW";
 import { Analytics } from "@vercel/analytics/next";
 
 const BASE_URL = "https://dondecargar.com.ar";
@@ -24,6 +25,13 @@ export const metadata: Metadata = {
     "cargadores Montevideo",
     "planificador viaje eléctrico",
   ],
+  manifest: "/manifest.json",
+  themeColor: "#4ade80",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "DóndeCargar",
+  },
   openGraph: {
     siteName: "DóndeCargar",
     locale: "es_AR",
@@ -47,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           DóndeCargar no garantiza que los datos estén actualizados ni que las estaciones estén operativas al momento de tu visita.
           Verificá siempre con la app del operador antes de salir.
         </footer>
+        <RegisterSW />
         <FeedbackButton />
         <Analytics />
         <Script
