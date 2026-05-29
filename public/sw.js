@@ -28,6 +28,9 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(event.request.url);
 
+  // Solo interceptar requests al mismo origen
+  if (url.origin !== self.location.origin) return;
+
   // No interceptar API routes ni crons
   if (url.pathname.startsWith("/api/")) return;
 

@@ -29,7 +29,6 @@ export const metadata: Metadata = {
     "cargadores Montevideo",
     "planificador viaje eléctrico",
   ],
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
