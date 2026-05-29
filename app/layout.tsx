@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import FeedbackButton from "./FeedbackButton";
@@ -6,6 +6,10 @@ import RegisterSW from "./RegisterSW";
 import { Analytics } from "@vercel/analytics/next";
 
 const BASE_URL = "https://dondecargar.com.ar";
+
+export const viewport: Viewport = {
+  themeColor: "#4ade80",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -26,7 +30,6 @@ export const metadata: Metadata = {
     "planificador viaje eléctrico",
   ],
   manifest: "/manifest.json",
-  themeColor: "#4ade80",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
