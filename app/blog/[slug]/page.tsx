@@ -82,7 +82,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 min-h-screen overflow-x-hidden">
+    <div className="max-w-2xl mx-auto px-4 py-10 min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div className="flex items-center gap-2 text-sm text-gray-400 mb-6 flex-wrap">
