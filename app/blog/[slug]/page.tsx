@@ -63,7 +63,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound();
 
   const raw = await marked(post.content, { async: true });
-  const html = sanitize(raw as string);
+  const html = sanitize(raw as string)
+    .replace(/<table>/g, '<div class="table-wrap"><table>')
+    .replace(/<\/table>/g, "</table></div>");
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -51,10 +51,15 @@ body {
 .blog-content blockquote p {
   margin-bottom: 0.4rem;
 }
+.blog-content .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5rem 0;
+}
 .blog-content table {
   width: 100%;
+  min-width: 480px;
   border-collapse: collapse;
-  margin: 1.5rem 0;
   font-size: 0.9rem;
 }
 .blog-content th {

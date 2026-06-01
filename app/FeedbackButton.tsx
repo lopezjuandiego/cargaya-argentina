@@ -63,7 +63,7 @@ export default function FeedbackButton() {
           open ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <div className="max-w-lg mx-auto px-5 py-5">
+        <div className="max-w-lg mx-auto px-5 py-5 max-h-[85vh] overflow-y-auto">
           {/* Handle */}
           <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
 
