@@ -5,8 +5,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: #f3f4f6;
   color: #111827;
-  overflow-x: hidden;
-  max-width: 100%;
 }
 
 /* Blog content — espaciado explícito, no depende de modificadores prose */
@@ -56,23 +54,17 @@ body {
 .blog-content {
   overflow-wrap: break-word;
   word-break: break-word;
-  max-width: 100%;
 }
 .blog-content .table-wrap {
   display: block;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 1.5rem 0;
-  width: 100%;
 }
 .blog-content table {
+  width: 100%;
   border-collapse: collapse;
   font-size: 0.85rem;
-  width: max-content;
-}
-.blog-content th,
-.blog-content td {
-  white-space: nowrap;
 }
 .blog-content th {
   background: #f9fafb;
