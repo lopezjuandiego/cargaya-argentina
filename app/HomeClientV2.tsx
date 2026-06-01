@@ -74,10 +74,10 @@ export default function HomeClientV2({ stationCount, lastUpdated }: { stationCou
           <span className="font-semibold text-white text-sm tracking-tight">DóndeCargar</span>
           <span className="text-[10px] font-semibold bg-green-900/60 text-green-400 px-1.5 py-0.5 rounded-full border border-green-800">Beta</span>
         </div>
-        <div className="flex items-center gap-5 text-sm text-gray-400">
-          <a href="/ruta" className="text-green-400 hover:text-green-300 font-semibold transition-colors">Planificar viaje</a>
-          <a href="/blog" className="hover:text-white transition-colors">Blog</a>
-          <a href="/agregar" className="hover:text-white transition-colors">Agregar</a>
+        <div className="flex items-center gap-4 text-sm text-gray-400">
+          <a href="/ruta" className="text-green-400 hover:text-green-300 font-semibold transition-colors whitespace-nowrap">Planificar</a>
+          <a href="/blog" className="hover:text-white transition-colors hidden sm:inline">Blog</a>
+          <a href="/agregar" className="hover:text-white transition-colors hidden sm:inline">Agregar</a>
         </div>
       </nav>
 
