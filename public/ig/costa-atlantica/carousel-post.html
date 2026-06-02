@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #d1d5db;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 20px; gap: 60px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .lbl {
+    font-size: 11px; color: #9ca3af; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace;
+    align-self: flex-start; margin-left: calc(50% - 540px);
+  }
+  .card {
+    width: 1080px; height: 1350px;
+    background: #0f1117;
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+  }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr {
+    padding: 36px 64px 0;
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0; position: relative; z-index: 2;
+  }
+  .hdr-logo { width: 46px; height: 46px; background: #16a34a; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .hdr-name { font-size: 18px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 12px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 12px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 4px 12px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 5px 13px; border-radius: 6px; }
+  .ftr { padding: 18px 64px 32px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2; }
+  .ftr-l { font-size: 14px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 12px; color: #4b5563; background: #111827; padding: 6px 14px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  .cover-img { flex: 1; position: relative; overflow: hidden; }
+  .cover-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.45) saturate(1.1); }
+  .cover-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #0f1117 35%, transparent 100%); }
+  .cover-text { position: absolute; bottom: 40px; left: 64px; right: 64px; }
+  .cover-text h1 { font-size: 64px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin-bottom: 16px; }
+  .cover-text h1 span { color: #4ade80; }
+  .cover-text p { font-size: 22px; color: #d1d5db; line-height: 1.4; max-width: 820px; margin-bottom: 20px; }
+
+  .split { flex: 1; display: flex; overflow: hidden; }
+  .split-content { width: 580px; padding: 32px 48px 24px 64px; display: flex; flex-direction: column; gap: 18px; flex-shrink: 0; }
+  .split-img { flex: 1; overflow: hidden; position: relative; }
+  .split-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.82) saturate(1.1); }
+  .split-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #0f1117 0%, transparent 40%); }
+  .split-content h2 { font-size: 38px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1px; }
+  .split-content h2 span { color: #4ade80; }
+
+  .data-body { flex: 1; padding: 28px 64px 0; display: flex; flex-direction: column; gap: 18px; }
+  .data-body h2 { font-size: 42px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1.5px; }
+  .data-body h2 span { color: #4ade80; }
+
+  /* Route timeline */
+  .route { display: flex; flex-direction: column; gap: 0; flex: 1; }
+  .route-item { display: flex; gap: 20px; align-items: flex-start; }
+  .route-line { display: flex; flex-direction: column; align-items: center; }
+  .route-dot { width: 18px; height: 18px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
+  .route-dot.start { background: #4ade80; }
+  .route-dot.end { background: #60a5fa; }
+  .route-connector { width: 2px; flex: 1; background: #1f2937; min-height: 30px; }
+  .route-content { padding-bottom: 24px; flex: 1; }
+  .route-km { font-size: 13px; color: #6b7280; font-weight: 600; margin-bottom: 3px; }
+  .route-place { font-size: 18px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; }
+  .route-detail { font-size: 13px; color: #9ca3af; line-height: 1.4; }
+  .route-badge { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 6px; }
+  .route-badge.green { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .route-badge.blue { color: #60a5fa; background: #0f1f3d; border: 1px solid #1e3a8a; }
+  .route-badge.gray { color: #9ca3af; background: #111827; border: 1px solid #374151; }
+
+  .facts { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .fact { background: rgba(26,31,46,0.95); border-radius: 16px; padding: 20px 22px; border: 1px solid #1f2937; display: flex; gap: 16px; align-items: flex-start; }
+  .fact.good { background: rgba(5,46,22,0.95); border-color: #166534; }
+  .fact.warn { background: rgba(28,8,8,0.95); border-color: #7f1d1d; }
+  .f-icon { font-size: 28px; flex-shrink: 0; }
+  .f-title { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 3px; }
+  .f-desc { font-size: 13px; color: #9ca3af; line-height: 1.5; }
+  .f-badge { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 7px; width: fit-content; }
+  .fact.good .f-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+  .fact.warn .f-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+
+  .cta-box { background: #16a34a; border-radius: 14px; padding: 18px 22px; text-align: center; }
+  .cta-main { font-size: 17px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 13px; color: #dcfce7; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-img">
+    <img src="https://images.pexels.com/photos/33093563/pexels-photo-33093563.jpeg?auto=compress&cs=tinysrgb&w=1080&fit=crop&h=1350" alt="Highway at night">
+    <div class="cover-overlay"></div>
+    <div class="cover-text">
+      <span class="tag">Ruta eléctrica · 2026</span><br><br>
+      <h1>BA → Mar<br>del Plata<br>en <span>eléctrico</span></h1>
+      <p>400 km por Ruta 2. Las 2 paradas de carga del trayecto y todo lo que necesitás saber antes de salir.</p>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 RUTA OVERVIEW -->
+<p class="lbl">Slide 2 · La ruta — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>La ruta<br><span>BA → MdP</span><br>paso a paso</h2>
+    <div class="route">
+      <div class="route-item">
+        <div class="route-line">
+          <div class="route-dot start"></div>
+          <div class="route-connector"></div>
+        </div>
+        <div class="route-content">
+          <div class="route-km">Km 0</div>
+          <div class="route-place">Buenos Aires</div>
+          <div class="route-detail">Salís con batería al 100% desde casa. 300–400 km de autonomía disponibles.</div>
+          <div class="route-badge green">Cargado en casa</div>
+        </div>
+      </div>
+      <div class="route-item">
+        <div class="route-line">
+          <div class="route-dot"></div>
+          <div class="route-connector"></div>
+        </div>
+        <div class="route-content">
+          <div class="route-km">Km 113</div>
+          <div class="route-place">Chascomús</div>
+          <div class="route-detail">Primera parada opcional. Si tu auto tiene más de 200 km de autonomía, podés continuar sin cargar.</div>
+          <div class="route-badge green">Cargador disponible</div>
+        </div>
+      </div>
+      <div class="route-item">
+        <div class="route-line">
+          <div class="route-dot"></div>
+          <div class="route-connector"></div>
+        </div>
+        <div class="route-content">
+          <div class="route-km">Km 202</div>
+          <div class="route-place">Dolores</div>
+          <div class="route-detail">Parada clave para la mayoría de los modelos. Cargás 20–30 min y llegás tranquilo a MdP.</div>
+          <div class="route-badge green">Carga rápida DC</div>
+        </div>
+      </div>
+      <div class="route-item">
+        <div class="route-line">
+          <div class="route-dot end"></div>
+        </div>
+        <div class="route-content">
+          <div class="route-km">Km ~400</div>
+          <div class="route-place">Mar del Plata</div>
+          <div class="route-detail">Llegás a destino. Varios cargadores en la ciudad para el regreso o durante la estadía.</div>
+          <div class="route-badge blue">Destino</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>Chascomús →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 CHASCOMÚS -->
+<p class="lbl">Slide 3 · Chascomús — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="split">
+    <div class="split-content">
+      <h2>Km 113:<br>parada<br><span>Chascomús</span></h2>
+      <div class="facts">
+        <div class="fact good">
+          <div class="f-icon">⚡</div>
+          <div>
+            <div class="f-title">Carga rápida en YPF / Shell</div>
+            <div class="f-desc">Hasta 160 kW DC disponibles. 100 km en menos de 15 minutos con los modelos más nuevos.</div>
+            <div class="f-badge">Hasta 160 kW DC</div>
+          </div>
+        </div>
+        <div class="fact">
+          <div class="f-icon">🗓️</div>
+          <div>
+            <div class="f-title">¿Cuándo parar acá?</div>
+            <div class="f-desc">Si tu auto tiene menos de 250 km de autonomía o si salís en temporada alta con tráfico. Como seguro.</div>
+            <div class="f-badge">Parada de seguridad</div>
+          </div>
+        </div>
+        <div class="fact good">
+          <div class="f-icon">🍕</div>
+          <div>
+            <div class="f-title">Aprovechá los 20 min</div>
+            <div class="f-desc">Hay parador gastronómico en la estación. Una pizza o un café y ya estás listo para continuar.</div>
+            <div class="f-badge">Sin tiempo perdido</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://images.pexels.com/photos/33093563/pexels-photo-33093563.jpeg?auto=compress&cs=tinysrgb&w=600&fit=crop&h=1350" alt="Highway">
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>Dolores →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 DOLORES -->
+<p class="lbl">Slide 4 · Dolores — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="split">
+    <div class="split-content">
+      <h2>Km 202:<br>la parada<br><span>clave</span></h2>
+      <div class="facts">
+        <div class="fact good">
+          <div class="f-icon">🎯</div>
+          <div>
+            <div class="f-title">La parada obligada para la mayoría</div>
+            <div class="f-desc">A 202 km de BA, la mayoría de los eléctricos llega con 30–50% de batería. Ideal para cargar al 80%.</div>
+            <div class="f-badge">Parada principal</div>
+          </div>
+        </div>
+        <div class="fact good">
+          <div class="f-icon">⚡</div>
+          <div>
+            <div class="f-title">Carga rápida hasta 160 kW DC</div>
+            <div class="f-desc">Con un BYD Seal o Atto 3 con CCS2, cargás 100 km en menos de 20 minutos.</div>
+            <div class="f-badge">CCS2 · CHAdeMO · Type 2</div>
+          </div>
+        </div>
+        <div class="fact">
+          <div class="f-icon">🏖️</div>
+          <div>
+            <div class="f-title">De acá a MdP: 200 km</div>
+            <div class="f-desc">Con una carga del 30% al 80% tenés más que suficiente para llegar a Mar del Plata sin ansiedad.</div>
+            <div class="f-badge">200 km restantes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://images.pexels.com/photos/20000977/pexels-photo-20000977.jpeg?auto=compress&cs=tinysrgb&w=600&fit=crop&h=1350" alt="Electric car on route">
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>consejos →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 TIPS DE RUTA -->
+<p class="lbl">Slide 5 · Tips — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Consejos<br>para el viaje<br>a <span>la Costa</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🌙</div>
+        <div>
+          <div class="f-title">Salí con el 100% desde casa</div>
+          <div class="f-desc">Cargá la noche anterior al viaje. Con batería llena, tenés la máxima flexibilidad para elegir dónde parar.</div>
+          <div class="f-badge">Salir con 100%</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">📱</div>
+        <div>
+          <div class="f-title">Revisá el mapa antes de salir</div>
+          <div class="f-desc">En temporada alta los cargadores pueden estar ocupados. Verificá disponibilidad en dondecargar.com.ar.</div>
+          <div class="f-badge">Verificar disponibilidad</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">💨</div>
+        <div>
+          <div class="f-title">Modo ECO en autopista</div>
+          <div class="f-desc">A 110 km/h con modo ECO consumís hasta 30% menos. Sumás rango y podés saltear una parada.</div>
+          <div class="f-badge">+30% de rango</div>
+        </div>
+      </div>
+      <div class="fact warn">
+        <div class="f-icon">⚠️</div>
+        <div>
+          <div class="f-title">Temporada alta: llegá temprano a los cargadores</div>
+          <div class="f-desc">En enero y febrero los cargadores de Dolores se saturan. Llegá con batería suficiente para esperar.</div>
+          <div class="f-badge">Planificar en enero/febrero</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>resumen →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 CTA -->
+<p class="lbl">Slide 6 · CTA — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>BA → MdP:<br>el viaje<br><span>está cubierto</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🛣️</div>
+        <div>
+          <div class="f-title">2 paradas para 400 km de ruta</div>
+          <div class="f-desc">Chascomús (km 113) como seguridad y Dolores (km 202) como parada principal. El recorrido está mapeado.</div>
+          <div class="f-badge">Ruta cubierta</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">⏱️</div>
+        <div>
+          <div class="f-title">Tiempo extra: 20–30 minutos</div>
+          <div class="f-desc">Una sola parada de carga rápida es todo lo que necesitás para el trayecto completo.</div>
+          <div class="f-badge">Mínimo desvío</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">Planificá tu ruta en el mapa</div>
+      <div class="cta-url">dondecargar.com.ar — todos los cargadores de Argentina</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Artículo completo en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #d1d5db;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 20px; gap: 60px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .lbl {
+    font-size: 11px; color: #9ca3af; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace;
+    align-self: flex-start; margin-left: calc(50% - 540px);
+  }
+  .card {
+    width: 1080px; height: 1350px;
+    background: #0f1117;
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+  }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr {
+    padding: 36px 64px 0;
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0; position: relative; z-index: 2;
+  }
+  .hdr-logo { width: 46px; height: 46px; background: #16a34a; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .hdr-name { font-size: 18px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 12px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 12px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 4px 12px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 5px 13px; border-radius: 6px; }
+  .ftr { padding: 18px 64px 32px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2; }
+  .ftr-l { font-size: 14px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 12px; color: #4b5563; background: #111827; padding: 6px 14px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  .cover-img { flex: 1; position: relative; overflow: hidden; }
+  .cover-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.45) saturate(1.1); }
+  .cover-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #0f1117 35%, transparent 100%); }
+  .cover-text { position: absolute; bottom: 40px; left: 64px; right: 64px; }
+  .cover-text h1 { font-size: 64px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin-bottom: 16px; }
+  .cover-text h1 span { color: #4ade80; }
+  .cover-text p { font-size: 22px; color: #d1d5db; line-height: 1.4; max-width: 820px; margin-bottom: 20px; }
+
+  .data-body { flex: 1; padding: 28px 64px 0; display: flex; flex-direction: column; gap: 18px; }
+  .data-body h2 { font-size: 42px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1.5px; }
+  .data-body h2 span { color: #4ade80; }
+
+  /* Big stat */
+  .stat-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .stat-number { font-size: 140px; font-weight: 900; color: #4ade80; line-height: 1; letter-spacing: -4px; }
+  .stat-number.red { color: #f87171; }
+  .stat-label { font-size: 22px; color: #f9fafb; font-weight: 700; text-align: center; }
+  .stat-sub { font-size: 16px; color: #9ca3af; text-align: center; max-width: 700px; line-height: 1.5; }
+  .stat-badge { display: inline-block; background: #14532d; color: #4ade80; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 7px 16px; border-radius: 8px; margin-top: 8px; }
+  .stat-badge.red { background: #1c0a0a; color: #f87171; border: 1px solid #7f1d1d; }
+
+  .facts { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .fact { background: rgba(26,31,46,0.95); border-radius: 16px; padding: 20px 22px; border: 1px solid #1f2937; display: flex; gap: 16px; align-items: flex-start; }
+  .fact.good { background: rgba(5,46,22,0.95); border-color: #166534; }
+  .fact.warn { background: rgba(28,8,8,0.95); border-color: #7f1d1d; }
+  .f-icon { font-size: 28px; flex-shrink: 0; }
+  .f-title { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 3px; }
+  .f-desc { font-size: 13px; color: #9ca3af; line-height: 1.5; }
+  .f-badge { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 7px; width: fit-content; }
+  .fact.good .f-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+  .fact.warn .f-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+
+  /* Compare boxes */
+  .compare-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; }
+  .box { border-radius: 16px; padding: 24px 22px; display: flex; flex-direction: column; gap: 12px; }
+  .box.bad { background: #1c0a0a; border: 1px solid #7f1d1d; }
+  .box.good { background: #052e16; border: 1px solid #166534; }
+  .box-icon { font-size: 36px; }
+  .box-title { font-size: 16px; font-weight: 800; color: #f9fafb; text-transform: uppercase; letter-spacing: 0.5px; }
+  .box-stat { font-size: 42px; font-weight: 900; line-height: 1; }
+  .box.bad .box-stat { color: #f87171; }
+  .box.good .box-stat { color: #4ade80; }
+  .box-detail { font-size: 13px; line-height: 1.5; }
+  .box.bad .box-detail { color: #fca5a5; }
+  .box.good .box-detail { color: #86efac; }
+
+  .cta-box { background: #16a34a; border-radius: 14px; padding: 18px 22px; text-align: center; }
+  .cta-main { font-size: 17px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 13px; color: #dcfce7; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-img">
+    <img src="https://images.pexels.com/photos/20000977/pexels-photo-20000977.jpeg?auto=compress&cs=tinysrgb&w=1080&fit=crop&h=1350" alt="Electric car on road">
+    <div class="cover-overlay"></div>
+    <div class="cover-text">
+      <span class="tag">Mitos y datos · 2026</span><br><br>
+      <h1>Ansiedad<br>de <span>autonomía</span>:<br>¿es real?</h1>
+      <p>El 76% de los no-EV users lo teme. Los datos muestran que casi nunca pasa. Te explicamos por qué.</p>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 EL MITO: 76% -->
+<p class="lbl">Slide 2 · El miedo — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>El miedo<br>más grande<br>del <span>no-EV user</span></h2>
+    <div class="stat-hero">
+      <div class="stat-number red">76%</div>
+      <div class="stat-label">teme quedarse sin batería</div>
+      <div class="stat-sub">Encuestas internacionales muestran que la ansiedad de autonomía es la principal razón para no comprar un eléctrico.</div>
+      <div class="stat-badge red">Miedo #1 pre-compra</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>la realidad →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 LA REALIDAD -->
+<p class="lbl">Slide 3 · La realidad — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>La realidad:<br>¿cuánto<br><span>manejamos</span>?</h2>
+    <div class="compare-2">
+      <div class="box bad">
+        <div class="box-icon">😰</div>
+        <div class="box-title">Lo que se cree</div>
+        <div class="box-stat">400+</div>
+        <div class="box-detail">km por día. El miedo asume viajes largos y constantes, sin acceso a cargadores.</div>
+      </div>
+      <div class="box good">
+        <div class="box-icon">📊</div>
+        <div class="box-title">Lo que pasa</div>
+        <div class="box-stat">37 km</div>
+        <div class="box-detail">promedio diario real en Argentina. Entre 33 y 41 km según estudios de movilidad urbana.</div>
+      </div>
+    </div>
+    <div class="facts" style="flex:0">
+      <div class="fact good">
+        <div class="f-icon">🔋</div>
+        <div>
+          <div class="f-title">Un eléctrico básico tiene 300–400 km de autonomía</div>
+          <div class="f-desc">Con 37 km de uso diario promedio, tenés para más de 8 días sin cargar. La ansiedad no tiene base estadística.</div>
+          <div class="f-badge">8+ días de reserva</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>la adaptación →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 CURVA DE ADAPTACIÓN -->
+<p class="lbl">Slide 4 · Adaptación — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>¿Cuándo<br>desaparece<br><span>la ansiedad</span>?</h2>
+    <div class="stat-hero" style="gap:12px;">
+      <div class="stat-number">30</div>
+      <div class="stat-label">a 60 días de uso real</div>
+      <div class="stat-sub">Los nuevos propietarios de EV reportan que la ansiedad de autonomía desaparece completamente en el primer o segundo mes de uso.</div>
+      <div class="stat-badge">Validado por propietarios EV</div>
+    </div>
+    <div class="facts" style="flex:0">
+      <div class="fact">
+        <div class="f-icon">🧠</div>
+        <div>
+          <div class="f-title">El hábito reemplaza el miedo</div>
+          <div class="f-desc">Enchufar el auto al llegar a casa se vuelve tan automático como enchufar el celular. Dejan de mirar el indicador de batería.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>la nueva ansiedad →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 ANSIEDAD DE CARGA -->
+<p class="lbl">Slide 5 · Charge anxiety — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>2026: la nueva<br>ansiedad es<br><span>de carga</span></h2>
+    <div class="facts">
+      <div class="fact warn">
+        <div class="f-icon">🔌</div>
+        <div>
+          <div class="f-title">Más autos, mismos cargadores públicos</div>
+          <div class="f-desc">La red crece, pero no tan rápido como la adopción. En autopistas y plazas, los tiempos de espera están aumentando.</div>
+          <div class="f-badge">El verdadero problema de 2026</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">🏠</div>
+        <div>
+          <div class="f-title">La solución: cargar en casa</div>
+          <div class="f-desc">Quienes tienen cargador doméstico no dependen de la red pública. La ansiedad de carga no les afecta.</div>
+          <div class="f-badge">Wallbox = independencia total</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">📈</div>
+        <div>
+          <div class="f-title">La infraestructura pública mejora</div>
+          <div class="f-desc">YPF y Shell siguen sumando DC rápidos. El mapa crece cada mes en dondecargar.com.ar.</div>
+          <div class="f-badge">+243 estaciones en AR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>el mapa →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 CTA -->
+<p class="lbl">Slide 6 · CTA — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>La ansiedad<br>de autonomía<br><span>no te debería frenar</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">📊</div>
+        <div>
+          <div class="f-title">37 km promedio diario ≠ 400 km de miedo</div>
+          <div class="f-desc">La estadística es clara: el uso real no tiene nada que ver con el escenario catastrófico imaginado.</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">⏱️</div>
+        <div>
+          <div class="f-title">En 30–60 días, el miedo desaparece</div>
+          <div class="f-desc">Los que dan el salto lo confirman: el hábito de cargar en casa elimina la ansiedad por completo.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">¿Buscás cargadores cerca tuyo?</div>
+      <div class="cta-url">dondecargar.com.ar — mapa gratuito de toda Argentina</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Artículo completo en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>

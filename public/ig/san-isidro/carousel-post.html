@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #d1d5db;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 20px; gap: 60px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .lbl {
+    font-size: 11px; color: #9ca3af; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace;
+    align-self: flex-start; margin-left: calc(50% - 540px);
+  }
+  .card {
+    width: 1080px; height: 1350px;
+    background: #0f1117;
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+  }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr {
+    padding: 36px 64px 0;
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0; position: relative; z-index: 2;
+  }
+  .hdr-logo { width: 46px; height: 46px; background: #16a34a; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .hdr-name { font-size: 18px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 12px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 12px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 4px 12px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 5px 13px; border-radius: 6px; }
+  .ftr { padding: 18px 64px 32px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2; }
+  .ftr-l { font-size: 14px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 12px; color: #4b5563; background: #111827; padding: 6px 14px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  /* COVER */
+  .cover-img { flex: 1; position: relative; overflow: hidden; }
+  .cover-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.45) saturate(1.1); }
+  .cover-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #0f1117 35%, transparent 100%); }
+  .cover-text { position: absolute; bottom: 40px; left: 64px; right: 64px; }
+  .cover-text h1 { font-size: 68px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin-bottom: 16px; }
+  .cover-text h1 span { color: #4ade80; }
+  .cover-text p { font-size: 22px; color: #d1d5db; line-height: 1.4; max-width: 820px; margin-bottom: 20px; }
+
+  /* SPLIT */
+  .split { flex: 1; display: flex; overflow: hidden; }
+  .split-content { width: 580px; padding: 32px 48px 24px 64px; display: flex; flex-direction: column; gap: 18px; flex-shrink: 0; }
+  .split-img { flex: 1; overflow: hidden; position: relative; }
+  .split-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.82) saturate(1.1); }
+  .split-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #0f1117 0%, transparent 40%); }
+  .split-content h2 { font-size: 38px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1px; }
+  .split-content h2 span { color: #4ade80; }
+
+  /* DATA */
+  .data-body { flex: 1; padding: 28px 64px 0; display: flex; flex-direction: column; gap: 20px; }
+  .data-body h2 { font-size: 42px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1.5px; }
+  .data-body h2 span { color: #4ade80; }
+
+  /* Facts */
+  .facts { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .fact { background: rgba(26,31,46,0.95); border-radius: 16px; padding: 20px 22px; border: 1px solid #1f2937; display: flex; gap: 16px; align-items: flex-start; }
+  .fact.good { background: rgba(5,46,22,0.95); border-color: #166534; }
+  .fact.warn { background: rgba(28,8,8,0.95); border-color: #7f1d1d; }
+  .f-icon { font-size: 28px; flex-shrink: 0; }
+  .f-title { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 3px; }
+  .f-desc { font-size: 13px; color: #9ca3af; line-height: 1.5; }
+  .f-badge { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 7px; width: fit-content; }
+  .fact.good .f-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+  .fact.warn .f-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+
+  /* Table */
+  .table-box { background: #1a1f2e; border-radius: 16px; overflow: hidden; border: 1px solid #1f2937; flex: 1; }
+  .t-row { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr; padding: 12px 20px; border-bottom: 1px solid #111827; align-items: center; }
+  .t-row:last-child { border-bottom: none; }
+  .t-row.head { background: #111827; }
+  .t-cell { font-size: 13px; color: #9ca3af; }
+  .t-row.head .t-cell { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .t-cell.green { color: #4ade80; font-weight: 700; }
+  .t-cell.name { color: #f9fafb; font-weight: 600; }
+
+  /* CTA */
+  .cta-box { background: #16a34a; border-radius: 14px; padding: 18px 22px; text-align: center; }
+  .cta-main { font-size: 17px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 13px; color: #dcfce7; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-img">
+    <img src="https://images.pexels.com/photos/13543307/pexels-photo-13543307.jpeg?auto=compress&cs=tinysrgb&w=1080&fit=crop&h=1350" alt="Buenos Aires Norte">
+    <div class="cover-overlay"></div>
+    <div class="cover-text">
+      <span class="tag">GBA Norte · 2026</span><br><br>
+      <h1>San Isidro<br>y <span>Boulogne</span>:<br>dónde cargar</h1>
+      <p>5 estaciones activas en el norte del GBA. Desde 60 kW DC hasta Type 2 AC en shopping y McDonald's.</p>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 YPF DC -->
+<p class="lbl">Slide 2 · YPF DC — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="split">
+    <div class="split-content">
+      <h2>YPF Acceso Norte:<br><span>el más rápido</span><br>de la zona</h2>
+      <div class="facts">
+        <div class="fact good">
+          <div class="f-icon">⚡</div>
+          <div>
+            <div class="f-title">60 kW de potencia DC</div>
+            <div class="f-desc">Carga rápida real: 100 km en menos de 25 minutos para la mayoría de los modelos.</div>
+            <div class="f-badge">Carga rápida DC</div>
+          </div>
+        </div>
+        <div class="fact good">
+          <div class="f-icon">🔌</div>
+          <div>
+            <div class="f-title">3 conectores en 1 puesto</div>
+            <div class="f-desc">CCS2 (estándar europeo), CHAdeMO (Nissan/Mitsubishi) y Type 2 AC. Compatible con casi todo.</div>
+            <div class="f-badge">CCS2 · CHAdeMO · Type 2</div>
+          </div>
+        </div>
+        <div class="fact">
+          <div class="f-icon">📍</div>
+          <div>
+            <div class="f-title">Acceso Norte, km 27</div>
+            <div class="f-desc">Dentro de la estación YPF sobre la autopista. Fácil acceso desde Panamericana.</div>
+            <div class="f-badge">Abierto 24 hs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://images.pexels.com/photos/20000977/pexels-photo-20000977.jpeg?auto=compress&cs=tinysrgb&w=600&fit=crop&h=1350" alt="Electric car charging">
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>Chargebox →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 CHARGEBOX -->
+<p class="lbl">Slide 3 · Chargebox — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>3 cargadores<br><span>Chargebox</span><br>en McDonald's</h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🍟</div>
+        <div>
+          <div class="f-title">McDonald's Boulogne</div>
+          <div class="f-desc">Av. Santa Fe 4250, Boulogne. Type 2 AC 7,4 kW. Cargás mientras comés.</div>
+          <div class="f-badge">Type 2 AC · 7,4 kW</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">🍟</div>
+        <div>
+          <div class="f-title">McDonald's Av. del Libertador</div>
+          <div class="f-desc">Paraná de las Palmas, San Isidro. Type 2 AC 7,4 kW. Estacionamiento amplio.</div>
+          <div class="f-badge">Type 2 AC · 7,4 kW</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">🏬</div>
+        <div>
+          <div class="f-title">Unicenter Shopping</div>
+          <div class="f-desc">Estacionamiento del shopping. Cargás mientras hacés las compras o vas al cine.</div>
+          <div class="f-badge">Type 2 AC · 7,4 kW</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>conectores →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 CONECTORES -->
+<p class="lbl">Slide 4 · Conectores — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>¿Tu auto<br>entra en<br><span>San Isidro</span>?</h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">✅</div>
+        <div>
+          <div class="f-title">BYD, Tesla, VW, Chery, Volvo</div>
+          <div class="f-desc">Type 2 AC: todos los modelos europeos y chinos modernos. Los Chargebox los tienen.</div>
+          <div class="f-badge">Type 2 · todos los Chargebox</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">✅</div>
+        <div>
+          <div class="f-title">BYD Seal, Atto 3, Han, MG, Ora</div>
+          <div class="f-desc">CCS2: carga rápida DC. Solo disponible en YPF Acceso Norte.</div>
+          <div class="f-badge">CCS2 · solo YPF</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🔋</div>
+        <div>
+          <div class="f-title">Nissan Leaf, Mitsubishi Outlander</div>
+          <div class="f-desc">CHAdeMO: el único puesto compatibe es la YPF Acceso Norte. No hay otros en la zona.</div>
+          <div class="f-badge">CHAdeMO · solo YPF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>consejos →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 TIPS -->
+<p class="lbl">Slide 5 · Tips — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Consejos<br>para cargar<br>en <span>zona norte</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🛒</div>
+        <div>
+          <div class="f-title">Combiná la carga con una actividad</div>
+          <div class="f-desc">Los Chargebox en McDonald's y Unicenter son ideales: enchufás y aprovechás el tiempo.</div>
+          <div class="f-badge">Sin espera improductiva</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">📱</div>
+        <div>
+          <div class="f-title">Registrate en la app Chargebox</div>
+          <div class="f-desc">Necesitás cuenta en la app para activar los cargadores. Es gratis y tarda 2 minutos.</div>
+          <div class="f-badge">App gratuita</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">Para carga rápida, YPF Acceso Norte</div>
+          <div class="f-desc">Si necesitás cargar 100+ km en 30 minutos, la YPF de Panamericana es tu mejor opción en la zona.</div>
+          <div class="f-badge">60 kW DC disponible</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>resumen →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 CTA -->
+<p class="lbl">Slide 6 · CTA — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Las <span>5 estaciones</span><br>de San Isidro<br>en resumen</h2>
+    <div class="table-box">
+      <div class="t-row head">
+        <div class="t-cell">Estación</div>
+        <div class="t-cell">Tipo</div>
+        <div class="t-cell">Potencia</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">YPF Acceso Norte</div>
+        <div class="t-cell">DC</div>
+        <div class="t-cell green">60 kW</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Chargebox McDonald's Boulogne</div>
+        <div class="t-cell">AC</div>
+        <div class="t-cell green">7,4 kW</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Chargebox McDonald's Libertador</div>
+        <div class="t-cell">AC</div>
+        <div class="t-cell green">7,4 kW</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Chargebox Unicenter</div>
+        <div class="t-cell">AC</div>
+        <div class="t-cell green">7,4 kW</div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">Encontrá todos los cargadores en el mapa</div>
+      <div class="cta-url">dondecargar.com.ar — gratuito para toda Argentina</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Mapa completo en <span>dondecargar.com.ar</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>
