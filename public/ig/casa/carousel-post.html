@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #d1d5db;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 20px; gap: 60px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .lbl {
+    font-size: 11px; color: #9ca3af; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace;
+    align-self: flex-start; margin-left: calc(50% - 540px);
+  }
+
+  /* BASE */
+  .card {
+    width: 1080px; height: 1350px;
+    background: #0f1117;
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+  }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+
+  .hdr {
+    padding: 36px 64px 0;
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+    position: relative; z-index: 2;
+  }
+  .hdr-logo {
+    width: 46px; height: 46px; background: #16a34a;
+    border-radius: 13px; display: flex; align-items: center;
+    justify-content: center; font-size: 24px; flex-shrink: 0;
+  }
+  .hdr-name { font-size: 18px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 12px; color: #6b7280; margin-top: 1px; }
+  .hdr-num {
+    margin-left: auto; font-size: 12px; color: #4b5563; font-weight: 600;
+    background: #1a1f2e; padding: 4px 12px; border-radius: 20px; border: 1px solid #1f2937;
+  }
+
+  .tag {
+    display: inline-block; background: #14532d; color: #4ade80;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 6px;
+  }
+
+  .ftr {
+    padding: 18px 64px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2;
+  }
+  .ftr-l { font-size: 14px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 12px; color: #4b5563; background: #111827; padding: 6px 14px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  /* ── SPLIT LAYOUT (image right) ── */
+  .split {
+    flex: 1; display: flex; overflow: hidden;
+  }
+  .split-content {
+    width: 580px; padding: 32px 48px 24px 64px;
+    display: flex; flex-direction: column; gap: 20px; flex-shrink: 0;
+  }
+  .split-img {
+    flex: 1; overflow: hidden; position: relative;
+  }
+  .split-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.92);
+  }
+  .split-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to right, #0f1117 0%, transparent 40%);
+  }
+
+  /* ── FULL-IMAGE COVER ── */
+  .cover-img {
+    flex: 1; position: relative; overflow: hidden;
+  }
+  .cover-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.82);
+  }
+  .cover-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(15,17,23,0.92) 18%, rgba(15,17,23,0.35) 55%, transparent 100%);
+  }
+  .cover-text {
+    position: absolute; bottom: 40px; left: 64px; right: 64px;
+  }
+  .cover-text h1 {
+    font-size: 68px; font-weight: 900; color: #f9fafb;
+    line-height: 1.0; letter-spacing: -2px; margin-bottom: 16px;
+  }
+  .cover-text h1 span { color: #4ade80; }
+  .cover-text p { font-size: 22px; color: #d1d5db; line-height: 1.4; max-width: 780px; margin-bottom: 20px; }
+
+  /* ── DATA LAYOUT (no image) ── */
+  .data-body {
+    flex: 1; padding: 28px 64px 0;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .data-body h2 {
+    font-size: 44px; font-weight: 800; color: #f9fafb;
+    line-height: 1.05; letter-spacing: -1.5px;
+  }
+  .data-body h2 span { color: #4ade80; }
+
+  /* Text elements in split */
+  .split-content h2 {
+    font-size: 38px; font-weight: 800; color: #f9fafb;
+    line-height: 1.05; letter-spacing: -1px;
+  }
+  .split-content h2 span { color: #4ade80; }
+
+  .bullets { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .bullet {
+    background: rgba(26,31,46,0.9); border-radius: 16px;
+    padding: 20px 22px; border: 1px solid #1f2937;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .b-icon { font-size: 28px; flex-shrink: 0; }
+  .b-title { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 3px; }
+  .b-desc { font-size: 13px; color: #9ca3af; line-height: 1.5; }
+
+  /* compare (slide 3) */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex: 1; }
+  .lvl {
+    background: #1a1f2e; border-radius: 20px;
+    padding: 28px 26px; border: 1px solid #1f2937;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .lvl.g { background: #052e16; border-color: #166534; }
+  .lvl-icon { font-size: 36px; }
+  .lvl-title { font-size: 20px; font-weight: 800; color: #f9fafb; }
+  .lvl-sub { font-size: 13px; color: #6b7280; }
+  .lvl-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; flex: 1; }
+  .lvl-row { display: flex; gap: 8px; align-items: flex-start; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
+  .lvl .dot { background: #6b7280; }
+  .lvl.g .dot { background: #4ade80; }
+  .lvl-txt { font-size: 16px; color: #d1d5db; line-height: 1.4; }
+  .lvl-badge {
+    margin-top: auto; display: inline-block;
+    font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 8px; width: fit-content;
+  }
+  .lvl.g .lvl-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .lvl:not(.g) .lvl-badge { color: #9ca3af; background: #111827; border: 1px solid #374151; }
+
+  /* steps (slide 7 & 10) */
+  .steps { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+  .step {
+    background: #1a1f2e; border-radius: 18px;
+    padding: 22px 26px; border: 1px solid #1f2937;
+    display: flex; gap: 18px; align-items: flex-start;
+  }
+  .step-n {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #16a34a; display: flex; align-items: center;
+    justify-content: center; font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .step-n.outline { background: #052e16; border: 2px solid #16a34a; color: #4ade80; }
+  .step-t { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 3px; }
+  .step-d { font-size: 13px; color: #9ca3af; line-height: 1.4; }
+
+  /* ROI boxes */
+  .roi-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .roi-box {
+    background: #1a1f2e; border-radius: 18px;
+    padding: 22px 20px; border: 1px solid #1f2937;
+  }
+  .roi-box.bad { background: #1c0a0a; border-color: #7f1d1d; }
+  .roi-box.good { background: #052e16; border-color: #166534; }
+  .roi-icon { font-size: 32px; margin-bottom: 8px; }
+  .roi-title { font-size: 14px; font-weight: 800; color: #f9fafb; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .roi-rows { display: flex; flex-direction: column; gap: 7px; }
+  .roi-row { display: flex; align-items: baseline; gap: 8px; }
+  .roi-arrow { font-size: 11px; color: #6b7280; flex-shrink: 0; }
+  .roi-box.bad .roi-arrow { color: #f87171; }
+  .roi-box.good .roi-arrow { color: #4ade80; }
+  .roi-row-text { font-size: 14px; color: #d1d5db; line-height: 1.35; }
+  .roi-total {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.07);
+    font-size: 15px; font-weight: 700;
+  }
+  .roi-box.bad .roi-total { color: #f87171; }
+  .roi-box.good .roi-total { color: #4ade80; }
+  .insight {
+    background: #052e16; border: 1px solid #166534;
+    border-radius: 18px; padding: 22px 24px;
+    display: flex; gap: 16px; align-items: flex-start; flex: 1;
+  }
+  .ins-icon { font-size: 30px; flex-shrink: 0; }
+  .ins-title { font-size: 17px; font-weight: 700; color: #4ade80; margin-bottom: 6px; }
+  .ins-desc { font-size: 15px; color: #86efac; line-height: 1.5; }
+
+  /* CTA box */
+  .cta-box {
+    background: #16a34a; border-radius: 16px; padding: 20px 24px; text-align: center;
+  }
+  .cta-main { font-size: 18px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 14px; color: #dcfce7; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════ S1 COVER ═══════ -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-img">
+    <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/EMtoi4xT7MSov2vFEzzmk.png" alt="EV plugged in at home">
+    <div class="cover-overlay"></div>
+    <div class="cover-text">
+      <span class="tag">Guía completa · Argentina 2026</span>
+      <br><br>
+      <h1>Cargador<br>en <span>casa</span>:</h1>
+      <p>Precios, opciones y todo lo que necesitás saber para instalar un wallbox en Argentina.</p>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- ═══════ S2 POR QUÉ ═══════ -->
+<p class="lbl">Slide 2 · Por qué en casa — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="split">
+    <div class="split-content">
+      <h2>Por qué<br>cargar en<br>casa <span>cambia<br>todo</span></h2>
+      <div class="bullets">
+        <div class="bullet">
+          <div class="b-icon">🌙</div>
+          <div>
+            <div class="b-title">Siempre listo al arrancar</div>
+            <div class="b-desc">Cada mañana tu auto tiene la carga que necesitás. Sin desvíos, sin esperas.</div>
+          </div>
+        </div>
+        <div class="bullet">
+          <div class="b-icon">💸</div>
+          <div>
+            <div class="b-title">Más barato que cargar en la calle</div>
+            <div class="b-desc">El costo por km en casa es considerablemente menor que en cargadores públicos o nafta.</div>
+          </div>
+        </div>
+        <div class="bullet">
+          <div class="b-icon">📱</div>
+          <div>
+            <div class="b-title">Control desde el celular</div>
+            <div class="b-desc">Programás la carga, ves el consumo y gestionás todo desde la app.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/SAMOoNQ9ZIm_7GQyIFhul.png" alt="EV charging at night">
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>Nivel 1 vs 2 →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- ═══════ S3 COMPARACIÓN ═══════ -->
+<p class="lbl">Slide 3 · Nivel 1 vs 2 — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Nivel 1 vs Nivel 2:<br><span>¿cuál te conviene?</span></h2>
+    <div class="compare">
+      <div class="lvl">
+        <div class="lvl-icon">🔌</div>
+        <div class="lvl-title">Nivel 1</div>
+        <div class="lvl-sub">Enchufe doméstico 220V</div>
+        <div class="lvl-list">
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">~3,5 kW de potencia</div></div>
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">10–15 km por hora</div></div>
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">7–10 hs para 100 km</div></div>
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">Sin instalación especial</div></div>
+        </div>
+        <div class="lvl-badge">Ideal hasta 80 km/día</div>
+      </div>
+      <div class="lvl g">
+        <div class="lvl-icon">⚡</div>
+        <div class="lvl-title">Nivel 2</div>
+        <div class="lvl-sub">Wallbox dedicado</div>
+        <div class="lvl-list">
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">7,4 a 22 kW</div></div>
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">25–75 km por hora</div></div>
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">1,5–4 hs para 100 km</div></div>
+          <div class="lvl-row"><div class="dot"></div><div class="lvl-txt">Requiere instalación</div></div>
+        </div>
+        <div class="lvl-badge">Mejor inversión a largo plazo</div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para ver <span>instalación →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- ═══════ S7 PROFESIONAL ═══════ -->
+<p class="lbl">Slide 7 · Profesional — capturá #s7</p>
+<div class="card" id="s7">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="split">
+    <div class="split-content">
+      <h2>La instalación:<br>siempre con<br>un <span>profesional</span></h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div>
+            <div class="step-t">Electricista matriculado</div>
+            <div class="step-d">Requisito legal y de seguridad. No hay alternativa.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div>
+            <div class="step-t">Pedí el certificado</div>
+            <div class="step-d">Garantía del cargador, seguro del auto y futuras inspecciones lo requieren.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div>
+            <div class="step-t">Revisá el tablero antes</div>
+            <div class="step-d">Muchos hogares necesitan ampliar antes de instalar el circuito dedicado.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/tYApMxDZqIeOhdDr0eWPJ.png" alt="Electrician working">
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para ver <span>recupero →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- ═══════ S8 ROI ═══════ -->
+<p class="lbl">Slide 8 · ROI — capturá #s8</p>
+<div class="card" id="s8">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>El tiempo que<br><span>recuperás</span> cada semana</h2>
+    <div class="roi-boxes">
+      <div class="roi-box bad">
+        <div class="roi-icon">⛽</div>
+        <div class="roi-title">Auto a nafta</div>
+        <div class="roi-rows">
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Acordarse que el tanque está bajo</div></div>
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Planificar el desvío</div></div>
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Parar, cargar, pagar</div></div>
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Repetir cada ~350 km</div></div>
+        </div>
+      </div>
+      <div class="roi-box good">
+        <div class="roi-icon">🌙</div>
+        <div class="roi-title">Eléctrico en casa</div>
+        <div class="roi-rows">
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Enchufás al llegar a casa</div></div>
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Dormís</div></div>
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Salís con batería llena</div></div>
+          <div class="roi-row"><div class="roi-arrow">→</div><div class="roi-row-text">Nunca pensás en dónde cargar</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="ins-icon">☀️</div>
+      <div>
+        <div class="ins-title">Al despertar: batería completa</div>
+        <div class="ins-desc">Con un Wallbox Nivel 2 cargás 100 km en ~2 horas mientras dormís. Sin desvíos, sin colas, sin paradas.</div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>arrancar →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- ═══════ S10 CTA ═══════ -->
+<p class="lbl">Slide 10 · CTA — capturá #s10</p>
+<div class="card" id="s10">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="split">
+    <div class="split-content">
+      <h2>Todo listo<br>para cargar<br>en <span>casa</span></h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n outline">1</div>
+          <div><div class="step-t">Evaluá tu consumo diario</div><div class="step-d">¿Cuántos km hacés por día?</div></div>
+        </div>
+        <div class="step">
+          <div class="step-n outline">2</div>
+          <div><div class="step-t">Elegí marca y modelo</div><div class="step-d">EVTRON, Wallbox, Scame Parre, ABB...</div></div>
+        </div>
+        <div class="step">
+          <div class="step-n outline">3</div>
+          <div><div class="step-t">Consultá con un electricista</div><div class="step-d">Revisá tablero y circuito antes de comprar.</div></div>
+        </div>
+        <div class="step">
+          <div class="step-n outline">4</div>
+          <div><div class="step-t">Instalá y pedí el certificado</div><div class="step-d">La inversión se recupera en meses.</div></div>
+        </div>
+      </div>
+      <div class="cta-box">
+        <div class="cta-main">¿Buscás cargadores cerca tuyo?</div>
+        <div class="cta-url">dondecargar.com.ar — mapa gratuito</div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/m6gB_INTzcb3EJGJS5hRo.png" alt="EV in home garage">
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Guía completa en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s10</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>

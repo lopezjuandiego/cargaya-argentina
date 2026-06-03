@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    gap: 32px;
+    padding: 40px;
+  }
+
+  /* ─── OPCIÓN A: ícono solo ─── */
+  .optA {
+    width: 1080px;
+    height: 1080px;
+    background: #0f1117;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bolt {
+    width: 560px;
+    height: 560px;
+  }
+
+  /* ─── OPCIÓN B: ícono + nombre ─── */
+  .optB {
+    width: 1080px;
+    height: 1080px;
+    background: #0f1117;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+  }
+  .bolt-sm {
+    width: 320px;
+    height: 320px;
+  }
+  .brand-text {
+    text-align: center;
+  }
+  .brand-main {
+    font-size: 96px;
+    font-weight: 900;
+    color: #f9fafb;
+    letter-spacing: -3px;
+    line-height: 1;
+  }
+  .brand-main span { color: #4ade80; }
+  .brand-sub {
+    font-size: 34px;
+    color: #6b7280;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  .label {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* preview circles (simula recorte de IG) */
+  .previews {
+    display: flex;
+    gap: 40px;
+    align-items: flex-end;
+  }
+  .preview-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .circle { border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- OPCIÓN A: solo ícono (recomendada — se ve bien en chiquito) -->
+<p class="label">Opción A — solo ícono (capturá este div)</p>
+<div class="optA" id="optA">
+  <svg class="bolt" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- fondo circular suave -->
+    <circle cx="50" cy="50" r="46" fill="#052e16" opacity="0.6"/>
+    <!-- rayo verde -->
+    <polygon points="58,8 28,54 50,54 42,92 72,46 50,46" fill="#4ade80"/>
+  </svg>
+</div>
+
+<div style="height:1px;background:#d1d5db;width:600px"></div>
+
+<!-- OPCIÓN B: ícono + nombre -->
+<p class="label">Opción B — ícono + nombre (capturá este div)</p>
+<div class="optB" id="optB">
+  <svg class="bolt-sm" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="46" fill="#052e16" opacity="0.6"/>
+    <polygon points="58,8 28,54 50,54 42,92 72,46 50,46" fill="#4ade80"/>
+  </svg>
+  <div class="brand-text">
+    <div class="brand-main"><span>Dónde</span>Cargar</div>
+    <div class="brand-sub">Mapa de cargadores · AR</div>
+  </div>
+</div>
+
+<div style="height:1px;background:#d1d5db;width:600px"></div>
+
+<!-- PREVIEW circular (como lo muestra IG) -->
+<p class="label">Preview — cómo lo recorta Instagram</p>
+<div class="previews">
+  <div class="preview-wrap">
+    <div class="circle" style="width:110px;height:110px;background:#0f1117">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="110" height="110">
+        <rect width="100" height="100" fill="#0f1117"/>
+        <circle cx="50" cy="50" r="46" fill="#052e16" opacity="0.6"/>
+        <polygon points="58,8 28,54 50,54 42,92 72,46 50,46" fill="#4ade80"/>
+      </svg>
+    </div>
+    <span style="font-size:11px;color:#6b7280">110px (móvil)</span>
+  </div>
+  <div class="preview-wrap">
+    <div class="circle" style="width:180px;height:180px;background:#0f1117">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="180" height="180">
+        <rect width="100" height="100" fill="#0f1117"/>
+        <circle cx="50" cy="50" r="46" fill="#052e16" opacity="0.6"/>
+        <polygon points="58,8 28,54 50,54 42,92 72,46 50,46" fill="#4ade80"/>
+      </svg>
+    </div>
+    <span style="font-size:11px;color:#6b7280">180px (desktop)</span>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#9ca3af;text-align:center;max-width:600px">
+  Para capturar: abrí DevTools (F12) → Elements → click derecho en <code>#optA</code> o <code>#optB</code> → <strong>Capture node screenshot</strong>. Guardás un PNG de 1080×1080px listo para subir.
+</p>
+
+</body>
+</html>

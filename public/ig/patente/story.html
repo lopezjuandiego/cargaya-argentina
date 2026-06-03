@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    gap: 16px;
+  }
+  .label {
+    font-size: 12px; color: #6b7280; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: monospace;
+  }
+
+  .card {
+    width: 1080px;
+    height: 1920px;
+    background: #0f1117;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .accent-bar {
+    height: 7px;
+    background: linear-gradient(90deg, #16a34a, #4ade80, #16a34a);
+    flex-shrink: 0;
+  }
+
+  .header {
+    padding: 48px 80px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .logo {
+    width: 56px; height: 56px;
+    background: #16a34a;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; flex-shrink: 0;
+  }
+  .brand-name { font-size: 22px; font-weight: 700; color: #f9fafb; }
+  .brand-handle { font-size: 15px; color: #6b7280; margin-top: 2px; }
+
+  /* Big hero area */
+  .hero {
+    padding: 64px 80px 0;
+    flex-shrink: 0;
+  }
+  .tag {
+    display: inline-block;
+    background: #14532d; color: #4ade80;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 8px 18px; border-radius: 8px;
+    margin-bottom: 28px;
+  }
+  .headline {
+    font-size: 92px;
+    font-weight: 900;
+    color: #f9fafb;
+    line-height: 1.0;
+    letter-spacing: -2.5px;
+    margin-bottom: 24px;
+  }
+  .headline .green { color: #4ade80; }
+  .subhead {
+    font-size: 28px;
+    color: #9ca3af;
+    line-height: 1.5;
+    max-width: 900px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: #1f2937;
+    margin: 52px 80px 0;
+    flex-shrink: 0;
+  }
+
+  /* Fact list */
+  .facts {
+    padding: 48px 80px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+  }
+  .fact {
+    background: #1a1f2e;
+    border-radius: 24px;
+    padding: 36px 40px;
+    border: 1px solid #1f2937;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+  }
+  .fact.good { border-color: #166534; background: #052e16; }
+  .fact.warn { border-color: #78350f; background: #1c1208; }
+
+  .fact-icon { font-size: 44px; flex-shrink: 0; line-height: 1; margin-top: 4px; }
+  .fact-body { flex: 1; }
+  .fact-title { font-size: 24px; font-weight: 700; color: #f9fafb; margin-bottom: 6px; }
+  .fact-desc { font-size: 20px; color: #9ca3af; line-height: 1.5; }
+  .fact-badge {
+    display: inline-block; margin-top: 10px;
+    font-size: 16px; font-weight: 700;
+    padding: 5px 14px; border-radius: 8px;
+  }
+  .fact.good .fact-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact.warn .fact-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+  .fact .fact-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+
+  /* Footer */
+  .footer {
+    padding: 40px 80px 60px;
+    flex-shrink: 0;
+    border-top: 1px solid #1f2937;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-cta { font-size: 22px; font-weight: 600; color: #d1d5db; }
+  .footer-cta span { color: #4ade80; }
+  .footer-url {
+    font-size: 18px; color: #4b5563; font-weight: 500;
+    background: #111827; padding: 10px 22px;
+    border-radius: 12px; border: 1px solid #1f2937;
+  }
+</style>
+</head>
+<body>
+<p class="label">ig-patente-story.html — 1080 × 1920 px (Story 9:16) — capturá #card-story</p>
+
+<div class="card" id="card-story">
+  <div class="accent-bar"></div>
+
+  <div class="header">
+    <div class="logo">⚡</div>
+    <div>
+      <div class="brand-name">DóndeCargar</div>
+      <div class="brand-handle">@dondecargar.ar</div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="tag">Buenos Aires · 2026</div>
+    <h1 class="headline">Patente<br><span class="green">$0</span> para<br>eléctricos<br>en CABA</h1>
+    <p class="subhead">Lo que aplica, lo que cambió y<br>lo que no está confirmado en PBA.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="facts">
+    <div class="fact good">
+      <div class="fact-icon">🏙️</div>
+      <div class="fact-body">
+        <div class="fact-title">CABA — Eléctricos</div>
+        <div class="fact-desc">Exención total y permanente. La AGIP la aplica automáticamente. Sin trámite, sin límite de valuación.</div>
+        <div class="fact-badge">100% automático · Ley 6825</div>
+      </div>
+    </div>
+
+    <div class="fact good">
+      <div class="fact-icon">🛣️</div>
+      <div class="fact-body">
+        <div class="fact-title">Peajes AUSA — Eléctricos</div>
+        <div class="fact-desc">25 de Mayo, Perito Moreno, Illia, Lugones, Cantilo. No pagás nada. Híbridos: 50% de descuento.</div>
+        <div class="fact-badge">Trámite anual en AUSA</div>
+      </div>
+    </div>
+
+    <div class="fact">
+      <div class="fact-icon">🔋</div>
+      <div class="fact-body">
+        <div class="fact-title">CABA — Híbridos</div>
+        <div class="fact-desc">Exención 1 o 2 años según valuación al patentar. Se aplica solo en la boleta.</div>
+        <div class="fact-badge">Escalonado · automático</div>
+      </div>
+    </div>
+
+    <div class="fact warn">
+      <div class="fact-icon">⚠️</div>
+      <div class="fact-body">
+        <div class="fact-title">Provincia de Buenos Aires</div>
+        <div class="fact-desc">La exención venció el 31/12/2025. ARBA dice que para 2026 no está reglamentada. Consultá en arba.gob.ar.</div>
+        <div class="fact-badge">Verificar en ARBA</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-cta">Artículo completo en<br><span>dondecargar.com.ar/blog</span></div>
+    <div class="footer-url">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#9ca3af;text-align:center;max-width:700px">
+  F12 → Elements → click derecho en <code>#card-story</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>
