@@ -12,6 +12,7 @@ export default function RegisterSW() {
 
     const handler = (e: Event) => {
       e.preventDefault();
+      if (!window.matchMedia("(max-width: 768px)").matches) return;
       setPrompt(e as Event & { prompt?: () => void });
     };
     window.addEventListener("beforeinstallprompt", handler);

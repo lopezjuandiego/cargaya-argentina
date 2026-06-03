@@ -62,7 +62,7 @@ const JOBS = [
   {
     file:   "ig/ansiedad/carousel-post.html",
     dir:    "ansiedad/post",
-    slides: ["s1", "s2", "s3", "s4", "s5", "s6"],
+    slides: ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"],
   },
   {
     file:   "ig/ansiedad/carousel-story.html",
