@@ -48,7 +48,7 @@
   .split-img { flex: 1; overflow: hidden; position: relative; }
   .split-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.92); }
   .split-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #0f1117 0%, transparent 40%); }
-  .split-content h2 { font-size: 58px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1px; }
+  .split-content h2 { font-size: 50px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1px; }
   .split-content h2 span { color: #4ade80; }
 
   .data-body { flex: 1; padding: 22px 64px 0; display: flex; flex-direction: column; gap: 14px; }
@@ -67,8 +67,8 @@
   .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
   .fact.warn .f-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
 
-  .table-box { background: #1a1f2e; border-radius: 16px; overflow: hidden; border: 1px solid #1f2937; flex: 1; }
-  .t-row { display: grid; grid-template-columns: 2.2fr 1fr; padding: 12px 20px; border-bottom: 1px solid #111827; align-items: center; }
+  .table-box { background: #1a1f2e; border-radius: 16px; overflow: hidden; border: 1px solid #1f2937; }
+  .t-row { display: grid; grid-template-columns: 2.2fr 1fr; padding: 32px 20px; border-bottom: 1px solid #111827; align-items: center; }
   .t-row:last-child { border-bottom: none; }
   .t-row.head { background: #111827; }
   .t-cell { font-size: 26px; color: #9ca3af; }
@@ -79,6 +79,14 @@
   .cta-box { background: #16a34a; border-radius: 14px; padding: 18px 22px; text-align: center; }
   .cta-main { font-size: 44px; font-weight: 800; color: #fff; }
   .cta-url { font-size: 34px; color: #dcfce7; margin-top: 4px; }
+
+  /* Overrides para split layout (columna 580px → contenido más estrecho) */
+  .split-content .f-icon { font-size: 36px; }
+  .split-content .f-title { font-size: 34px; }
+  .split-content .f-desc { font-size: 26px; line-height: 1.45; }
+  .split-content .f-badge { font-size: 22px; padding: 4px 12px; }
+  .split-content .fact { padding: 16px 20px; }
+  .split-content .facts { gap: 10px; }
 </style>
 </head>
 <body>

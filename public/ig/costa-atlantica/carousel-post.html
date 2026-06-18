@@ -48,7 +48,7 @@
   .split-img { flex: 1; overflow: hidden; position: relative; }
   .split-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.92); }
   .split-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #0f1117 0%, transparent 40%); }
-  .split-content h2 { font-size: 58px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1px; }
+  .split-content h2 { font-size: 50px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1px; }
   .split-content h2 span { color: #4ade80; }
 
   .data-body { flex: 1; padding: 22px 64px 0; display: flex; flex-direction: column; gap: 14px; }
@@ -87,6 +87,14 @@
   .cta-box { background: #16a34a; border-radius: 14px; padding: 18px 22px; text-align: center; }
   .cta-main { font-size: 44px; font-weight: 800; color: #fff; }
   .cta-url { font-size: 34px; color: #dcfce7; margin-top: 4px; }
+
+  /* Overrides para split layout (columna 580px → contenido más estrecho) */
+  .split-content .f-icon { font-size: 36px; }
+  .split-content .f-title { font-size: 34px; }
+  .split-content .f-desc { font-size: 26px; line-height: 1.45; }
+  .split-content .f-badge { font-size: 22px; padding: 4px 12px; }
+  .split-content .fact { padding: 16px 20px; }
+  .split-content .facts { gap: 10px; }
 </style>
 </head>
 <body>
@@ -211,14 +219,6 @@
             <div class="f-badge">Parada de seguridad</div>
           </div>
         </div>
-        <div class="fact good">
-          <div class="f-icon">🍕</div>
-          <div>
-            <div class="f-title">Aprovechá los 20 min</div>
-            <div class="f-desc">Hay parador gastronómico en la estación. Una pizza o un café y ya estás listo para continuar.</div>
-            <div class="f-badge">Sin tiempo perdido</div>
-          </div>
-        </div>
       </div>
     </div>
     <div class="split-img">
@@ -260,14 +260,6 @@
             <div class="f-badge">CCS2 · CHAdeMO · Type 2</div>
           </div>
         </div>
-        <div class="fact">
-          <div class="f-icon">🏖️</div>
-          <div>
-            <div class="f-title">De acá a MdP: 200 km</div>
-            <div class="f-desc">Con una carga del 30% al 80% tenés más que suficiente para llegar a Mar del Plata sin ansiedad.</div>
-            <div class="f-badge">200 km restantes</div>
-          </div>
-        </div>
       </div>
     </div>
     <div class="split-img">
@@ -306,22 +298,6 @@
           <div class="f-title">Revisá el mapa antes de salir</div>
           <div class="f-desc">En temporada alta los cargadores pueden estar ocupados. Verificá disponibilidad en dondecargar.com.ar.</div>
           <div class="f-badge">Verificar disponibilidad</div>
-        </div>
-      </div>
-      <div class="fact good">
-        <div class="f-icon">💨</div>
-        <div>
-          <div class="f-title">Modo ECO en autopista</div>
-          <div class="f-desc">A 110 km/h con modo ECO consumís hasta 30% menos. Sumás rango y podés saltear una parada.</div>
-          <div class="f-badge">+30% de rango</div>
-        </div>
-      </div>
-      <div class="fact warn">
-        <div class="f-icon">⚠️</div>
-        <div>
-          <div class="f-title">Temporada alta: llegá temprano a los cargadores</div>
-          <div class="f-desc">En enero y febrero los cargadores de Dolores se saturan. Llegá con batería suficiente para esperar.</div>
-          <div class="f-badge">Planificar en enero/febrero</div>
         </div>
       </div>
     </div>
