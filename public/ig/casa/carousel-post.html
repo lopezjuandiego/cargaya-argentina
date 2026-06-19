@@ -76,27 +76,14 @@
     background: linear-gradient(to right, #0f1117 0%, transparent 40%);
   }
 
-  /* ── COVER SIN FOTO ── */
-  .cover-solo {
-    flex: 1; display: flex; flex-direction: column;
-    justify-content: center; padding: 40px 72px;
-    background: linear-gradient(150deg, #0f1117 40%, #071a0e 100%);
-    position: relative; overflow: hidden;
-  }
-  .cover-solo::before {
-    content: ''; position: absolute;
-    right: -80px; top: 50%; transform: translateY(-50%);
-    width: 480px; height: 480px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .cover-solo h1 {
-    font-size: 92px; font-weight: 900; color: #f9fafb;
-    line-height: 1.0; letter-spacing: -2px; margin: 28px 0 24px;
-  }
-  .cover-solo h1 span { color: #4ade80; }
-  .cover-solo p { font-size: 36px; color: #9ca3af; line-height: 1.4; max-width: 860px; }
-  .cover-solo .cs-tag { }
+  /* ── COVER CON FOTO ── */
+  .cover-img { flex: 1; position: relative; overflow: hidden; }
+  .cover-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.65) contrast(1.1) saturate(1.2); }
+  .cover-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,17,23,0.95) 22%, rgba(15,17,23,0.40) 55%, transparent 100%); }
+  .cover-text { position: absolute; bottom: 40px; left: 64px; right: 64px; }
+  .cover-text h1 { font-size: 84px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin-bottom: 18px; }
+  .cover-text h1 span { color: #4ade80; }
+  .cover-text p { font-size: 34px; color: #d1d5db; line-height: 1.4; max-width: 820px; margin-bottom: 22px; }
 
   /* ── DATA LAYOUT (no image) ── */
   .data-body {
@@ -231,10 +218,14 @@
     <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
     <div class="hdr-num">1 / 6</div>
   </div>
-  <div class="cover-solo">
-    <div class="cs-tag"><span class="tag">Guía completa · Argentina 2026</span></div>
-    <h1>Cargador<br>en <span>casa</span>:</h1>
-    <p>Precios, opciones y todo lo que necesitás saber para instalar un wallbox en Argentina.</p>
+  <div class="cover-img">
+    <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/tYApMxDZqIeOhdDr0eWPJ.png" alt="Electricista instalando wallbox en casa">
+    <div class="cover-overlay"></div>
+    <div class="cover-text">
+      <span class="tag">Guía completa · Argentina 2026</span><br><br>
+      <h1>Cargador<br>en <span>casa</span>:</h1>
+      <p>Precios, opciones y todo lo que necesitás saber para instalar un wallbox en Argentina.</p>
+    </div>
   </div>
   <div class="ftr">
     <div class="ftr-l">Seguí para más info <span>→</span></div>
@@ -251,28 +242,30 @@
     <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
     <div class="hdr-num">2 / 6</div>
   </div>
-  <div class="split">
-    <div class="split-content">
-      <h2>Por qué<br>cargar en<br>casa <span>cambia<br>todo</span></h2>
-      <div class="bullets">
-        <div class="bullet">
-          <div class="b-icon">🌙</div>
-          <div>
-            <div class="b-title">Siempre listo al arrancar</div>
-            <div class="b-desc">Cada mañana tu auto tiene la carga que necesitás. Sin desvíos, sin esperas.</div>
-          </div>
+  <div class="data-body">
+    <h2>Por qué cargar<br>en casa<br><span>cambia todo</span></h2>
+    <div class="bullets">
+      <div class="bullet">
+        <div class="b-icon">🌙</div>
+        <div>
+          <div class="b-title">Siempre listo al arrancar</div>
+          <div class="b-desc">Cada mañana tu auto tiene la carga que necesitás. Sin desvíos, sin esperas.</div>
         </div>
-        <div class="bullet">
-          <div class="b-icon">💸</div>
-          <div>
-            <div class="b-title">Más barato que cargar en la calle</div>
-            <div class="b-desc">El costo por km en casa es considerablemente menor que en cargadores públicos o nafta.</div>
-          </div>
+      </div>
+      <div class="bullet">
+        <div class="b-icon">💸</div>
+        <div>
+          <div class="b-title">Más barato que en la calle</div>
+          <div class="b-desc">Cargar de noche en casa es considerablemente más barato que cualquier cargador público o nafta.</div>
         </div>
+      </div>
+      <div class="bullet">
+        <div class="b-icon">📱</div>
+        <div>
+          <div class="b-title">Control desde el celular</div>
+          <div class="b-desc">Programás la carga, ves el consumo y gestionás todo desde la app del wallbox.</div>
         </div>
-    </div>
-    <div class="split-img">
-      <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/SAMOoNQ9ZIm_7GQyIFhul.png" alt="EV charging at night">
+      </div>
     </div>
   </div>
   <div class="ftr">
@@ -334,35 +327,30 @@
     <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
     <div class="hdr-num">4 / 6</div>
   </div>
-  <div class="split">
-    <div class="split-content">
-      <h2>La instalación:<br>siempre con<br>un <span>profesional</span></h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-n">1</div>
-          <div>
-            <div class="step-t">Electricista matriculado</div>
-            <div class="step-d">Requisito legal y de seguridad. No hay alternativa.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">2</div>
-          <div>
-            <div class="step-t">Pedí el certificado</div>
-            <div class="step-d">Garantía del cargador, seguro del auto y futuras inspecciones lo requieren.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">3</div>
-          <div>
-            <div class="step-t">Revisá el tablero antes</div>
-            <div class="step-d">Muchos hogares necesitan ampliar antes de instalar el circuito dedicado.</div>
-          </div>
+  <div class="data-body">
+    <h2>La instalación:<br>siempre con un<br><span>profesional</span></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div>
+          <div class="step-t">Electricista matriculado</div>
+          <div class="step-d">La instalación debe hacerla un profesional habilitado. Es un requisito legal y de seguridad, sin excepciones.</div>
         </div>
       </div>
-    </div>
-    <div class="split-img">
-      <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/tYApMxDZqIeOhdDr0eWPJ.png" alt="Electrician working">
+      <div class="step">
+        <div class="step-n">2</div>
+        <div>
+          <div class="step-t">Pedí el certificado</div>
+          <div class="step-d">Fundamental para garantías del cargador, cobertura del seguro del auto y futuras inspecciones.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div>
+          <div class="step-t">Revisá el tablero antes</div>
+          <div class="step-d">Muchos hogares necesitan ampliar la capacidad antes de instalar el circuito dedicado.</div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="ftr">
@@ -427,30 +415,25 @@
     <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
     <div class="hdr-num">6 / 6</div>
   </div>
-  <div class="split">
-    <div class="split-content">
-      <h2>Todo listo<br>para cargar<br>en <span>casa</span></h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-n outline">1</div>
-          <div><div class="step-t">Evaluá tu consumo diario</div><div class="step-d">¿Cuántos km hacés por día?</div></div>
-        </div>
-        <div class="step">
-          <div class="step-n outline">2</div>
-          <div><div class="step-t">Elegí marca y modelo</div><div class="step-d">EVTRON, Wallbox, Scame Parre, ABB...</div></div>
-        </div>
-        <div class="step">
-          <div class="step-n outline">3</div>
-          <div><div class="step-t">Consultá con un electricista</div><div class="step-d">Revisá tablero y circuito antes de comprar.</div></div>
-        </div>
+  <div class="data-body">
+    <h2>Todo listo<br>para cargar<br>en <span>casa</span></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n outline">1</div>
+        <div><div class="step-t">Evaluá tu consumo diario</div><div class="step-d">¿Cuántos km hacés por día? Eso define si necesitás Nivel 1 o Nivel 2.</div></div>
       </div>
-      <div class="cta-box">
-        <div class="cta-main">¿Buscás cargadores cerca tuyo?</div>
-        <div class="cta-url">dondecargar.com.ar — mapa gratuito</div>
+      <div class="step">
+        <div class="step-n outline">2</div>
+        <div><div class="step-t">Elegí marca y modelo</div><div class="step-d">EVTRON, Wallbox, Scame Parre, ABB o CIRCUTOR según tu presupuesto.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n outline">3</div>
+        <div><div class="step-t">Instalá con un matriculado</div><div class="step-d">Evaluá el tablero, instalá el circuito dedicado y pedí el certificado.</div></div>
       </div>
     </div>
-    <div class="split-img">
-      <img src="https://cdn.gamma.app/8qxogbmqw7pxhn1/generated-images/m6gB_INTzcb3EJGJS5hRo.png" alt="EV in home garage">
+    <div class="cta-box">
+      <div class="cta-main">¿Buscás cargadores cerca tuyo?</div>
+      <div class="cta-url">dondecargar.com.ar — mapa gratuito de toda Argentina</div>
     </div>
   </div>
   <div class="ftr">
