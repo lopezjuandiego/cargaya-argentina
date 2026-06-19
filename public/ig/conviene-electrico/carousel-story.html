@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #d1d5db; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 60px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .lbl { font-size: 11px; color: #9ca3af; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace; align-self: flex-start; margin-left: calc(50% - 540px); }
+  .card { width: 1080px; height: 1920px; background: #0f1117; display: flex; flex-direction: column; overflow: hidden; }
+  .accent { height: 7px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr { padding: 260px 80px 0; display: flex; align-items: center; gap: 16px; flex-shrink: 0; position: relative; z-index: 2; }
+  .hdr-logo { width: 52px; height: 52px; background: #16a34a; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 27px; flex-shrink: 0; }
+  .hdr-name { font-size: 34px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 24px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 24px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 8px 20px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 10px 22px; border-radius: 7px; }
+  .ftr { padding: 30px 80px 260px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; }
+  .ftr-l { font-size: 34px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 28px; color: #4b5563; background: #111827; padding: 12px 22px; border-radius: 10px; border: 1px solid #1f2937; }
+
+  .cover-solo { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 50px 80px; background: linear-gradient(150deg, #0f1117 40%, #071a0e 100%); position: relative; overflow: hidden; }
+  .cover-solo::before { content: ''; position: absolute; right: -80px; top: 50%; transform: translateY(-50%); width: 580px; height: 580px; border-radius: 50%; background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%); pointer-events: none; }
+  .cover-solo h1 { font-size: 100px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -3px; margin: 30px 0 28px; }
+  .cover-solo h1 span { color: #4ade80; }
+  .cover-solo p { font-size: 44px; color: #9ca3af; line-height: 1.4; max-width: 900px; }
+
+  .data-body { flex: 1; padding: 48px 80px 0; display: flex; flex-direction: column; gap: 18px; }
+  .data-body h2 { font-size: 62px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; }
+  .data-body h2 span { color: #4ade80; }
+
+  .stat-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+  .stat-number { font-size: 180px; font-weight: 900; color: #4ade80; line-height: 1; letter-spacing: -6px; }
+  .stat-label { font-size: 52px; color: #f9fafb; font-weight: 700; text-align: center; }
+  .stat-sub { font-size: 40px; color: #9ca3af; text-align: center; max-width: 800px; line-height: 1.5; }
+  .stat-badge { display: inline-block; background: #14532d; color: #4ade80; font-size: 34px; font-weight: 700; padding: 14px 28px; border-radius: 10px; margin-top: 10px; }
+
+  .bullets { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .bullet { background: #1a1f2e; border-radius: 22px; padding: 22px 28px; border: 1px solid #1f2937; display: flex; gap: 18px; align-items: flex-start; flex: 1; }
+  .bullet.good { background: #052e16; border-color: #166534; }
+  .bullet.warn { background: #1c0a0a; border-color: #7f1d1d; }
+  .b-icon { font-size: 46px; flex-shrink: 0; }
+  .b-title { font-size: 44px; font-weight: 700; color: #f9fafb; margin-bottom: 6px; }
+  .b-desc { font-size: 36px; color: #9ca3af; line-height: 1.5; }
+  .b-badge { display: inline-block; margin-top: 10px; font-size: 32px; font-weight: 700; padding: 10px 20px; border-radius: 9px; width: fit-content; }
+  .bullet.good .b-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .bullet .b-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+  .bullet.warn .b-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+
+  .compare-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
+  .box { border-radius: 22px; padding: 32px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .box.bad { background: #1c0a0a; border: 1px solid #7f1d1d; }
+  .box.good { background: #052e16; border: 1px solid #166534; }
+  .box-icon { font-size: 48px; }
+  .box-title { font-size: 40px; font-weight: 800; color: #f9fafb; text-transform: uppercase; letter-spacing: 0.5px; }
+  .box-stat { font-size: 56px; font-weight: 900; line-height: 1; }
+  .box.bad .box-stat { color: #f87171; }
+  .box.good .box-stat { color: #4ade80; }
+  .box-detail { font-size: 36px; line-height: 1.5; }
+  .box.bad .box-detail { color: #fca5a5; }
+  .box.good .box-detail { color: #86efac; }
+
+  .cta-box { background: #16a34a; border-radius: 22px; padding: 28px 36px; text-align: center; }
+  .cta-main { font-size: 52px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 38px; color: #dcfce7; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-solo">
+    <div><span class="tag">Análisis · Argentina 2026</span></div>
+    <h1>¿Conviene<br>un <span>eléctrico</span><br>en Argentina?</h1>
+    <p>Hicimos las cuentas con números reales. El resultado te va a sorprender.</p>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>los números →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 STAT -->
+<p class="lbl">Slide 2 · Stat — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>El costo<br>por km</h2>
+    <div class="stat-hero">
+      <div class="stat-number">15x</div>
+      <div class="stat-label">más barato por km</div>
+      <div class="stat-sub">Cargando en casa vs. nafta premium. El número que más sorprende.</div>
+      <div class="stat-badge">EL DATO QUE CAMBIA TODO</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>la comparación →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 COMPARE -->
+<p class="lbl">Slide 3 · Compare — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>100 km:<br>nafta vs<br><span>eléctrico</span></h2>
+    <div class="compare-2">
+      <div class="box bad">
+        <div class="box-icon">⛽</div>
+        <div class="box-title">Nafta</div>
+        <div class="box-stat">$1.800</div>
+        <div class="box-detail">por 100 km (nafta premium, ~8L)</div>
+      </div>
+      <div class="box good">
+        <div class="box-icon">⚡</div>
+        <div class="box-title">Eléctrico</div>
+        <div class="box-stat">$120</div>
+        <div class="box-detail">por 100 km (tarifa nocturna, ~15 kWh)</div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>mantenimiento →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 MANTENIMIENTO -->
+<p class="lbl">Slide 4 · Mantenimiento — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>El ahorro<br><span>que casi nadie<br>calcula</span></h2>
+    <div class="bullets">
+      <div class="bullet good">
+        <div class="b-icon">🔧</div>
+        <div>
+          <div class="b-title">El ahorro en mantenimiento</div>
+          <div class="b-desc">Sin cambio de aceite, sin filtros, sin distribución. Solo frenos, cubiertas y refrigerante.</div>
+          <div class="b-badge">~$200k/año menos</div>
+        </div>
+      </div>
+      <div class="bullet warn">
+        <div class="b-icon">🛡️</div>
+        <div>
+          <div class="b-title">El seguro</div>
+          <div class="b-desc">Todavía entre 15-20% más caro que un equivalente de nafta. El delta se achica cada año.</div>
+          <div class="b-badge">Variable según aseguradora</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>¿cuándo conviene? →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 CONVIENE / NO -->
+<p class="lbl">Slide 5 · Conviene vs No — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>¿Cuándo<br><span>conviene</span><br>y cuándo no?</h2>
+    <div class="bullets">
+      <div class="bullet good">
+        <div class="b-icon">✅</div>
+        <div>
+          <div class="b-title">Sí conviene si...</div>
+          <div class="b-desc">Tenés dónde cargar en casa o en el trabajo. Hacés más de 30 km/día. Querés cortar con la nafta.</div>
+          <div class="b-badge">La mayoría de los casos</div>
+        </div>
+      </div>
+      <div class="bullet warn">
+        <div class="b-icon">⚠️</div>
+        <div>
+          <div class="b-title">Cuando dudarlo...</div>
+          <div class="b-desc">No tenés acceso a carga nocturna (edificio sin instalación). Hacés rutas largas frecuentes.</div>
+          <div class="b-badge">Evaluar cada caso</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>el número final →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 CTA -->
+<p class="lbl">Slide 6 · CTA — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>En <span>~18 meses</span><br>ya amortizaste<br>la diferencia</h2>
+    <div class="bullets">
+      <div class="bullet good">
+        <div class="b-icon">📊</div>
+        <div>
+          <div class="b-title">Con 15.000 km/año</div>
+          <div class="b-desc">Ahorrás ~$1.400 por 100 km vs nafta. ~$210.000 de ahorro solo en combustible por año.</div>
+          <div class="b-badge">~18 meses para amortizar USD 2.000 extra</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">Encontrá cargadores en dondecargar.com.ar</div>
+      <div class="cta-url">mapa gratuito · toda Argentina</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Análisis completo en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>

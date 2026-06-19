@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #d1d5db; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 60px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .lbl { font-size: 11px; color: #9ca3af; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace; align-self: flex-start; margin-left: calc(50% - 540px); }
+  .card { width: 1080px; height: 1350px; background: #0f1117; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr { padding: 140px 64px 0; display: flex; align-items: center; gap: 14px; flex-shrink: 0; position: relative; z-index: 2; }
+  .hdr-logo { width: 46px; height: 46px; background: #16a34a; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .hdr-name { font-size: 26px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 18px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 18px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 6px 14px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 7px 16px; border-radius: 6px; }
+  .ftr { padding: 18px 64px 140px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2; }
+  .ftr-l { font-size: 30px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 26px; color: #4b5563; background: #111827; padding: 10px 18px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  .cover-solo { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 72px; background: linear-gradient(150deg, #0f1117 40%, #071a0e 100%); position: relative; overflow: hidden; }
+  .cover-solo::before { content: ''; position: absolute; right: -80px; top: 50%; transform: translateY(-50%); width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%); pointer-events: none; }
+  .cover-solo h1 { font-size: 84px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin: 28px 0 24px; }
+  .cover-solo h1 span { color: #4ade80; }
+  .cover-solo p { font-size: 34px; color: #9ca3af; line-height: 1.4; max-width: 860px; }
+
+  .data-body { flex: 1; padding: 22px 64px 0; display: flex; flex-direction: column; gap: 14px; }
+  .data-body h2 { font-size: 62px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1.5px; }
+  .data-body h2 span { color: #4ade80; }
+
+  .facts { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .fact { background: rgba(26,31,46,0.95); border-radius: 16px; padding: 22px 26px; border: 1px solid #1f2937; display: flex; gap: 20px; align-items: flex-start; }
+  .fact.good { background: rgba(5,46,22,0.95); border-color: #166534; }
+  .fact.warn { background: rgba(28,8,8,0.95); border-color: #7f1d1d; }
+  .f-icon { font-size: 44px; flex-shrink: 0; }
+  .f-title { font-size: 42px; font-weight: 700; color: #f9fafb; margin-bottom: 6px; }
+  .f-desc { font-size: 38px; color: #9ca3af; line-height: 1.45; }
+  .f-badge { display: inline-block; margin-top: 8px; font-size: 30px; font-weight: 700; padding: 8px 18px; border-radius: 7px; width: fit-content; }
+  .fact.good .f-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+  .fact.warn .f-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+
+  .table-box { background: #1a1f2e; border-radius: 16px; overflow: hidden; border: 1px solid #1f2937; }
+  .t-row { display: grid; grid-template-columns: 1.8fr 1fr 0.8fr; padding: 24px 20px; border-bottom: 1px solid #111827; align-items: center; }
+  .t-row:last-child { border-bottom: none; }
+  .t-row.head { background: #111827; }
+  .t-cell { font-size: 26px; color: #9ca3af; }
+  .t-row.head .t-cell { font-size: 22px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .t-cell.green { color: #4ade80; font-weight: 700; }
+  .t-cell.blue { color: #60a5fa; font-weight: 700; }
+  .t-cell.free { color: #fbbf24; font-weight: 700; }
+  .t-cell.name { color: #f9fafb; font-weight: 600; }
+
+  .cta-box { background: #16a34a; border-radius: 14px; padding: 22px 22px; text-align: center; }
+  .cta-main { font-size: 44px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 34px; color: #dcfce7; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-solo">
+    <div><span class="tag">Costa Atlántica · 2026</span></div>
+    <h1>Mar del Plata:<br>dónde<br><span>cargar</span></h1>
+    <p>5 estaciones activas, una gratuita. Todo lo que necesitás para llegar y recargar en MdP.</p>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 SHELL -->
+<p class="lbl">Slide 2 · Shell — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Shell Recharge:<br><span>el más rápido</span><br>de MdP</h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">50 kW DC · 3 conectores</div>
+          <div class="f-desc">CCS2 (BYD, Chery, europeos), CHAdeMO (Nissan Leaf) y Type 2 AC. 100 km en menos de 30 min con los modelos más rápidos.</div>
+          <div class="f-badge">50 kW · 35-55 min de 20% a 80%</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">📱</div>
+        <div>
+          <div class="f-title">Cómo cargar con Shell</div>
+          <div class="f-desc">Registrate en la app Shell Recharge. La primera carga suele ser gratis como bienvenida a la red.</div>
+          <div class="f-badge">App Shell Recharge</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>YPF →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 YPF -->
+<p class="lbl">Slide 3 · YPF — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>YPF en el<br>corredor<br><span>Constitución</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🛣️</div>
+        <div>
+          <div class="f-title">YPF Constitución y Tejedor</div>
+          <div class="f-desc">DC rápido sobre la arteria principal de MdP. Ideal para llegar cargado antes de descansar.</div>
+          <div class="f-badge">DC · Avenida principal</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">🛣️</div>
+        <div>
+          <div class="f-title">YPF Av. Constitución</div>
+          <div class="f-desc">Un segundo punto YPF en la misma avenida. Si uno está ocupado, el otro suele tener lugar. Fundamental en temporada alta.</div>
+          <div class="f-badge">DC · Respaldo garantizado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>gratuito →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 SCAME + CARREFOUR -->
+<p class="lbl">Slide 4 · Scame + Carrefour — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Scame: <span>gratis</span>.<br>Carrefour:<br>mientras comprás</h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🎁</div>
+        <div>
+          <div class="f-title">Scame Electropuerto</div>
+          <div class="f-desc">Uno de los pocos cargadores gratuitos de la ciudad. Zona del puerto histórico, cerca de la Banquina de Pescadores.</div>
+          <div class="f-badge">GRATUITO · Puerto histórico</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🛒</div>
+        <div>
+          <div class="f-title">Carrefour Mar del Plata</div>
+          <div class="f-desc">AC lento en el estacionamiento. Ideal para sumar 40-60 km mientras hacés las compras del día.</div>
+          <div class="f-badge">Type 2 AC · Sin registro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>cómo llegar →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 CÓMO LLEGAR -->
+<p class="lbl">Slide 5 · Cómo llegar — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Cómo llegar<br>desde BA<br><span>cargado</span></h2>
+    <div class="facts">
+      <div class="fact">
+        <div class="f-icon">🚗</div>
+        <div>
+          <div class="f-title">BYD Dolphin Mini y similares</div>
+          <div class="f-desc">Autonomía ~340 km. Podés llegar directo desde BA si salís al 100%. Si no, 1 parada en Dolores (km 202) es suficiente.</div>
+          <div class="f-badge">Directo o 1 parada · km 202</div>
+        </div>
+      </div>
+      <div class="fact warn">
+        <div class="f-icon">⚠️</div>
+        <div>
+          <div class="f-title">Temporada alta</div>
+          <div class="f-desc">En enero-febrero los cargadores de MdP se saturan, especialmente Shell y YPF. Llegá con batería extra o madrugá.</div>
+          <div class="f-badge">Planificar · Enero-Febrero</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>resumen →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 TABLA + CTA -->
+<p class="lbl">Slide 6 · Resumen — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Las 5 estaciones<br>de <span>Mar del Plata</span></h2>
+    <div class="table-box">
+      <div class="t-row head">
+        <div class="t-cell">Estación</div>
+        <div class="t-cell">Tipo</div>
+        <div class="t-cell">Costo</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Shell Recharge</div>
+        <div class="t-cell blue">50kW DC</div>
+        <div class="t-cell">Pago</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">YPF Constitución ×2</div>
+        <div class="t-cell blue">DC</div>
+        <div class="t-cell">Pago</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Scame Electropuerto</div>
+        <div class="t-cell green">AC</div>
+        <div class="t-cell free">GRATIS</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Carrefour / Sheraton</div>
+        <div class="t-cell green">AC</div>
+        <div class="t-cell">Pago</div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">Ver mapa completo en dondecargar.com.ar</div>
+      <div class="cta-url">todas las estaciones · gratuito</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Artículo completo en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>

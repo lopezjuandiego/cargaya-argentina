@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #d1d5db; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 60px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .lbl { font-size: 11px; color: #9ca3af; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace; align-self: flex-start; margin-left: calc(50% - 540px); }
+  .card { width: 1080px; height: 1350px; background: #0f1117; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr { padding: 140px 64px 0; display: flex; align-items: center; gap: 14px; flex-shrink: 0; position: relative; z-index: 2; }
+  .hdr-logo { width: 46px; height: 46px; background: #16a34a; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .hdr-name { font-size: 26px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 18px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 18px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 6px 14px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 7px 16px; border-radius: 6px; }
+  .ftr { padding: 18px 64px 140px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2; }
+  .ftr-l { font-size: 30px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 26px; color: #4b5563; background: #111827; padding: 10px 18px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  .cover-solo { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 72px; background: linear-gradient(150deg, #0f1117 40%, #071a0e 100%); position: relative; overflow: hidden; }
+  .cover-solo::before { content: ''; position: absolute; right: -80px; top: 50%; transform: translateY(-50%); width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%); pointer-events: none; }
+  .cover-solo h1 { font-size: 84px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin: 28px 0 24px; }
+  .cover-solo h1 span { color: #4ade80; }
+  .cover-solo p { font-size: 34px; color: #9ca3af; line-height: 1.4; max-width: 860px; }
+
+  .data-body { flex: 1; padding: 22px 64px 0; display: flex; flex-direction: column; gap: 14px; }
+  .data-body h2 { font-size: 62px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1.5px; }
+  .data-body h2 span { color: #4ade80; }
+
+  .facts { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .fact { background: rgba(26,31,46,0.95); border-radius: 16px; padding: 22px 26px; border: 1px solid #1f2937; display: flex; gap: 20px; align-items: flex-start; }
+  .fact.good { background: rgba(5,46,22,0.95); border-color: #166534; }
+  .fact.warn { background: rgba(28,8,8,0.95); border-color: #7f1d1d; }
+  .f-icon { font-size: 44px; flex-shrink: 0; }
+  .f-title { font-size: 42px; font-weight: 700; color: #f9fafb; margin-bottom: 6px; }
+  .f-desc { font-size: 38px; color: #9ca3af; line-height: 1.45; }
+  .f-badge { display: inline-block; margin-top: 8px; font-size: 30px; font-weight: 700; padding: 8px 18px; border-radius: 7px; width: fit-content; }
+  .fact.good .f-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+  .fact.warn .f-badge { color: #fbbf24; background: #1c1208; border: 1px solid #78350f; }
+
+  .table-box { background: #1a1f2e; border-radius: 16px; overflow: hidden; border: 1px solid #1f2937; }
+  .t-row { display: grid; grid-template-columns: 2fr 1.2fr; padding: 28px 20px; border-bottom: 1px solid #111827; align-items: center; }
+  .t-row:last-child { border-bottom: none; }
+  .t-row.head { background: #111827; }
+  .t-cell { font-size: 26px; color: #9ca3af; }
+  .t-row.head .t-cell { font-size: 22px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .t-cell.green { color: #4ade80; font-weight: 700; }
+  .t-cell.name { color: #f9fafb; font-weight: 600; }
+
+  .cta-box { background: #16a34a; border-radius: 14px; padding: 22px 22px; text-align: center; }
+  .cta-main { font-size: 44px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 34px; color: #dcfce7; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-solo">
+    <div><span class="tag">GBA Norte · 2026</span></div>
+    <h1>Vicente López:<br>dónde<br><span>cargar</span></h1>
+    <p>YPF DC rápido, Carrefour AC y todo lo que necesitás saber para recargar en el partido.</p>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 YPF -->
+<p class="lbl">Slide 2 · YPF — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>YPF Punto<br>Eléctrico:<br><span>el más completo</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">Carga rápida DC</div>
+          <div class="f-desc">Libertador y Melo, Vicente López. El punto más completo del partido. 35-55 min para cargar de 20% a 80%.</div>
+          <div class="f-badge">Múltiples conectores · Abierto 24 hs</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">💳</div>
+        <div>
+          <div class="f-title">Cómo pagar</div>
+          <div class="f-desc">YPF cobra por kWh consumido desde 2026. Eliminó la tarifa plana. Necesitás la app YPF o tarjeta YPFE.</div>
+          <div class="f-badge">App YPF o tarjeta</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>Carrefour →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 CARREFOUR -->
+<p class="lbl">Slide 3 · Carrefour — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Carrefour<br>Vicente López:<br><span>carga lenta</span></h2>
+    <div class="facts">
+      <div class="fact">
+        <div class="f-icon">🛒</div>
+        <div>
+          <div class="f-title">Ideal para compras</div>
+          <div class="f-desc">Av. del Libertador, inicio del partido. Type 2 AC. Dejás el auto 1-2 horas y sumás 40-60 km de autonomía.</div>
+          <div class="f-badge">Type 2 AC · Chargebox</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🔌</div>
+        <div>
+          <div class="f-title">Conectores disponibles</div>
+          <div class="f-desc">Type 2 AC compatible con BYD, Tesla Model 3/Y (con adaptador), VW ID, Chery, Volvo y la mayoría de los modelos europeos y chinos.</div>
+          <div class="f-badge">Type 2 · estándar europeo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>zona norte →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 ZONA NORTE -->
+<p class="lbl">Slide 4 · Zona norte — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Zona norte:<br>más opciones<br><span>cerca</span></h2>
+    <div class="table-box">
+      <div class="t-row head">
+        <div class="t-cell">Estación</div>
+        <div class="t-cell">Distancia</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">YPF Acceso Norte — San Isidro</div>
+        <div class="t-cell green">~15 min</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">McDonald's Boulogne — Type 2 AC</div>
+        <div class="t-cell green">~20 min</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Unicenter Shopping — Martínez</div>
+        <div class="t-cell green">~20 min</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Chargebox Nordelta — Tigre</div>
+        <div class="t-cell green">~35 min</div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>conectores →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 CONECTORES -->
+<p class="lbl">Slide 5 · Conectores — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Conectores<br>en <span>Vicente López</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🔌</div>
+        <div>
+          <div class="f-title">Type 2 AC</div>
+          <div class="f-desc">Todos los Chargebox lo tienen. Compatible con BYD, Tesla, VW ID, Chery, Volvo. Sin adaptador.</div>
+          <div class="f-badge">Estándar para la zona</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">CCS2 (DC rápido)</div>
+          <div class="f-desc">Solo disponible en YPF Libertador. Para BYD Seal, Atto 3, Han EV y modelos con CCS2. Necesitás el conector correcto.</div>
+          <div class="f-badge">Solo YPF Libertador</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>resumen →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 CTA -->
+<p class="lbl">Slide 6 · CTA — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Todo lo que<br>necesitás en<br><span>Vicente López</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">YPF Libertador y Melo</div>
+          <div class="f-desc">Carga rápida DC. El más completo del partido.</div>
+          <div class="f-badge">Abierto 24 hs</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🛒</div>
+        <div>
+          <div class="f-title">Carrefour Vicente López</div>
+          <div class="f-desc">Carga lenta AC mientras hacés las compras. 40-60 km en 1-2 hs.</div>
+          <div class="f-badge">Type 2 AC · Chargebox</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">Mapa completo en dondecargar.com.ar</div>
+      <div class="cta-url">todas las estaciones de la zona norte</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Artículo completo en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>

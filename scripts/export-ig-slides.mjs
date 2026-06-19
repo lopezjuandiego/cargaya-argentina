@@ -79,6 +79,46 @@ const JOBS = [
     dir:    "costa-atlantica/story",
     slides: ["s1", "s2", "s3", "s4", "s5", "s6"],
   },
+  {
+    file:   "ig/conviene-electrico/carousel-post.html",
+    dir:    "conviene-electrico/post",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/conviene-electrico/carousel-story.html",
+    dir:    "conviene-electrico/story",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/vicente-lopez/carousel-post.html",
+    dir:    "vicente-lopez/post",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/vicente-lopez/carousel-story.html",
+    dir:    "vicente-lopez/story",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/mar-del-plata/carousel-post.html",
+    dir:    "mar-del-plata/post",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/mar-del-plata/carousel-story.html",
+    dir:    "mar-del-plata/story",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/pinamar/carousel-post.html",
+    dir:    "pinamar/post",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
+  {
+    file:   "ig/pinamar/carousel-story.html",
+    dir:    "pinamar/story",
+    slides: ["s1","s2","s3","s4","s5","s6"],
+  },
 ];
 
 const browser = await chromium.launch({ args: ["--no-sandbox"] });

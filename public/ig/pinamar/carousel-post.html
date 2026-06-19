@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #d1d5db; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 60px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .lbl { font-size: 11px; color: #9ca3af; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace; align-self: flex-start; margin-left: calc(50% - 540px); }
+  .card { width: 1080px; height: 1350px; background: #0f1117; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .accent { height: 6px; background: linear-gradient(90deg,#16a34a,#4ade80,#16a34a); flex-shrink: 0; }
+  .hdr { padding: 140px 64px 0; display: flex; align-items: center; gap: 14px; flex-shrink: 0; position: relative; z-index: 2; }
+  .hdr-logo { width: 46px; height: 46px; background: #16a34a; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .hdr-name { font-size: 26px; font-weight: 700; color: #f9fafb; }
+  .hdr-handle { font-size: 18px; color: #6b7280; margin-top: 1px; }
+  .hdr-num { margin-left: auto; font-size: 18px; color: #4b5563; font-weight: 600; background: #1a1f2e; padding: 6px 14px; border-radius: 20px; border: 1px solid #1f2937; }
+  .tag { display: inline-block; background: #14532d; color: #4ade80; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 7px 16px; border-radius: 6px; }
+  .ftr { padding: 18px 64px 140px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; flex-shrink: 0; position: relative; z-index: 2; }
+  .ftr-l { font-size: 30px; font-weight: 600; color: #d1d5db; }
+  .ftr-l span { color: #4ade80; }
+  .ftr-r { font-size: 26px; color: #4b5563; background: #111827; padding: 10px 18px; border-radius: 8px; border: 1px solid #1f2937; }
+
+  .cover-solo { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 72px; background: linear-gradient(150deg, #0f1117 40%, #071a0e 100%); position: relative; overflow: hidden; }
+  .cover-solo::before { content: ''; position: absolute; right: -80px; top: 50%; transform: translateY(-50%); width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%); pointer-events: none; }
+  .cover-solo h1 { font-size: 84px; font-weight: 900; color: #f9fafb; line-height: 1.0; letter-spacing: -2px; margin: 28px 0 24px; }
+  .cover-solo h1 span { color: #4ade80; }
+  .cover-solo p { font-size: 34px; color: #9ca3af; line-height: 1.4; max-width: 860px; }
+
+  .data-body { flex: 1; padding: 22px 64px 0; display: flex; flex-direction: column; gap: 14px; }
+  .data-body h2 { font-size: 62px; font-weight: 800; color: #f9fafb; line-height: 1.05; letter-spacing: -1.5px; }
+  .data-body h2 span { color: #4ade80; }
+
+  .facts { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .fact { background: rgba(26,31,46,0.95); border-radius: 16px; padding: 22px 26px; border: 1px solid #1f2937; display: flex; gap: 20px; align-items: flex-start; }
+  .fact.good { background: rgba(5,46,22,0.95); border-color: #166534; }
+  .fact.warn { background: rgba(28,8,8,0.95); border-color: #7f1d1d; }
+  .f-icon { font-size: 44px; flex-shrink: 0; }
+  .f-title { font-size: 42px; font-weight: 700; color: #f9fafb; margin-bottom: 6px; }
+  .f-desc { font-size: 38px; color: #9ca3af; line-height: 1.45; }
+  .f-badge { display: inline-block; margin-top: 8px; font-size: 30px; font-weight: 700; padding: 8px 18px; border-radius: 7px; width: fit-content; }
+  .fact.good .f-badge { color: #4ade80; background: #052e16; border: 1px solid #166534; }
+  .fact .f-badge { color: #93c5fd; background: #0f172a; border: 1px solid #1e3a5f; }
+
+  .table-box { background: #1a1f2e; border-radius: 16px; overflow: hidden; border: 1px solid #1f2937; }
+  .t-row { display: grid; grid-template-columns: 2fr 1fr; padding: 24px 20px; border-bottom: 1px solid #111827; align-items: center; }
+  .t-row:last-child { border-bottom: none; }
+  .t-row.head { background: #111827; }
+  .t-cell { font-size: 26px; color: #9ca3af; }
+  .t-row.head .t-cell { font-size: 22px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .t-cell.green { color: #4ade80; font-weight: 700; }
+  .t-cell.blue { color: #60a5fa; font-weight: 700; }
+  .t-cell.name { color: #f9fafb; font-weight: 600; }
+
+  .cta-box { background: #16a34a; border-radius: 14px; padding: 22px 22px; text-align: center; }
+  .cta-main { font-size: 44px; font-weight: 800; color: #fff; }
+  .cta-url { font-size: 34px; color: #dcfce7; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<!-- S1 COVER -->
+<p class="lbl">Slide 1 · Cover — capturá #s1</p>
+<div class="card" id="s1">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">1 / 6</div>
+  </div>
+  <div class="cover-solo">
+    <div><span class="tag">Costa Atlántica · 2026</span></div>
+    <h1>Pinamar<br>y <span>Cariló</span>:<br>dónde cargar</h1>
+    <p>8 estaciones entre Pinamar y Cariló. La guía completa para llegar y recargar en la costa.</p>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para más info <span>→</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S2 LOS MÁS RÁPIDOS -->
+<p class="lbl">Slide 2 · Los más rápidos — capturá #s2</p>
+<div class="card" id="s2">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">2 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Los más rápidos:<br>Chargebox CALP<br><span>+ Shell Recharge</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">Chargebox CALP — 60 kW</div>
+          <div class="f-desc">El más rápido de Pinamar. CCS2 + Type 2 AC. Carga de 20% a 80% en menos de una hora con BYD Seal o Atto 3.</div>
+          <div class="f-badge">60 kW · El más rápido</div>
+        </div>
+      </div>
+      <div class="fact good">
+        <div class="f-icon">⚡</div>
+        <div>
+          <div class="f-title">Shell Recharge Pinamar</div>
+          <div class="f-desc">3 conectores en un solo punto: CCS2, CHAdeMO (Nissan Leaf) y Type 2 AC. El más versátil de la ciudad.</div>
+          <div class="f-badge">3 conectores · Máxima compatibilidad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>YPF →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S3 YPF + PUMA -->
+<p class="lbl">Slide 3 · YPF y Puma — capturá #s3</p>
+<div class="card" id="s3">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">3 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>YPF y Puma<br>Energy:<br><span>para Pinamar</span></h2>
+    <div class="facts">
+      <div class="fact">
+        <div class="f-icon">🛣️</div>
+        <div>
+          <div class="f-title">YPF ACA + YPF Jason y Júpiter</div>
+          <div class="f-desc">Dos YPF con DC de 22 kW en el corazón de Pinamar. Ideales para una carga rápida o nocturna mientras estás de compras.</div>
+          <div class="f-badge">2 puntos · DC 22 kW</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🏪</div>
+        <div>
+          <div class="f-title">Chargebox Puma Energy + Carrefour</div>
+          <div class="f-desc">Complementarios. Puma Energy es DC. Carrefour tiene AC lento, ideal mientras hacés las compras de la semana.</div>
+          <div class="f-badge">DC + AC · Complementarios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>Cariló →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S4 CARILÓ -->
+<p class="lbl">Slide 4 · Cariló — capturá #s4</p>
+<div class="card" id="s4">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">4 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Cariló:<br>carga<br><span>tranquila</span></h2>
+    <div class="facts">
+      <div class="fact">
+        <div class="f-icon">🌲</div>
+        <div>
+          <div class="f-title">Cariló Golf</div>
+          <div class="f-desc">Type 2 AC en el complejo. Ideal para cargar durante el día mientras disfrutás del bosque o la playa.</div>
+          <div class="f-badge">Type 2 AC · Carga diurna</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🏨</div>
+        <div>
+          <div class="f-title">Hotel Saint German Cariló</div>
+          <div class="f-desc">Acceso también para quienes no se alojan. Buena opción para cargar overnight si estás en la zona.</div>
+          <div class="f-badge">AC · Overnight ideal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>cómo llegar →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S5 CÓMO LLEGAR -->
+<p class="lbl">Slide 5 · Cómo llegar — capturá #s5</p>
+<div class="card" id="s5">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">5 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Cómo llegar<br>desde BA<br><span>sin escalas</span></h2>
+    <div class="facts">
+      <div class="fact good">
+        <div class="f-icon">🚗</div>
+        <div>
+          <div class="f-title">BYD Dolphin Mini y similares</div>
+          <div class="f-desc">~340 km de autonomía vs ~380 km a Pinamar. Llegás justo al 100% con ECO. Una parada en Dolores (km 202) da margen tranquilo.</div>
+          <div class="f-badge">1 parada en Dolores · km 202</div>
+        </div>
+      </div>
+      <div class="fact">
+        <div class="f-icon">🌙</div>
+        <div>
+          <div class="f-title">Consejo: salí cargado al 100%</div>
+          <div class="f-desc">Cargá la noche anterior en casa. No dependas de cargadores en BA para salir. Evitá cargar en la ciudad antes del viaje.</div>
+          <div class="f-badge">Cargado desde casa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Seguí para <span>resumen →</span></div>
+    <div class="ftr-r">dondecargar.com.ar/blog</div>
+  </div>
+</div>
+
+<!-- S6 TABLA + CTA -->
+<p class="lbl">Slide 6 · Resumen — capturá #s6</p>
+<div class="card" id="s6">
+  <div class="accent"></div>
+  <div class="hdr">
+    <div class="hdr-logo">⚡</div>
+    <div><div class="hdr-name">DóndeCargar</div><div class="hdr-handle">@dondecargar.ar</div></div>
+    <div class="hdr-num">6 / 6</div>
+  </div>
+  <div class="data-body">
+    <h2>Las 8 estaciones<br>de <span>Pinamar y Cariló</span></h2>
+    <div class="table-box">
+      <div class="t-row head">
+        <div class="t-cell">Estación</div>
+        <div class="t-cell">Tipo</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Chargebox CALP</div>
+        <div class="t-cell blue">60kW DC</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Shell Recharge</div>
+        <div class="t-cell blue">50kW DC</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">YPF ACA / YPF Jason</div>
+        <div class="t-cell blue">22kW DC</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Puma Energy / Carrefour</div>
+        <div class="t-cell green">DC / AC</div>
+      </div>
+      <div class="t-row">
+        <div class="t-cell name">Cariló Golf / Saint German</div>
+        <div class="t-cell green">AC lento</div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <div class="cta-main">Ver mapa en dondecargar.com.ar</div>
+      <div class="cta-url">todas las estaciones · gratuito</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <div class="ftr-l">Artículo completo en <span>dondecargar.com.ar/blog</span></div>
+    <div class="ftr-r">🔗 link en bio</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:#6b7280;text-align:center;max-width:700px;padding-bottom:40px">
+  F12 → Elements → click derecho en <code>#s1</code>…<code>#s6</code> → <b>Capture node screenshot</b>
+</p>
+</body>
+</html>
